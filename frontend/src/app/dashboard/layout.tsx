@@ -36,6 +36,8 @@ import {
   BarChart3,
   Settings,
   Shield,
+  ShieldCheck,
+  UserCircle,
   LogOut,
   Menu,
   ChevronDown,
@@ -83,6 +85,12 @@ const navItems: NavItem[] = [
     icon: BarChart3,
     roles: ["employee", "org_admin"],
   },
+  {
+    label: "My Profile",
+    href: "/dashboard/profile",
+    icon: UserCircle,
+    roles: ["public", "employee", "org_admin", "super_admin"],
+  },
 ];
 
 /** Organization admin navigation items */
@@ -91,6 +99,12 @@ const adminNavItems: NavItem[] = [
     label: "Admin Dashboard",
     href: "/admin",
     icon: Shield,
+    roles: ["org_admin"],
+  },
+  {
+    label: "Verifications",
+    href: "/admin/verifications",
+    icon: ShieldCheck,
     roles: ["org_admin"],
   },
   {

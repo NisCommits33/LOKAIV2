@@ -36,6 +36,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 
 /** Wraps LoginContent in Suspense for useSearchParams compatibility */
 export default function LoginPage() {
@@ -68,6 +69,9 @@ function LoginSkeleton() {
 function LoginContent() {
   const { signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [showPersonalPw, setShowPersonalPw] = useState(false);
+  const [showOrgPw, setShowOrgPw] = useState(false);
+  const [showSaPw, setShowSaPw] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
@@ -195,6 +199,68 @@ function LoginContent() {
 
                 <TabsContent value="individual" className="space-y-8 outline-none">
                   <div className="space-y-6">
+                    {/* Email/Password Login */}
+                    <form onSubmit={handleEmailLogin} className="space-y-4">
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="personal-email"
+                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                        >
+                          Email
+                        </Label>
+                        <Input
+                          id="personal-email"
+                          name="email"
+                          type="email"
+                          placeholder="you@example.com"
+                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="personal-password"
+                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                        >
+                          Password
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="personal-password"
+                            name="password"
+                            type={showPersonalPw ? "text" : "password"}
+                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPersonalPw(!showPersonalPw)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showPersonalPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                        disabled={loading}
+                      >
+                        {loading ? "Signing in..." : "Sign In"}
+                      </Button>
+                    </form>
+
+                    {/* Divider */}
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-slate-100" />
+                      </div>
+                      <div className="relative flex justify-center text-[10px] uppercase tracking-widest">
+                        <span className="bg-white px-3 text-slate-400 font-bold">or</span>
+                      </div>
+                    </div>
+
                     <Button
                       variant="outline"
                       className="w-full h-12 gap-3 text-sm font-bold border-slate-200 rounded-xl hover:bg-slate-50 transition-all active:scale-[0.98] shadow-none"
@@ -225,6 +291,16 @@ function LoginContent() {
                       )}
                       Continue with Google
                     </Button>
+
+                    <p className="text-center text-xs text-slate-400 font-medium">
+                      Don&apos;t have an account?{" "}
+                      <a
+                        href="/register"
+                        className="text-slate-900 font-bold hover:underline"
+                      >
+                        Create one
+                      </a>
+                    </p>
                   </div>
                 </TabsContent>
 
@@ -254,13 +330,23 @@ function LoginContent() {
                         >
                           Password
                         </Label>
-                        <Input
-                          id="org-password"
-                          name="password"
-                          type="password"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
-                          required
-                        />
+                        <div className="relative">
+                          <Input
+                            id="org-password"
+                            name="password"
+                            type={showOrgPw ? "text" : "password"}
+                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowOrgPw(!showOrgPw)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showOrgPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
                       </div>
                       <Button
                         type="submit"
@@ -311,13 +397,23 @@ function LoginContent() {
                         >
                           Password
                         </Label>
-                        <Input
-                          id="sa-password"
-                          name="password"
-                          type="password"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
-                          required
-                        />
+                        <div className="relative">
+                          <Input
+                            id="sa-password"
+                            name="password"
+                            type={showSaPw ? "text" : "password"}
+                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowSaPw(!showSaPw)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showSaPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
                       </div>
                       <Button
                         type="submit"

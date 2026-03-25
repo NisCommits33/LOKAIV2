@@ -15,7 +15,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** Routes accessible without authentication */
-const publicRoutes = ["/login", "/auth/callback", "/"];
+const publicRoutes = ["/login", "/auth/callback", "/", "/register"];
 
 /** Route prefixes accessible without authentication (prefix match) */
 const publicPrefixes = ["/register-organization", "/api/organizations/apply"];
