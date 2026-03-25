@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin-client";
+import { verifySuperAdmin } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -18,16 +20,12 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Verify super_admin role
-  const { data: dbUser } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (dbUser?.role !== "super_admin") {
+  if (!(await verifySuperAdmin(supabase, user.id))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  // Use admin client (bypasses RLS) for data operations
+  const adminClient = createAdminClient();
 
   let body: Record<string, unknown>;
   try {
@@ -42,7 +40,7 @@ export async function POST(
   }
 
   // Get the application and its created organization
-  const { data: application } = await supabase
+  const { data: application } = await adminClient
     .from("organization_applications")
     .select("status, organization_id")
     .eq("id", id)
@@ -60,7 +58,7 @@ export async function POST(
   }
 
   // Find user by email
-  const { data: targetUser } = await supabase
+  const { data: targetUser } = await adminClient
     .from("users")
     .select("id")
     .eq("email", email as string)
@@ -74,7 +72,7 @@ export async function POST(
   }
 
   // Assign org_admin role
-  const { error: updateError } = await supabase
+  const { error: updateError } = await adminClient
     .from("users")
     .update({
       role: "org_admin",

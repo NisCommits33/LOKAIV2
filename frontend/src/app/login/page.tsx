@@ -85,8 +85,8 @@ function LoginContent() {
     }
   };
 
-  /** Handles organization admin email/password login */
-  const handleOrgLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  /** Handles email/password login for org admins and super admins */
+  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
@@ -100,16 +100,31 @@ function LoginContent() {
       });
       if (error) throw error;
 
+      // Determine user role — with RPC fallback if RLS blocks direct query
+      let role: string | null = null;
+      let verificationStatus: string | null = null;
+
       const { data: profileData } = await supabase
         .from("users")
         .select("role, verification_status")
         .eq("id", data.user.id)
         .single();
 
+      if (profileData) {
+        role = profileData.role;
+        verificationStatus = profileData.verification_status;
+      } else {
+        // RLS may block the query — use SECURITY DEFINER function
+        const { data: rpcRole } = await supabase.rpc("get_user_role", { user_id: data.user.id });
+        role = rpcRole as string | null;
+      }
+
       toast.success("Signed in successfully");
 
-      if (profileData?.role === "org_admin") {
-        if (profileData?.verification_status === "verified") {
+      if (role === "super_admin") {
+        router.push("/super-admin");
+      } else if (role === "org_admin") {
+        if (verificationStatus === "verified") {
           router.push("/admin");
         } else {
           router.push("/pending-approval");
@@ -157,7 +172,7 @@ function LoginContent() {
               )}
 
               <Tabs defaultValue="individual" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6 h-11 bg-slate-50 p-1 rounded-xl">
+                <TabsList className="grid w-full grid-cols-3 mb-6 h-11 bg-slate-50 p-1 rounded-xl">
                   <TabsTrigger
                     value="individual"
                     className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white data-[selected]:text-slate-900 data-[selected]:shadow-sm transition-all"
@@ -169,6 +184,12 @@ function LoginContent() {
                     className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white data-[selected]:text-slate-900 data-[selected]:shadow-sm transition-all"
                   >
                     Organization
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="super-admin"
+                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white data-[selected]:text-slate-900 data-[selected]:shadow-sm transition-all"
+                  >
+                    Super Admin
                   </TabsTrigger>
                 </TabsList>
 
@@ -208,7 +229,7 @@ function LoginContent() {
                 </TabsContent>
 
                 <TabsContent value="organization" className="outline-none">
-                  <form onSubmit={handleOrgLogin} className="space-y-6">
+                  <form onSubmit={handleEmailLogin} className="space-y-6">
                     <div className="space-y-4">
                       <div className="space-y-1.5">
                         <Label
@@ -247,6 +268,63 @@ function LoginContent() {
                         disabled={loading}
                       >
                         {loading ? "Verifying..." : "Enter Portal"}
+                      </Button>
+                    </div>
+                    <p className="text-center text-xs text-slate-400 font-medium pt-4">
+                      Don&apos;t have an organization?{" "}
+                      <a
+                        href="/register-organization"
+                        className="text-slate-900 font-bold hover:underline"
+                      >
+                        Register here
+                      </a>
+                    </p>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="super-admin" className="outline-none">
+                  <form onSubmit={handleEmailLogin} className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-xs text-slate-500 font-medium">
+                        Platform administrator access. Authorized personnel only.
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="sa-email"
+                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                        >
+                          Admin Email
+                        </Label>
+                        <Input
+                          id="sa-email"
+                          name="email"
+                          type="email"
+                          placeholder="superadmin@lokai.gov.np"
+                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="sa-password"
+                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                        >
+                          Password
+                        </Label>
+                        <Input
+                          id="sa-password"
+                          name="password"
+                          type="password"
+                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          required
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                        disabled={loading}
+                      >
+                        {loading ? "Authenticating..." : "Access Platform"}
                       </Button>
                     </div>
                   </form>

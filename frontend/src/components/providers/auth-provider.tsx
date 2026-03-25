@@ -53,11 +53,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("id", userId)
         .single();
 
-      if (error) {
-        console.error("Error fetching user profile:", error);
-        return null;
+      if (!error && data) {
+        return data as User;
       }
-      return data as User;
+
+      // Fallback: RLS may block SELECT *. Use SECURITY DEFINER RPC to get role.
+      console.warn("Direct user query failed, using RPC fallback:", error?.message);
+      const { data: rpcRole } = await supabase.rpc("get_user_role", { user_id: userId });
+
+      if (rpcRole) {
+        // Return a minimal User object so the rest of the app knows the role
+        return {
+          id: userId,
+          email: "",
+          full_name: null,
+          avatar_url: null,
+          organization_id: null,
+          department_id: null,
+          job_level_id: null,
+          employee_id: null,
+          role: rpcRole as User["role"],
+          verification_status: "verified" as const,
+          verified_at: null,
+          verified_by: null,
+          rejection_reason: null,
+          rejected_by: null,
+          rejected_at: null,
+          is_active: true,
+          profile_completed: true,
+          created_at: "",
+          updated_at: "",
+        } as User;
+      }
+
+      return null;
     },
     [supabase]
   );

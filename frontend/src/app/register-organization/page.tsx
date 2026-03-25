@@ -33,6 +33,7 @@ import {
   Upload,
   X,
   FileText,
+  Lock,
 } from "lucide-react";
 
 const orgDetailsSchema = z.object({
@@ -54,9 +55,14 @@ const applicantSchema = z.object({
   applicant_email: z.string().email("Enter a valid email"),
   applicant_position: z.string().optional(),
   applicant_phone: z.string().optional(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirm_password: z.string().min(1, "Please confirm your password"),
 });
 
-const fullSchema = orgDetailsSchema.merge(applicantSchema);
+const fullSchema = orgDetailsSchema.merge(applicantSchema).refine(
+  (data) => data.password === data.confirm_password,
+  { message: "Passwords don't match", path: ["confirm_password"] }
+);
 type FormData = z.infer<typeof fullSchema>;
 
 interface UploadedDoc {
@@ -65,13 +71,17 @@ interface UploadedDoc {
   type: string;
 }
 
+interface StagedFile {
+  file: File;
+  name: string;
+}
+
 export default function OrgRegistrationPage() {
   const router = useRouter();
   const supabase = createClient();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [documents, setDocuments] = useState<UploadedDoc[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const [stagedFiles, setStagedFiles] = useState<StagedFile[]>([]);
   const totalSteps = 3;
 
   const {
@@ -94,6 +104,8 @@ export default function OrgRegistrationPage() {
       applicant_email: "",
       applicant_position: "",
       applicant_phone: "",
+      password: "",
+      confirm_password: "",
     },
   });
 
@@ -115,32 +127,46 @@ export default function OrgRegistrationPage() {
         "applicant_email",
         "applicant_position",
         "applicant_phone",
+        "password",
+        "confirm_password",
       ]);
       if (valid) setStep(3);
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    setIsUploading(true);
-    try {
-      for (const file of Array.from(files)) {
-        if (file.size > 10 * 1024 * 1024) {
-          toast.error(`${file.name} exceeds 10MB limit`);
-          continue;
-        }
+    for (const file of Array.from(files)) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds 10MB limit`);
+        continue;
+      }
+      setStagedFiles((prev) => [...prev, { file, name: file.name }]);
+    }
+    e.target.value = "";
+  };
 
-        const ext = file.name.split(".").pop();
+  const removeDocument = (index: number) => {
+    setStagedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+    try {
+      // 1. Upload staged documents first (as anon — no auth needed)
+      const uploadedDocs: UploadedDoc[] = [];
+      for (const staged of stagedFiles) {
+        const ext = staged.name.split(".").pop();
         const path = `applications/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-        const { error } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from("org-applications")
-          .upload(path, file);
+          .upload(path, staged.file);
 
-        if (error) {
-          toast.error(`Failed to upload ${file.name}`);
+        if (uploadError) {
+          toast.error(`Failed to upload ${staged.name}`);
           continue;
         }
 
@@ -148,37 +174,32 @@ export default function OrgRegistrationPage() {
           .from("org-applications")
           .getPublicUrl(path);
 
-        setDocuments((prev) => [
-          ...prev,
-          { name: file.name, url: urlData.publicUrl, type: file.type },
-        ]);
+        uploadedDocs.push({
+          name: staged.name,
+          url: urlData.publicUrl,
+          type: staged.file.type,
+        });
       }
-      toast.success("Documents uploaded");
-    } catch {
-      toast.error("Upload failed");
-    } finally {
-      setIsUploading(false);
-      e.target.value = "";
-    }
-  };
 
-  const removeDocument = (index: number) => {
-    setDocuments((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
-    try {
+      // 2. Submit the application WITH password (server creates auth account)
+      const { confirm_password: _cpw, ...formFields } = data;
       const res = await fetch("/api/organizations/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, documents }),
+        body: JSON.stringify({ ...formFields, documents: uploadedDocs }),
       });
 
       const result = await res.json();
 
       if (!res.ok) {
         throw new Error(result.error || "Failed to submit application");
+      }
+
+      if (result.warning) {
+        console.warn("Registration warning:", result.warning);
+        toast.error(result.warning);
+        setIsSubmitting(false);
+        return;
       }
 
       toast.success("Application submitted successfully!");
@@ -416,6 +437,45 @@ export default function OrgRegistrationPage() {
                           />
                         </div>
                       </div>
+
+                      <div className="flex items-center gap-2 pt-2 pb-1">
+                        <Lock className="h-3.5 w-3.5 text-slate-400" />
+                        <p className="text-xs font-semibold text-slate-400">
+                          Create login credentials — you&apos;ll use this email and password to sign in.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                            Password *
+                          </Label>
+                          <Input
+                            {...register("password")}
+                            type="password"
+                            placeholder="Min 6 characters"
+                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          />
+                          {errors.password && (
+                            <p className="text-sm text-red-500 font-medium pl-1">{errors.password.message}</p>
+                          )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                            Confirm Password *
+                          </Label>
+                          <Input
+                            {...register("confirm_password")}
+                            type="password"
+                            placeholder="Re-enter password"
+                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          />
+                          {errors.confirm_password && (
+                            <p className="text-sm text-red-500 font-medium pl-1">{errors.confirm_password.message}</p>
+                          )}
+                        </div>
+                      </div>
                     </motion.div>
                   )}
 
@@ -441,7 +501,7 @@ export default function OrgRegistrationPage() {
                           <Upload className="h-8 w-8 text-slate-300" />
                           <div className="text-center">
                             <span className="text-sm font-semibold text-slate-600">
-                              {isUploading ? "Uploading..." : "Click to upload"}
+                              Click to add files
                             </span>
                             <p className="text-xs text-slate-400 mt-1">PDF, JPG, PNG up to 10MB</p>
                           </div>
@@ -451,20 +511,19 @@ export default function OrgRegistrationPage() {
                             accept=".pdf,.jpg,.jpeg,.png"
                             multiple
                             onChange={handleFileUpload}
-                            disabled={isUploading}
                           />
                         </label>
 
-                        {documents.length > 0 && (
+                        {stagedFiles.length > 0 && (
                           <div className="space-y-2 mt-3">
-                            {documents.map((doc, idx) => (
+                            {stagedFiles.map((staged, idx) => (
                               <div
                                 key={idx}
                                 className="flex items-center gap-3 rounded-lg border border-slate-100 px-4 py-3 bg-white"
                               >
                                 <FileText className="h-4 w-4 text-slate-400 shrink-0" />
                                 <span className="text-sm font-medium text-slate-700 truncate flex-1">
-                                  {doc.name}
+                                  {staged.name}
                                 </span>
                                 <button
                                   type="button"
@@ -499,7 +558,7 @@ export default function OrgRegistrationPage() {
                           </div>
                           <div>
                             <span className="text-slate-400 text-xs">Documents</span>
-                            <p className="font-semibold text-slate-700">{documents.length} file(s)</p>
+                            <p className="font-semibold text-slate-700">{stagedFiles.length} file(s)</p>
                           </div>
                         </div>
                       </div>

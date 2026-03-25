@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin-client";
+import { verifySuperAdmin } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -20,19 +22,15 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Verify super_admin role
-  const { data: dbUser } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (dbUser?.role !== "super_admin") {
+  if (!(await verifySuperAdmin(supabase, user.id))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // Use admin client (bypasses RLS) for data operations
+  const adminClient = createAdminClient();
+
   // Get the application
-  const { data: application, error: fetchError } = await supabase
+  const { data: application, error: fetchError } = await adminClient
     .from("organization_applications")
     .select("*")
     .eq("id", id)
@@ -59,7 +57,7 @@ export async function POST(
   }
 
   // Approve the application (trigger creates org + defaults)
-  const { data: updated, error: updateError } = await supabase
+  const { data: updated, error: updateError } = await adminClient
     .from("organization_applications")
     .update({
       status: "approved",
@@ -77,14 +75,74 @@ export async function POST(
   // Assign admin role to the applicant or specified user
   const targetEmail = adminEmail || application.applicant_email;
   if (targetEmail && updated.organization_id) {
-    const { data: targetUser } = await supabase
+    let userId: string | null = null;
+
+    // First check if public.users row exists (created by handle_new_user trigger on signUp)
+    const { data: existingUser } = await adminClient
       .from("users")
       .select("id")
-      .eq("email", targetEmail)
+      .ilike("email", targetEmail)
       .maybeSingle();
 
-    if (targetUser) {
-      await supabase
+    if (existingUser) {
+      // Auth user + public.users row both exist — just confirm their email
+      await adminClient.auth.admin.updateUserById(existingUser.id, {
+        email_confirm: true,
+      });
+      userId = existingUser.id;
+    } else {
+      // Auth user doesn't exist (signUp failed during registration) — create one
+      const tempPassword = crypto.randomUUID();
+      const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
+        email: targetEmail,
+        password: tempPassword,
+        email_confirm: true,
+        user_metadata: {
+          full_name: application.applicant_name,
+          name: application.applicant_name,
+        },
+      });
+
+      if (createError || !newUser?.user) {
+        console.error("Failed to create auth user:", createError?.message);
+        return NextResponse.json(
+          { ...updated, warning: "Approved but admin account creation failed. User must sign up manually." },
+          { status: 200 }
+        );
+      }
+
+      userId = newUser.user.id;
+
+      // Send password reset so the user can set their own password
+      await adminClient.auth.admin.generateLink({
+        type: "recovery",
+        email: targetEmail,
+      });
+    }
+
+    // Ensure public.users row exists (trigger may have failed)
+    const { data: targetUser } = await adminClient
+      .from("users")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!targetUser) {
+      // Manually create the public.users row if the trigger didn't fire
+      await adminClient.from("users").insert({
+        id: userId,
+        email: targetEmail,
+        full_name: application.applicant_name,
+        role: "org_admin",
+        organization_id: updated.organization_id,
+        verification_status: "verified",
+        verified_at: new Date().toISOString(),
+        verified_by: user.id,
+        profile_completed: true,
+      });
+    } else {
+      // Update existing public.users row
+      await adminClient
         .from("users")
         .update({
           role: "org_admin",
@@ -94,7 +152,7 @@ export async function POST(
           verified_by: user.id,
           profile_completed: true,
         })
-        .eq("id", targetUser.id);
+        .eq("id", userId);
     }
   }
 

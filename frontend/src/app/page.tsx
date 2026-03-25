@@ -165,6 +165,16 @@ export default function Home() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
+              <Link href="/register-organization">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-12 px-8 text-base font-semibold rounded-xl border-slate-200 hover:bg-slate-50 text-slate-700 shadow-none transition-all"
+                >
+                  Register Organization
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </Container>

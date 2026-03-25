@@ -1,9 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin-client";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/organizations/apply
- * Creates a new organization registration application.
+ * Creates a new organization registration application and
+ * an auth account for the applicant (with email unconfirmed
+ * so login is blocked until super admin approves).
  * No authentication required — public endpoint.
  */
 export async function POST(request: NextRequest) {
@@ -29,12 +32,13 @@ export async function POST(request: NextRequest) {
     applicant_position,
     applicant_phone,
     documents,
+    password,
   } = body as Record<string, string | unknown>;
 
   // Validate required fields
-  if (!name || !code || !contact_email || !applicant_name || !applicant_email) {
+  if (!name || !code || !contact_email || !applicant_name || !applicant_email || !password) {
     return NextResponse.json(
-      { error: "Missing required fields: name, code, contact_email, applicant_name, applicant_email" },
+      { error: "Missing required fields: name, code, contact_email, applicant_name, applicant_email, password" },
       { status: 400 }
     );
   }
@@ -88,7 +92,59 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
+    console.error("[apply] Application insert failed:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  console.log("[apply] Application saved:", data.id, "for email:", applicant_email);
+
+  // Create auth account server-side using admin client (reliable, bypasses client-side auth issues)
+  const adminClient = createAdminClient();
+  console.log("[apply] Creating auth user for:", applicant_email);
+
+  const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
+    email: applicant_email as string,
+    password: password as string,
+    email_confirm: false, // Stays unconfirmed until super admin approves
+    user_metadata: {
+      full_name: applicant_name as string,
+      name: applicant_name as string,
+    },
+  });
+
+  if (authError) {
+    console.error("[apply] Auth account creation FAILED:", authError.message);
+    // Application is already saved — don't fail the whole request
+    return NextResponse.json(
+      { ...data, warning: `Application saved but account creation failed: ${authError.message}` },
+      { status: 201 }
+    );
+  }
+
+  console.log("[apply] Auth user created:", authData.user?.id, "email:", authData.user?.email);
+
+  // Verify the trigger created a public.users row
+  const { data: publicUser, error: publicUserError } = await adminClient
+    .from("users")
+    .select("id, email, role")
+    .eq("id", authData.user.id)
+    .maybeSingle();
+
+  if (publicUser) {
+    console.log("[apply] public.users row confirmed:", publicUser.id, publicUser.email, publicUser.role);
+  } else {
+    console.error("[apply] public.users row NOT found after createUser. Trigger may have failed.", publicUserError?.message);
+    // Manually create the public.users row as fallback
+    const { error: insertError } = await adminClient.from("users").insert({
+      id: authData.user.id,
+      email: applicant_email as string,
+      full_name: applicant_name as string,
+    });
+    if (insertError) {
+      console.error("[apply] Manual public.users insert also failed:", insertError.message);
+    } else {
+      console.log("[apply] Manually created public.users row for:", authData.user.id);
+    }
   }
 
   return NextResponse.json(data, { status: 201 });

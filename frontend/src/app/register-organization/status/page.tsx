@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,14 @@ import { motion } from "framer-motion";
 import type { OrganizationApplication } from "@/types/database";
 
 export default function ApplicationStatusPage() {
+  return (
+    <Suspense fallback={<FullPageSpinner />}>
+      <ApplicationStatusContent />
+    </Suspense>
+  );
+}
+
+function ApplicationStatusContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams.get("id");
