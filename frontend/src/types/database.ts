@@ -52,6 +52,11 @@ export interface Database {
         Insert: Omit<OrganizationApplication, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<OrganizationApplication, "id" | "created_at">>;
       };
+      personal_documents: {
+        Row: PersonalDocument;
+        Insert: Omit<PersonalDocument, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<PersonalDocument, "id" | "created_at">>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -175,6 +180,29 @@ export interface QuizAttempt {
 /** Quiz attempt joined with quiz metadata for listings */
 export interface QuizAttemptWithQuiz extends QuizAttempt {
   gk_quizzes?: Pick<GKQuiz, "title" | "category" | "difficulty"> | null;
+}
+
+/** Processing status for user-uploaded documents */
+export type DocumentProcessingStatus = "pending" | "processing" | "completed" | "failed";
+
+/** User-uploaded personal document (PDF study material) */
+export interface PersonalDocument {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  file_path: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  extracted_text: string | null;
+  ai_summary: string | null;
+  questions: QuizQuestion[];
+  processing_status: DocumentProcessingStatus;
+  processing_error: string | null;
+  created_at: string;
+  updated_at: string;
+  processed_at: string | null;
 }
 
 /** Self-service organization registration application */
