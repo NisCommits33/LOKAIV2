@@ -1,0 +1,15 @@
+# Environment
+.env
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Poppler binaries (large, download locally)
+poppler-24.08.0/
+
+# Model cache
+.cache/

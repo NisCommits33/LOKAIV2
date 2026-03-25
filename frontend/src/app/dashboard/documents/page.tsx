@@ -160,7 +160,12 @@ export default function DocumentsPage() {
       }
 
       setUploadProgress(100);
-      toast.success("Document uploaded successfully");
+      toast.success("Document uploaded — extracting text...");
+
+      // Auto-trigger OCR text extraction
+      const newDoc = await res.json();
+      fetch(`/api/documents/${newDoc.id}/process`, { method: "POST" }).catch(() => {});
+
       fetchDocuments();
     } catch {
       clearInterval(progressInterval);

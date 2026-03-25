@@ -1,0 +1,33 @@
+# LokAI — AI Processing Backend
+#
+# FastAPI microservice for document processing:
+# - OCR (Tesseract: English + Nepali)
+# - Summarization (facebook/bart-large-cnn)
+# - Question Generation (valhalla/t5-small-qg-hl)
+
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+pydantic==2.9.0
+pydantic-settings==2.5.0
+
+# CORS & Rate Limiting
+slowapi==0.1.9
+
+# OCR
+pdf2image==1.17.0
+pytesseract==0.3.13
+Pillow==10.4.0
+
+# AI Models
+transformers==4.44.0
+torch==2.4.0
+sentencepiece==0.2.0
+
+# Supabase
+supabase==2.7.0
+
+# Utilities
+python-dotenv==1.0.1
+httpx==0.27.0

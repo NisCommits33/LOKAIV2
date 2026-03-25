@@ -2,14 +2,18 @@
  * dashboard/documents/[id]/page.tsx — Document Detail
  *
  * Shows full document metadata, download link, processing status,
- * extracted text preview, AI summary, and edit/delete actions.
+ * extracted text preview, and on-demand AI actions (Summarize / Generate Quiz).
+ *
+ * Flow:
+ * - Upload auto-triggers OCR text extraction
+ * - Once text is extracted, user can Summarize or Generate Quiz independently
  *
  * @module app/dashboard/documents/[id]
  */
 
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +44,10 @@ import {
   CheckCircle2,
   Loader2,
   BookOpen,
+  Copy,
+  RefreshCw,
+  Brain,
+  HelpCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -53,10 +61,10 @@ const statusColors: Record<DocumentProcessingStatus, string> = {
 };
 
 const statusLabels: Record<DocumentProcessingStatus, string> = {
-  pending: "Pending Processing",
-  processing: "Processing...",
+  pending: "Extracting text...",
+  processing: "Extracting text...",
   completed: "Ready",
-  failed: "Processing Failed",
+  failed: "Extraction Failed",
 };
 
 function formatFileSize(bytes: number): string {
@@ -77,6 +85,14 @@ function formatDate(date: string): string {
 
 interface DocumentDetailData extends PersonalDocument {
   download_url: string | null;
+}
+
+interface GeneratedQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+  explanation: string;
 }
 
 export default function DocumentDetailPage({
@@ -101,6 +117,14 @@ export default function DocumentDetailPage({
   const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  // OCR polling
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // On-demand AI states
+  const [summarizing, setSummarizing] = useState(false);
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+  const [questions, setQuestions] = useState<GeneratedQuestion[]>([]);
+
   useEffect(() => {
     async function fetchDoc() {
       const res = await fetch(`/api/documents/${id}`);
@@ -109,11 +133,129 @@ export default function DocumentDetailPage({
         setDoc(data);
         setEditTitle(data.title);
         setEditDescription(data.description || "");
+        // Load existing questions from document
+        if (data.questions && Array.isArray(data.questions)) {
+          setQuestions(data.questions);
+        }
+        // If text extraction is still running, poll for completion
+        if (data.processing_status === "processing" || data.processing_status === "pending") {
+          startPolling();
+        }
       }
       setLoading(false);
     }
     fetchDoc();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
+  // Poll for OCR text extraction completion
+  function startPolling() {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    pollingRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/documents/${id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.processing_status === "completed") {
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          pollingRef.current = null;
+          setDoc(data);
+          toast.success("Text extracted successfully!");
+        } else if (data.processing_status === "failed") {
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          pollingRef.current = null;
+          setDoc(data);
+          toast.error(data.processing_error || "Text extraction failed");
+        }
+      } catch {
+        // Network error — keep polling
+      }
+    }, 3000);
+  }
+
+  // Retry OCR text extraction
+  async function handleRetryExtraction() {
+    setDoc((prev) =>
+      prev ? { ...prev, processing_status: "processing" as DocumentProcessingStatus, processing_error: null } : prev
+    );
+
+    try {
+      const res = await fetch(`/api/documents/${id}/process`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to start extraction");
+      }
+      toast.info("Text extraction started...");
+      startPolling();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Extraction failed";
+      setDoc((prev) =>
+        prev ? { ...prev, processing_status: "failed" as DocumentProcessingStatus, processing_error: message } : prev
+      );
+      toast.error(message);
+    }
+  }
+
+  // On-demand: Generate Summary
+  async function handleSummarize() {
+    setSummarizing(true);
+    try {
+      const res = await fetch(`/api/documents/${id}/summarize`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Summarization failed");
+      }
+      const data = await res.json();
+      setDoc((prev) => (prev ? { ...prev, ai_summary: data.summary } : prev));
+      toast.success("Summary generated!");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Summarization failed";
+      toast.error(message);
+    } finally {
+      setSummarizing(false);
+    }
+  }
+
+  // On-demand: Generate Quiz Questions
+  async function handleGenerateQuiz() {
+    setGeneratingQuiz(true);
+    try {
+      const res = await fetch(`/api/documents/${id}/generate-questions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ count: 5, difficulty: "medium" }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Quiz generation failed");
+      }
+      const data = await res.json();
+      setQuestions(data.questions || []);
+      toast.success("Quiz generated!");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Quiz generation failed";
+      toast.error(message);
+    } finally {
+      setGeneratingQuiz(false);
+    }
+  }
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard");
+  }
 
   async function handleSave() {
     if (!editTitle.trim()) {
@@ -176,6 +318,10 @@ export default function DocumentDetailPage({
       </div>
     );
   }
+
+  const isExtracting = doc.processing_status === "processing" || doc.processing_status === "pending";
+  const isReady = doc.processing_status === "completed";
+  const isFailed = doc.processing_status === "failed";
 
   return (
     <div className="p-6 sm:p-8 space-y-6 max-w-4xl">
@@ -267,17 +413,14 @@ export default function DocumentDetailPage({
               variant="outline"
               className={statusColors[doc.processing_status]}
             >
-              {doc.processing_status === "processing" && (
+              {isExtracting && (
                 <Loader2 className="h-3 w-3 mr-1 animate-spin" />
               )}
-              {doc.processing_status === "completed" && (
+              {isReady && (
                 <CheckCircle2 className="h-3 w-3 mr-1" />
               )}
-              {doc.processing_status === "failed" && (
+              {isFailed && (
                 <AlertCircle className="h-3 w-3 mr-1" />
-              )}
-              {doc.processing_status === "pending" && (
-                <Clock className="h-3 w-3 mr-1" />
               )}
               {statusLabels[doc.processing_status]}
             </Badge>
@@ -311,8 +454,8 @@ export default function DocumentDetailPage({
             </div>
           </div>
 
-          {/* Processing failure message */}
-          {doc.processing_status === "failed" && doc.processing_error && (
+          {/* Extraction failure message */}
+          {isFailed && doc.processing_error && (
             <div className="mt-4 p-3 bg-red-50 rounded-lg text-sm text-red-700 flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               {doc.processing_error}
@@ -321,55 +464,185 @@ export default function DocumentDetailPage({
         </CardContent>
       </Card>
 
-      {/* AI Summary — shown when processing is complete */}
-      {doc.processing_status === "completed" && doc.ai_summary && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-indigo-500" />
-              AI Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
-              {doc.ai_summary}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Extracted text preview — shown when processing is complete */}
-      {doc.processing_status === "completed" && doc.extracted_text && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <FileText className="h-4 w-4 text-slate-500" />
-              Extracted Text
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="max-h-80 overflow-y-auto rounded-lg bg-slate-50 p-4">
-              <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
-                {doc.extracted_text}
-              </p>
+      {/* Text extraction in progress */}
+      {isExtracting && (
+        <Card className="border-blue-100 bg-blue-50/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+              <div>
+                <p className="text-sm font-medium text-blue-700">
+                  Extracting text from your document...
+                </p>
+                <p className="text-xs text-blue-500 mt-0.5">
+                  This runs automatically after upload. You&apos;ll be able to summarize and generate quizzes once done.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Pending processing notice */}
-      {doc.processing_status === "pending" && (
-        <Card className="border-amber-100 bg-amber-50/50">
+      {/* Extraction failed — retry */}
+      {isFailed && (
+        <Card className="border-red-100 bg-red-50/50">
           <CardContent className="p-5 text-center">
-            <Clock className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-            <p className="text-sm font-medium text-amber-700">
-              Waiting for AI processing
+            <AlertCircle className="h-8 w-8 text-red-400 mx-auto mb-3" />
+            <p className="text-sm font-medium text-red-700 mb-1">
+              Text Extraction Failed
             </p>
-            <p className="text-xs text-amber-500 mt-1">
-              Text extraction, summarization, and question generation will appear here once processed.
-            </p>
+            {doc.processing_error && (
+              <p className="text-xs text-red-500 mb-4">{doc.processing_error}</p>
+            )}
+            <Button variant="outline" onClick={handleRetryExtraction}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry Extraction
+            </Button>
           </CardContent>
         </Card>
+      )}
+
+      {/* ── Ready: AI Actions ────────────────────────────────────── */}
+      {isReady && (
+        <>
+          {/* Action buttons row */}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              onClick={handleSummarize}
+              disabled={summarizing}
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              {summarizing ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <BookOpen className="h-4 w-4 mr-2" />
+              )}
+              {summarizing
+                ? "Summarizing..."
+                : doc.ai_summary
+                  ? "Regenerate Summary"
+                  : "Summarize PDF"}
+            </Button>
+            <Button
+              onClick={handleGenerateQuiz}
+              disabled={generatingQuiz}
+              variant="outline"
+              className="border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
+              {generatingQuiz ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Brain className="h-4 w-4 mr-2" />
+              )}
+              {generatingQuiz
+                ? "Generating Quiz..."
+                : questions.length > 0
+                  ? "Regenerate Quiz"
+                  : "Generate Quiz"}
+            </Button>
+          </div>
+
+          {/* AI Summary */}
+          {doc.ai_summary && (
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-indigo-500" />
+                    AI Summary
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(doc.ai_summary!)}
+                  >
+                    <Copy className="h-3.5 w-3.5 mr-1" />
+                    Copy
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                  {doc.ai_summary}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Generated Questions */}
+          {questions.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <HelpCircle className="h-4 w-4 text-purple-500" />
+                    AI-Generated Questions
+                    <Badge variant="secondary" className="ml-1">
+                      {questions.length}
+                    </Badge>
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {questions.map((q, idx) => (
+                    <div
+                      key={q.id}
+                      className="p-3 rounded-lg bg-slate-50 border border-slate-100"
+                    >
+                      <p className="text-sm font-medium text-slate-700 mb-2">
+                        {idx + 1}. {q.question}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 ml-4">
+                        {q.options.map((opt, optIdx) => (
+                          <p
+                            key={optIdx}
+                            className={`text-xs px-2 py-1 rounded ${
+                              optIdx === q.correct_answer
+                                ? "bg-emerald-50 text-emerald-700 font-medium"
+                                : "text-slate-500"
+                            }`}
+                          >
+                            {String.fromCharCode(65 + optIdx)}. {opt}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Extracted Text */}
+          {doc.extracted_text && (
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-slate-500" />
+                    Extracted Text
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(doc.extracted_text!)}
+                  >
+                    <Copy className="h-3.5 w-3.5 mr-1" />
+                    Copy
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="max-h-80 overflow-y-auto rounded-lg bg-slate-50 p-4">
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                    {doc.extracted_text}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
 
       {/* Delete Confirmation */}
