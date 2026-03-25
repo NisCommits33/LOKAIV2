@@ -38,4 +38,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# project folders (not frontend)
+/migrations/
+/sprint_review/
 next-env.d.ts
