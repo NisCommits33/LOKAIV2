@@ -133,6 +133,50 @@ export interface ApplicationDocument {
   type: string;
 }
 
+/** A single question within a GK quiz (stored as JSONB) */
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+  explanation: string;
+}
+
+/** GK quiz difficulty level */
+export type QuizDifficulty = "easy" | "medium" | "hard";
+
+/** General Knowledge quiz */
+export interface GKQuiz {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string;
+  difficulty: QuizDifficulty;
+  questions: QuizQuestion[];
+  total_questions: number;
+  time_limit_minutes: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+/** A user's quiz attempt with submitted answers */
+export interface QuizAttempt {
+  id: string;
+  user_id: string;
+  quiz_id: string;
+  source_type: string;
+  score: number;
+  total_questions: number;
+  answers: Record<string, number>;
+  time_spent: number;
+  created_at: string;
+}
+
+/** Quiz attempt joined with quiz metadata for listings */
+export interface QuizAttemptWithQuiz extends QuizAttempt {
+  gk_quizzes?: Pick<GKQuiz, "title" | "category" | "difficulty"> | null;
+}
+
 /** Self-service organization registration application */
 export interface OrganizationApplication {
   id: string;
