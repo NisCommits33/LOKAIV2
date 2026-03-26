@@ -197,6 +197,7 @@ export interface PersonalDocument {
   mime_type: string;
   extracted_text: string | null;
   ai_summary: string | null;
+  chapters: { title: string; content: string }[] | null;
   questions: QuizQuestion[];
   processing_status: DocumentProcessingStatus;
   processing_error: string | null;

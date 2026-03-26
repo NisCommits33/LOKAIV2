@@ -14,7 +14,7 @@ import { NextResponse } from "next/server";
 const AI_BACKEND_URL = process.env.AI_BACKEND_URL || "http://localhost:8000";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createClient();
@@ -45,11 +45,26 @@ export async function POST(
     );
   }
 
+  let engine = "local";
+  let overrideText: string | null = null;
+  try {
+    const body = await request.json().catch(() => ({}));
+    if (body.engine) engine = body.engine;
+    if (body.text) overrideText = body.text;
+  } catch {
+    // No body or invalid JSON — use defaults
+  }
+
+  const textToProcess = overrideText || doc.extracted_text;
+
   try {
     const aiRes = await fetch(`${AI_BACKEND_URL}/api/ai/summarize`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: doc.extracted_text }),
+      body: JSON.stringify({ 
+        text: textToProcess,
+        engine 
+      }),
       signal: AbortSignal.timeout(120000), // 2 min
     });
 
@@ -62,11 +77,13 @@ export async function POST(
 
     const result = (await aiRes.json()) as { summary: string };
 
-    // Save summary to document
-    await supabase
-      .from("personal_documents")
-      .update({ ai_summary: result.summary })
-      .eq("id", id);
+    // Save summary to document only if it's the full document text
+    if (!overrideText) {
+      await supabase
+        .from("personal_documents")
+        .update({ ai_summary: result.summary })
+        .eq("id", id);
+    }
 
     return NextResponse.json({ summary: result.summary });
   } catch (err) {

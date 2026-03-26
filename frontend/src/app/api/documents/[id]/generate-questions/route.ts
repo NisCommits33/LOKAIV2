@@ -48,22 +48,29 @@ export async function POST(
   // Parse optional params
   let count = 5;
   let difficulty = "medium";
+  let engine = "local";
+  let overrideText: string | null = null;
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     if (body.count) count = Math.min(Math.max(body.count, 1), 20);
     if (body.difficulty) difficulty = body.difficulty;
+    if (body.engine) engine = body.engine;
+    if (body.text) overrideText = body.text;
   } catch {
-    // No body — use defaults
+    // No body or invalid JSON — use defaults
   }
+
+  const textToProcess = overrideText || doc.extracted_text;
 
   try {
     const aiRes = await fetch(`${AI_BACKEND_URL}/api/ai/questions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        text: doc.extracted_text,
+        text: textToProcess,
         count,
         difficulty,
+        engine,
       }),
       signal: AbortSignal.timeout(120000), // 2 min
     });
@@ -77,11 +84,13 @@ export async function POST(
 
     const result = (await aiRes.json()) as { questions: unknown[] };
 
-    // Save questions to document
-    await supabase
-      .from("personal_documents")
-      .update({ questions: result.questions })
-      .eq("id", id);
+    // Save questions to document only if it's the full document text
+    if (!overrideText) {
+      await supabase
+        .from("personal_documents")
+        .update({ questions: result.questions })
+        .eq("id", id);
+    }
 
     return NextResponse.json({ questions: result.questions });
   } catch (err) {

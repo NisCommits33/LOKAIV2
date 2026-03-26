@@ -25,10 +25,13 @@ class Settings(BaseSettings):
     # Rate Limiting
     rate_limit: str = "100/minute"
 
+    # Cloud AI Keys
+    groq_api_key: str = ""
+
     # Models
     summarization_model: str = "facebook/bart-large-cnn"
     qg_model: str = "valhalla/t5-small-qg-hl"
-    max_input_length: int = 1024
+    max_input_length: int = 2048 # Increase for cloud models
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

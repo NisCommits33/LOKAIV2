@@ -18,7 +18,7 @@ router = APIRouter()
 @router.post("/questions", response_model=QuestionResponse)
 async def questions_endpoint(req: QuestionRequest):
     try:
-        result = generate_questions(req.text, req.count, req.difficulty)
+        result = generate_questions(req.text, req.count, req.difficulty, req.engine)
         return QuestionResponse(**result)
     except Exception as e:
         logger.error(f"Question generation failed: {e}")

@@ -73,81 +73,71 @@ export async function POST(
   const arrayBuffer = await fileData.arrayBuffer();
   const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-  // Parse optional language param
-  let language = "eng";
+  // Parse optional params
+  let language = "eng+nep";
+  let engine_preference = "local";
+  let question_count = 5;
+  let difficulty = "medium";
+  
   try {
     const body = await request.json();
     if (body.language) language = body.language;
+    if (body.engine_preference) engine_preference = body.engine_preference;
+    if (body.question_count) question_count = body.question_count;
+    if (body.difficulty) difficulty = body.difficulty;
   } catch {
-    // No body — use defaults
+    // Use defaults
   }
 
-  // Fire-and-forget: run OCR in background, save results when done
-  extractTextInBackground(id, base64, language);
+  // Fire-and-forget: run full pipeline in background
+  runFullPipelineInBackground(id, base64, language, engine_preference, question_count, difficulty);
 
   // Return immediately so the UI can start polling
-  return NextResponse.json({ status: "processing", message: "Text extraction started" });
+  return NextResponse.json({ 
+    status: "processing", 
+    message: `Processing started using ${engine_preference} engine.` 
+  });
 }
 
-/** Runs OCR in the background and updates the document when done. */
-async function extractTextInBackground(
+/** Runs the full AI pipeline in the background on the FastAPI backend. */
+async function runFullPipelineInBackground(
   docId: string,
   base64: string,
   language: string,
+  engine_preference: string,
+  question_count: number,
+  difficulty: string
 ) {
   const { createClient: createBgClient } = await import("@/lib/supabase/server");
   const supabase = await createBgClient();
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 300000); // 5 min
-
-    let aiResponse: Response;
-    try {
-      aiResponse = await fetch(`${AI_BACKEND_URL}/api/ai/ocr`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          file_base64: base64,
-          language,
-        }),
-        signal: controller.signal,
-      });
-    } catch {
-      clearTimeout(timeout);
-      throw new Error(
-        `AI backend is not reachable at ${AI_BACKEND_URL}. Make sure the FastAPI server is running.`
-      );
-    }
-
-    clearTimeout(timeout);
+    // Call the NEW /api/ai/process endpoint (Full Pipeline)
+    const aiResponse = await fetch(`${AI_BACKEND_URL}/api/ai/process`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        doc_id: docId,
+        file_base64: base64,
+        language,
+        engine_preference,
+        question_count,
+        difficulty
+      }),
+    });
 
     if (!aiResponse.ok) {
       const errorData = await aiResponse.json().catch(() => ({}));
-      throw new Error(
-        (errorData as { detail?: string }).detail ||
-          `AI backend returned ${aiResponse.status}`
-      );
+      throw new Error((errorData as { detail?: string }).detail || `AI backend returned ${aiResponse.status}`);
     }
 
-    const result = (await aiResponse.json()) as {
-      text: string;
-      page_count: number;
-      language: string;
-      confidence: number;
-    };
+    // Since /api/ai/process is now asynchronous and returns immediately,
+    // we don't need to wait for result here. The backend will update Supabase directly.
+    console.log(`[Next.js API] Pipeline started for ${docId}`);
 
-    // Save extracted text only — summary and questions are generated on-demand
-    await supabase
-      .from("personal_documents")
-      .update({
-        extracted_text: result.text,
-        processing_status: "completed",
-        processed_at: new Date().toISOString(),
-      })
-      .eq("id", docId);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Text extraction failed";
+    const message = err instanceof Error ? err.message : "Pipeline start failed";
+    console.error(`[Next.js API Error] ${message}`);
     await supabase
       .from("personal_documents")
       .update({ processing_status: "failed", processing_error: message })

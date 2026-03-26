@@ -18,7 +18,7 @@ router = APIRouter()
 @router.post("/summarize", response_model=SummarizeResponse)
 async def summarize_endpoint(req: SummarizeRequest):
     try:
-        result = summarize_text(req.text, req.max_length, req.min_length)
+        result = summarize_text(req.text, req.max_length, req.min_length, req.engine)
         return SummarizeResponse(**result)
     except Exception as e:
         logger.error(f"Summarization failed: {e}")

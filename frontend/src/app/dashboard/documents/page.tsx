@@ -111,8 +111,16 @@ export default function DocumentsPage() {
     if (statusFilter) params.set("status", statusFilter);
 
     const res = await fetch(`/api/documents?${params.toString()}`);
-    if (res.ok) {
-      const data = await res.json();
+    console.log("/api/documents status:", res.status);
+    let bodyText = await res.text();
+    console.log("/api/documents body:", bodyText);
+    let data = null;
+    try {
+      data = JSON.parse(bodyText);
+    } catch (e) {
+      console.error("Failed to parse JSON:", e);
+    }
+    if (res.ok && data) {
       setDocuments(data.documents);
       setTotal(data.total);
     }
@@ -152,21 +160,16 @@ export default function DocumentsPage() {
       });
 
       clearInterval(progressInterval);
-
-      if (!res.ok) {
-        const data = await res.json();
-        toast.error(data.error || "Upload failed");
-        return;
-      }
-
-      setUploadProgress(100);
-      toast.success("Document uploaded — extracting text...");
-
-      // Auto-trigger OCR text extraction
       const newDoc = await res.json();
-      fetch(`/api/documents/${newDoc.id}/process`, { method: "POST" }).catch(() => {});
-
-      fetchDocuments();
+      console.log("Upload response doc:", newDoc);
+      toast.success("Document uploaded — extracting text...");
+      // Show modal or toast after upload, do not navigate
+      if (newDoc.id) {
+        fetchDocuments();
+      } else {
+        console.error("No document ID returned from upload");
+        fetchDocuments();
+      }
     } catch {
       clearInterval(progressInterval);
       toast.error("Upload failed. Please try again.");
