@@ -14,7 +14,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -51,6 +51,7 @@ const difficultyColors: Record<QuizDifficulty, string> = {
 export default function QuizPlayerPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const { isLoading: authLoading } = useAuth();
 
   const [quiz, setQuiz] = useState<GKQuiz | null>(null);
@@ -68,18 +69,28 @@ export default function QuizPlayerPage() {
   // Fetch quiz
   useEffect(() => {
     async function fetchQuiz() {
-      const res = await fetch(`/api/gk/quizzes/${id}`);
+      // 1. Determine the correct fetch URL
+      const fetchUrl = id === "custom" 
+        ? `/api/gk/quizzes/custom?${searchParams.toString()}` 
+        : `/api/gk/quizzes/${id}`;
+
+      const res = await fetch(fetchUrl);
       if (res.ok) {
         const data: GKQuiz = await res.json();
         setQuiz(data);
-        setTimeLeft(data.time_limit_minutes * 60);
+        // Ensure timer is set (Some custom quizzes might have 0/null for 'no timer')
+        if (data.time_limit_minutes && data.time_limit_minutes > 0) {
+          setTimeLeft(data.time_limit_minutes * 60);
+        } else {
+          setTimeLeft(0);
+        }
       } else {
         router.push("/dashboard/quizzes");
       }
       setLoading(false);
     }
     fetchQuiz();
-  }, [id, router]);
+  }, [id, searchParams, router]);
 
   // Submit handler
   const handleSubmit = useCallback(async () => {
@@ -94,16 +105,28 @@ export default function QuizPlayerPage() {
 
     const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
 
+    const isCustom = id === "custom";
+    const submitUrl = isCustom ? "/api/gk/quizzes/custom/submit" : `/api/gk/quizzes/${id}/submit`;
+
     try {
-      const res = await fetch(`/api/gk/quizzes/${id}/submit`, {
+      const res = await fetch(submitUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, time_spent: timeSpent }),
+        body: JSON.stringify({ 
+          answers, 
+          questions: isCustom ? quiz.questions : undefined, // Send questions for virtual verification
+          time_spent: timeSpent,
+          metadata: isCustom ? { category: quiz.category, difficulty: quiz.difficulty } : undefined
+        }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        router.push(`/dashboard/quizzes/${id}/results/${data.attempt_id}`);
+        const resultUrl = isCustom 
+          ? `/dashboard/quizzes/results/${data.attempt_id}?custom=true`
+          : `/dashboard/quizzes/${id}/results/${data.attempt_id}`;
+          
+        router.push(resultUrl);
       } else {
         const err = await res.json().catch(() => null);
         console.error("Submit failed:", res.status, err);
@@ -260,7 +283,11 @@ export default function QuizPlayerPage() {
           )}
         >
           <Clock className="h-4 w-4" />
-          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+          {timeLeft > 0 ? (
+            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+          ) : (
+             <span className="text-[10px] uppercase tracking-wider">Unlimited</span>
+          )}
         </div>
       </div>
 

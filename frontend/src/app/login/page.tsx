@@ -158,15 +158,15 @@ function LoginContent() {
           </div>
 
           <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
-            <CardHeader className="text-center pt-8 px-10">
-              <CardTitle className="text-3xl font-bold text-slate-900 tracking-tight">
+            <CardHeader className="text-center pt-8 px-6 sm:px-10">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 LokAI
-              </CardTitle>
+              </h1>
               <CardDescription className="text-base pt-3 font-medium text-slate-500">
                 Sign in to your preparation portal.
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-10 pb-12">
+            <CardContent className="px-6 sm:px-10 pb-12">
               {error && (
                 <div className="mb-6 rounded-xl bg-red-50 border border-red-100 p-3 text-sm text-red-600 font-medium">
                   {error === "auth_callback_error"

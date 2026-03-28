@@ -85,65 +85,67 @@ export default function AuditLogsPage() {
            </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Organization</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead className="text-right">Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              ) : filteredLogs.length === 0 ? (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center text-slate-500">
-                    No audit logs found.
-                  </TableCell>
+                  <TableHead className="min-w-[150px]">Timestamp</TableHead>
+                  <TableHead className="min-w-[180px]">User</TableHead>
+                  <TableHead className="min-w-[140px]">Organization</TableHead>
+                  <TableHead className="min-w-[160px]">Action</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Details</TableHead>
                 </TableRow>
-              ) : (
-                filteredLogs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell className="whitespace-nowrap text-sm text-slate-500">
-                      {format(new Date(log.created_at), "MMM d, yyyy HH:mm")}
-                    </TableCell>
-                    <TableCell>
-                      <p className="font-medium text-slate-900">{log.user?.full_name || "System"}</p>
-                      <p className="text-xs text-slate-500">{log.user?.email || "internal"}</p>
-                    </TableCell>
-                    <TableCell>
-                      {log.organization?.name ? (
-                        <Badge variant="outline">{log.organization.name}</Badge>
-                      ) : (
-                        <span className="text-slate-400 text-xs">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="font-mono text-xs">
-                        {log.action}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <Button variant="ghost" size="sm" onClick={() => alert(JSON.stringify(log.details, null, 2))}>
-                          View JSON
-                       </Button>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredLogs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">
+                      No audit logs found.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filteredLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="whitespace-nowrap text-sm text-slate-500">
+                        {format(new Date(log.created_at), "MMM d, yyyy HH:mm")}
+                      </TableCell>
+                      <TableCell>
+                        <p className="font-medium text-slate-900">{log.user?.full_name || "System"}</p>
+                        <p className="text-xs text-slate-500">{log.user?.email || "internal"}</p>
+                      </TableCell>
+                      <TableCell>
+                        {log.organization?.name ? (
+                          <Badge variant="outline" className="whitespace-nowrap">{log.organization.name}</Badge>
+                        ) : (
+                          <span className="text-slate-400 text-xs">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-mono text-[10px] uppercase tracking-tight">
+                          {log.action}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                         <Button variant="ghost" size="sm" onClick={() => alert(JSON.stringify(log.details, null, 2))}>
+                            View
+                         </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

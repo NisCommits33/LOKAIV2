@@ -14,17 +14,7 @@ export async function GET() {
   }
 
   const { data, error } = await supabase.from("system_settings").select("*");
-
-  if (error) {
-    // If the table doesn't exist yet, return empty gracefully defined structure
-    if (error.code === '42P01') {
-       return NextResponse.json([
-          { key: 'max_org_documents', value: '100', description: 'Maximum docs per org' },
-          { key: 'max_file_size_mb', value: '20', description: 'Max file size' }
-       ]);
-    }
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json(data);
 }

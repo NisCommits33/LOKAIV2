@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -105,82 +106,87 @@ export default function CrossOrgUsersPage() {
            </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User Details</TableHead>
-                <TableHead>Organization</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Manage Access</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-8 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              ) : filteredUsers.length === 0 ? (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center text-slate-500">
-                    No users matched your search.
-                  </TableCell>
+                  <TableHead className="min-w-[180px]">User Details</TableHead>
+                  <TableHead className="min-w-[180px]">Organization</TableHead>
+                  <TableHead className="min-w-[120px]">Role</TableHead>
+                  <TableHead className="min-w-[120px]">Joined</TableHead>
+                  <TableHead className="text-right min-w-[140px]">Manage Access</TableHead>
                 </TableRow>
-              ) : (
-                filteredUsers.map((u) => (
-                  <TableRow key={u.id}>
-                    <TableCell>
-                      <p className="font-medium text-slate-900">{u.full_name}</p>
-                      <p className="text-sm text-slate-500">{u.email}</p>
-                    </TableCell>
-                    <TableCell>
-                      {u.organization?.name ? (
-                         <div>
-                            <p className="font-medium text-slate-700">{u.organization.name}</p>
-                            <p className="text-xs text-slate-500">{u.department?.name || "No Dept"} • {u.job_level?.name || "No Level"}</p>
-                         </div>
-                      ) : (
-                        <span className="text-slate-400 italic">No Organization</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                         variant={u.role === 'super_admin' ? 'destructive' : u.role === 'org_admin' ? 'default' : 'secondary'}
-                         className="capitalize"
-                      >
-                         {u.role.replace('_', ' ')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm text-slate-500">
-                      {format(new Date(u.created_at), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell className="text-right">
-                       {u.role !== 'super_admin' && u.organization && (
-                          <Button 
-                             variant={u.role === 'employee' ? 'outline' : 'ghost'}
-                             size="sm"
-                             className={u.role === 'employee' ? 'text-blue-600 border-blue-200 hover:bg-blue-50' : 'text-red-600 hover:bg-red-50'}
-                             onClick={() => handleRoleToggle(u.id, u.role)}
-                          >
-                             {u.role === 'employee' ? (
-                                <><ArrowUpCircle className="h-4 w-4 mr-2" /> Promote</>
-                             ) : (
-                                <><ArrowDownCircle className="h-4 w-4 mr-2" /> Demote</>
-                             )}
-                          </Button>
-                       )}
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-8 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredUsers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">
+                      No users matched your search.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filteredUsers.map((u) => (
+                    <TableRow key={u.id}>
+                      <TableCell>
+                        <p className="font-medium text-slate-900">{u.full_name}</p>
+                        <p className="text-sm text-slate-500">{u.email}</p>
+                      </TableCell>
+                      <TableCell>
+                        {u.organization?.name ? (
+                           <div className="whitespace-nowrap">
+                              <p className="font-medium text-slate-700">{u.organization.name}</p>
+                              <p className="text-xs text-slate-500">{u.department?.name || "No Dept"} • {u.job_level?.name || "No Level"}</p>
+                           </div>
+                        ) : (
+                          <span className="text-slate-400 italic">No Organization</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                           variant={u.role === 'super_admin' ? 'destructive' : u.role === 'org_admin' ? 'default' : 'secondary'}
+                           className="capitalize whitespace-nowrap"
+                        >
+                           {u.role.replace('_', ' ')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm text-slate-500">
+                        {format(new Date(u.created_at), "MMM d, yyyy")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                         {u.role !== 'super_admin' && u.organization && (
+                            <Button 
+                               variant={u.role === 'employee' ? 'outline' : 'ghost'}
+                               size="sm"
+                               className={cn(
+                                 "whitespace-nowrap",
+                                 u.role === 'employee' ? 'text-blue-600 border-blue-200 hover:bg-blue-50' : 'text-red-600 hover:bg-red-50'
+                               )}
+                               onClick={() => handleRoleToggle(u.id, u.role)}
+                            >
+                               {u.role === 'employee' ? (
+                                  <><ArrowUpCircle className="h-4 w-4 mr-2" /> Promote</>
+                               ) : (
+                                  <><ArrowDownCircle className="h-4 w-4 mr-2" /> Demote</>
+                               )}
+                            </Button>
+                         )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

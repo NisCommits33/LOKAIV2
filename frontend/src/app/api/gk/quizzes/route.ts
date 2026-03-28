@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from("gk_quizzes")
-    .select("id, title, description, category, difficulty, total_questions, time_limit_minutes, is_active, created_at")
+    .select("id, title, description, category, sub_category, difficulty, total_questions, time_limit_minutes, is_active, created_at")
     .eq("is_active", true)
     .order("created_at", { ascending: false });
 
