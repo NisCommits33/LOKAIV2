@@ -30,6 +30,7 @@ interface DepartmentSelectorProps {
   onValueChange: (value: string) => void;
   label?: string;
   disabled?: boolean;
+  showAllOption?: boolean;
 }
 
 /** Wraps onValueChange to filter out null values from Radix Select */
@@ -47,6 +48,7 @@ export function DepartmentSelector({
   onValueChange,
   label = "Department",
   disabled = false,
+  showAllOption = false,
 }: DepartmentSelectorProps) {
   const supabase = createClient();
 
@@ -96,6 +98,11 @@ export function DepartmentSelector({
           />
         </SelectTrigger>
         <SelectContent>
+          {showAllOption && (
+            <SelectItem value="all">
+              <span className="font-semibold text-indigo-700">All Departments (Org-Wide)</span>
+            </SelectItem>
+          )}
           {departments?.map((dept) => (
             <SelectItem key={dept.id} value={dept.id}>
               {dept.name}

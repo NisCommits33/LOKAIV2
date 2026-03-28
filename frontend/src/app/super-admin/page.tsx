@@ -2,7 +2,8 @@
  * super-admin/page.tsx — Platform Overview Dashboard
  *
  * Shows platform-wide statistics and quick navigation for the super admin:
- * - Total organizations, pending applications, active users
+ * - Total organizations, pending applications, active users, total documents, total quizzes
+ * - Platform Growth Chart (Organizations over time)
  * - Quick action links to organization management
  *
  * @module app/super-admin
@@ -19,46 +20,54 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   Building2,
   Users,
-  Clock,
-  CheckCircle2,
-  XCircle,
   ArrowRight,
   Shield,
+  FileText,
+  BookOpen
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface PlatformStats {
   totalOrganizations: number;
   totalUsers: number;
-  pendingApplications: number;
-  approvedApplications: number;
-  rejectedApplications: number;
+  totalDocuments: number;
+  totalQuizzes: number;
 }
 
 export default function SuperAdminPage() {
   const [stats, setStats] = useState<PlatformStats | null>(null);
+  const [growthData, setGrowthData] = useState<{ name: string; total: number }[]>([]);
+  const [pendingApps, setPendingApps] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch("/api/super/stats");
-        if (!res.ok) throw new Error("Failed to load stats");
+        // Fetch base stats from stats API for backwards compatibility on pending apps
+        const legacyRes = await fetch("/api/super/stats");
+        if (legacyRes.ok) {
+           const legacyData = await legacyRes.json();
+           setPendingApps(legacyData.pendingApplications || 0);
+        }
+
+        // Fetch new comprehensive analytics
+        const res = await fetch("/api/super/analytics");
+        if (!res.ok) throw new Error("Failed to load analytics");
         const data = await res.json();
-        setStats({
-          totalOrganizations: data.totalOrganizations ?? 0,
-          totalUsers: data.totalUsers ?? 0,
-          pendingApplications: data.pendingApplications ?? 0,
-          approvedApplications: data.approvedApplications ?? 0,
-          rejectedApplications: data.rejectedApplications ?? 0,
-        });
-      } catch {
-        setStats({
-          totalOrganizations: 0,
-          totalUsers: 0,
-          pendingApplications: 0,
-          approvedApplications: 0,
-          rejectedApplications: 0,
-        });
+        
+        setStats(data.metrics);
+        setGrowthData(data.growthData || []);
+
+      } catch (e) {
+        console.error("Failed fetching stats", e);
       } finally {
         setLoading(false);
       }
@@ -69,34 +78,28 @@ export default function SuperAdminPage() {
 
   const statCards = [
     {
-      title: "Total Organizations",
-      value: stats?.totalOrganizations,
+      title: "Organizations",
+      value: stats?.totalOrganizations || 0,
       icon: Building2,
       color: "text-blue-600 bg-blue-50",
     },
     {
       title: "Total Users",
-      value: stats?.totalUsers,
+      value: stats?.totalUsers || 0,
       icon: Users,
       color: "text-emerald-600 bg-emerald-50",
     },
     {
-      title: "Pending Applications",
-      value: stats?.pendingApplications,
-      icon: Clock,
-      color: "text-amber-600 bg-amber-50",
+      title: "Org Documents",
+      value: stats?.totalDocuments || 0,
+      icon: FileText,
+      color: "text-purple-600 bg-purple-50",
     },
     {
-      title: "Approved Applications",
-      value: stats?.approvedApplications,
-      icon: CheckCircle2,
-      color: "text-green-600 bg-green-50",
-    },
-    {
-      title: "Rejected Applications",
-      value: stats?.rejectedApplications,
-      icon: XCircle,
-      color: "text-red-600 bg-red-50",
+      title: "GK Quizzes",
+      value: stats?.totalQuizzes || 0,
+      icon: BookOpen,
+      color: "text-indigo-600 bg-indigo-50",
     },
   ];
 
@@ -118,7 +121,7 @@ export default function SuperAdminPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -142,6 +145,37 @@ export default function SuperAdminPage() {
         ))}
       </div>
 
+      {/* Analytics Chart */}
+      <Card className="col-span-full">
+         <CardHeader>
+            <CardTitle>Platform Growth (Organizations)</CardTitle>
+         </CardHeader>
+         <CardContent>
+             {loading ? (
+                 <Skeleton className="h-[300px] w-full" />
+             ) : (
+                 <div className="h-[300px] w-full">
+                     <ResponsiveContainer width="100%" height="100%">
+                         <LineChart data={growthData}>
+                             <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                             <XAxis dataKey="name" axisLine={false} tickLine={false} tickMargin={10} />
+                             <YAxis axisLine={false} tickLine={false} tickMargin={10} />
+                             <Tooltip />
+                             <Line 
+                                type="monotone" 
+                                dataKey="total" 
+                                stroke="#2563eb" 
+                                strokeWidth={3}
+                                dot={{ fill: '#2563eb', r: 4 }}
+                                activeDot={{ r: 6 }} 
+                             />
+                         </LineChart>
+                     </ResponsiveContainer>
+                 </div>
+             )}
+         </CardContent>
+      </Card>
+
       {/* Quick Actions */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="hover:shadow-md transition-shadow">
@@ -156,9 +190,9 @@ export default function SuperAdminPage() {
               Review pending organization applications, approve or reject
               registrations, and assign organization admins.
             </p>
-            {stats && stats.pendingApplications > 0 && (
+            {pendingApps > 0 && (
               <Badge variant="secondary" className="bg-amber-50 text-amber-700">
-                {stats.pendingApplications} pending review
+                {pendingApps} pending review
               </Badge>
             )}
             <Button asChild className="w-full">
@@ -173,18 +207,18 @@ export default function SuperAdminPage() {
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Users className="h-5 w-5 text-emerald-600" />
-              User Management
+              <BookOpen className="h-5 w-5 text-indigo-600" />
+              Global Quizzes
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-sm text-slate-500">
-              View all platform users, manage roles, and oversee verification
-              statuses across organizations.
+              Create and push General Knowledge Quizzes straight to all normal 
+              users platform-wide.
             </p>
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/super-admin/users">
-                View All Users
+            <Button asChild variant="outline" className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+              <Link href="/super-admin/quizzes">
+                Quiz Manager
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

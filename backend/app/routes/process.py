@@ -36,7 +36,8 @@ async def process_endpoint(req: ProcessRequest, background_tasks: BackgroundTask
         sb = get_supabase_client()
         
         # 0. Set initial status to 'processing'
-        sb.table("personal_documents").update({
+        table_name = getattr(req, "doc_type", "personal_documents")
+        sb.table(table_name).update({
             "processing_status": "processing",
             "ocr_progress": 0,
             "ocr_eta": 0
@@ -50,7 +51,8 @@ async def process_endpoint(req: ProcessRequest, background_tasks: BackgroundTask
             req.language, 
             req.question_count, 
             req.difficulty,
-            req.engine_preference
+            req.engine_preference,
+            getattr(req, "doc_type", "personal_documents")
         )
         
         # Return immediately to the frontend
@@ -71,7 +73,8 @@ def run_full_pipeline(
     language: str, 
     q_count: int, 
     difficulty: str,
-    engine_pref: str = "local"
+    engine_pref: str = "local",
+    doc_type: str = "personal_documents"
 ):
     """
     Heavy processing logic run as a background task. 
@@ -89,7 +92,7 @@ def run_full_pipeline(
         page_count = ocr_result.get("page_count", 0)
 
         if not ocr_result["text"].strip():
-            sb.table("personal_documents").update({
+            sb.table(doc_type).update({
                 "processing_status": "failed", 
                 "processing_error": "No text could be extracted from the PDF."
             }).eq("id", doc_id).execute()
@@ -100,7 +103,7 @@ def run_full_pipeline(
         chapters = extract_chapters(ocr_result["text"])
         
         # Update text and chapters for the user to see immediately
-        sb.table("personal_documents").update({
+        sb.table(doc_type).update({
             "extracted_text": ocr_result["text"],
             "ocr_total": page_count,
             "chapters": chapters,
@@ -115,7 +118,7 @@ def run_full_pipeline(
         else:
             summary_result = summarize_text(ocr_result["text"])
         
-        sb.table("personal_documents").update({
+        sb.table(doc_type).update({
             "ai_summary": summary_result["summary"],
             "processing_status": "processing"
         }).eq("id", doc_id).execute()
@@ -129,7 +132,7 @@ def run_full_pipeline(
             qg_result = generate_questions(ocr_result["text"], q_count, difficulty)
 
         # Store Final Results
-        sb.table("personal_documents").update({
+        sb.table(doc_type).update({
             "questions": qg_result["questions"],
             "processing_status": "completed",
             "processed_at": "now()"
@@ -142,7 +145,7 @@ def run_full_pipeline(
         try:
             from app.utils.supabase import get_supabase_client
             sb = get_supabase_client()
-            sb.table("personal_documents").update({
+            sb.table(doc_type).update({
                 "processing_status": "failed",
                 "processing_error": f"AI Engine ({engine_pref}) Error: {str(e)}"
             }).eq("id", doc_id).execute()

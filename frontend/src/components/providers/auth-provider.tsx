@@ -163,13 +163,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /** Signs out the user and clears all local auth state */
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.warn("Supabase sign out error:", error);
+    } finally {
+      setDbUser(null);
+      setSupabaseUser(null);
+      setSession(null);
+      
+      // Force clearing browser storage to remove stuck auth tokens
+      if (typeof window !== "undefined") {
+         localStorage.removeItem("supabase.auth.token");
+      }
     }
-    setDbUser(null);
-    setSupabaseUser(null);
-    setSession(null);
   };
 
   return (

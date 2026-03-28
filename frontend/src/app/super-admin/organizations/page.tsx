@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +23,6 @@ import {
   Search,
   CheckCircle2,
   XCircle,
-  Clock,
   FileText,
   ExternalLink,
   Mail,
