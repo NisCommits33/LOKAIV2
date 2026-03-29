@@ -162,6 +162,7 @@ export interface GKQuiz {
   total_questions: number;
   time_limit_minutes: number;
   reward_xp: number;
+  thumbnail_url: string | null;
   is_active: boolean;
   created_at: string;
 }

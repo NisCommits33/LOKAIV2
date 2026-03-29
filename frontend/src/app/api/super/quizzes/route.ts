@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
   try {
       const body = await request.json();
-      const { title, description, category, difficulty, questions } = body;
+      const { title, description, category, sub_category, thumbnail_url, difficulty, questions, time_limit_minutes, reward_xp } = body;
 
       const { data, error } = await supabase
          .from("gk_quizzes")
@@ -44,8 +44,14 @@ export async function POST(request: NextRequest) {
              title,
              description,
              category,
-             difficulty: difficulty || 'Medium',
-             questions: questions || []
+             sub_category: sub_category || 'General',
+             thumbnail_url: thumbnail_url || null,
+             difficulty: (difficulty || 'medium').toLowerCase(),
+             questions: questions || [],
+             total_questions: Array.isArray(questions) ? questions.length : 0,
+             time_limit_minutes: time_limit_minutes || 15,
+             reward_xp: reward_xp || 0,
+             is_active: true,
          })
          .select()
          .single();

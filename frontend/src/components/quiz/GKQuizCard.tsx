@@ -34,7 +34,7 @@ export function GKQuizCard({ quiz, compact = false }: GKQuizCardProps) {
     hard: "bg-red-50 text-red-700",
   }[quiz.difficulty] || "bg-slate-50 text-slate-700";
 
-  const thumbnail = categoryImages[quiz.category] || categoryImages["General Knowledge"];
+  const thumbnail = quiz.thumbnail_url || categoryImages[quiz.category] || categoryImages["General Knowledge"];
 
   // COMPACT VERSION (HORIZONTAL MINIMAL)
   if (compact) {
