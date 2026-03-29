@@ -10,6 +10,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function POST(
   request: Request,
@@ -77,6 +78,9 @@ export async function POST(
   if (attemptError) {
     return NextResponse.json({ error: attemptError.message }, { status: 500 });
   }
+
+  // Trigger cache revalidation for analytics
+  revalidatePath("/api/gk/analytics/summary");
 
   return NextResponse.json({
     attempt_id: attempt.id,

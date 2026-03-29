@@ -120,15 +120,15 @@ const adminNavItems: NavItem[] = [
     roles: ["org_admin"],
   },
   {
-    label: "Upload Documents",
-    href: "/admin/documents",
-    icon: Upload,
+    label: "Job Levels",
+    href: "/admin/job-levels",
+    icon: Layers,
     roles: ["org_admin"],
   },
   {
-    label: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
+    label: "Document Library",
+    href: "/admin/documents",
+    icon: FileText,
     roles: ["org_admin"],
   },
 ];
@@ -151,6 +151,12 @@ const superAdminNavItems: NavItem[] = [
     label: "All Users",
     href: "/super-admin/users",
     icon: Users,
+    roles: ["super_admin"],
+  },
+  {
+    label: "Quiz Manager",
+    href: "/super-admin/quizzes",
+    icon: BookOpen,
     roles: ["super_admin"],
   },
   {

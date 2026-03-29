@@ -25,8 +25,16 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LayoutDashboard, LogOut, User } from "lucide-react"
+import { LayoutDashboard, LogOut, User, Menu } from "lucide-react"
 import { usePathname } from "next/navigation"
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
+import { Separator } from "@/components/ui/separator"
 
 export function Header() {
     const { supabaseUser, dbUser, signOut } = useAuth()
@@ -124,15 +132,50 @@ export function Header() {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
-                            <div className="flex items-center gap-3">
-                                <Link href="/login">
-                                    <Button variant="ghost" className="font-semibold text-slate-500 hover:text-slate-900 rounded-xl h-9 px-4">Sign In</Button>
-                                </Link>
-                                <Link href="/login">
-                                    <Button className="font-semibold px-5 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-none">
-                                        Get Started
-                                    </Button>
-                                </Link>
+                            <div className="flex items-center gap-2">
+                                <div className="hidden sm:flex items-center gap-3">
+                                    <Link href="/login">
+                                        <Button variant="ghost" className="font-semibold text-slate-500 hover:text-slate-900 rounded-xl h-9 px-4">Sign In</Button>
+                                    </Link>
+                                    <Link href="/login">
+                                        <Button className="font-semibold px-5 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-none">
+                                            Get Started
+                                        </Button>
+                                    </Link>
+                                </div>
+                                
+                                {/* Mobile Hamburger Menu */}
+                                <div className="lg:hidden">
+                                    <Sheet>
+                                        <SheetTrigger render={
+                                            <Button variant="ghost" size="icon" className="text-slate-600">
+                                                <Menu className="h-5 w-5" />
+                                            </Button>
+                                        } />
+                                        <SheetContent side="right" className="w-[300px] flex flex-col">
+                                            <SheetHeader className="text-left border-b pb-4">
+                                                <SheetTitle className="text-xl font-bold">LokAI</SheetTitle>
+                                            </SheetHeader>
+                                            <nav className="flex flex-col gap-4 mt-8">
+                                                <Link href="/#features" className="text-lg font-medium text-slate-600 hover:text-primary px-2 transition-colors">
+                                                    Features
+                                                </Link>
+                                                <Separator className="bg-slate-100" />
+                                                <Link href="/login" className="text-lg font-medium text-slate-600 hover:text-primary px-2 transition-colors">
+                                                    Sign In
+                                                </Link>
+                                                <Link href="/register-organization" className="text-lg font-medium text-slate-600 hover:text-primary px-2 transition-colors">
+                                                    Register Organization
+                                                </Link>
+                                                <Link href="/login">
+                                                    <Button className="w-full font-bold h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-4">
+                                                        Get Started
+                                                    </Button>
+                                                </Link>
+                                            </nav>
+                                        </SheetContent>
+                                    </Sheet>
+                                </div>
                             </div>
                         )}
                     </div>

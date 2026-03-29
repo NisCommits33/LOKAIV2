@@ -155,21 +155,21 @@ export default function Home() {
               for document intelligence, manage official materials securely, and
               master GK with ease.
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link href="/login">
+            <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+              <Link href="/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 px-8 text-base font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none transition-all"
+                  className="h-12 w-full px-8 text-base font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none transition-all"
                 >
                   Start Preparation
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/register-organization">
+              <Link href="/register-organization" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 px-8 text-base font-semibold rounded-xl border-slate-200 hover:bg-slate-50 text-slate-700 shadow-none transition-all"
+                  className="h-12 w-full px-8 text-base font-semibold rounded-xl border-slate-200 hover:bg-slate-50 text-slate-700 shadow-none transition-all"
                 >
                   Register Organization
                   <ChevronRight className="ml-2 h-4 w-4" />
@@ -390,7 +390,7 @@ export default function Home() {
               accessibility, and AI integration.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 max-w-lg mx-auto text-left">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 max-w-lg mx-auto text-left">
               {[
                 "AI-Powered Document Intelligence",
                 "Institutional RBAC for Ministries",
@@ -401,7 +401,7 @@ export default function Home() {
                   key={i}
                   className="flex items-center gap-3 text-sm text-slate-700 font-semibold"
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />
                   {point}
                 </div>
               ))}

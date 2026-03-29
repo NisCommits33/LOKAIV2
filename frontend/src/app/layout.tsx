@@ -38,11 +38,21 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-/** Global SEO metadata for the platform */
+/** Global SEO and PWA metadata for the platform */
 export const metadata: Metadata = {
   title: "LokAI - AI-Powered Exam Preparation",
-  description:
-    "AI-powered exam preparation platform for Nepal government employees",
+  description: "AI-powered exam preparation platform for Nepal government employees",
+  manifest: "/manifest.json",
+  themeColor: "#0f172a",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "LokAI",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({

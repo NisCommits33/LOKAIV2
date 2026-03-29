@@ -156,10 +156,13 @@ export interface GKQuiz {
   title: string;
   description: string | null;
   category: string;
+  sub_category: string | null;
   difficulty: QuizDifficulty;
   questions: QuizQuestion[];
   total_questions: number;
   time_limit_minutes: number;
+  reward_xp: number;
+  thumbnail_url: string | null;
   is_active: boolean;
   created_at: string;
 }
