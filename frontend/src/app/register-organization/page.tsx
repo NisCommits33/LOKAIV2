@@ -233,6 +233,18 @@ export default function OrgRegistrationPage() {
     <div className="py-12 bg-white flex-1 min-h-screen">
       <Container>
         <div className="mx-auto max-w-2xl">
+          <div className="mb-8">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => router.push("/login")}
+              className="text-slate-500 hover:bg-slate-50 hover:text-slate-900 -ml-4"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Login
+            </Button>
+          </div>
+
           {/* Progress */}
           <div className="mb-10 flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900">Register Organization</h2>
@@ -266,7 +278,15 @@ export default function OrgRegistrationPage() {
               </CardDescription>
             </CardHeader>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form 
+              onSubmit={(e) => e.preventDefault()}
+              onKeyDown={(e) => {
+                // Prevent Enter from submitting the form, unless it's a textarea or specifically allowed
+                if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+                  e.preventDefault();
+                }
+              }}
+            >
               <CardContent className="p-10">
                 <AnimatePresence mode="wait">
                   {/* Step 1: Organization Details */}
@@ -574,7 +594,7 @@ export default function OrgRegistrationPage() {
                     variant="outline"
                     onClick={() => setStep(step - 1)}
                     disabled={isSubmitting}
-                    className="h-12 px-6 rounded-xl border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-all"
+                    className="h-12 px-6 rounded-xl border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
@@ -592,7 +612,8 @@ export default function OrgRegistrationPage() {
                   </Button>
                 ) : (
                   <Button
-                    type="submit"
+                    type="button"
+                    onClick={handleSubmit(onSubmit)}
                     disabled={isSubmitting}
                     className="flex-1 h-12 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >

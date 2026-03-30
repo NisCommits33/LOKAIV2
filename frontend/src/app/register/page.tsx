@@ -59,6 +59,27 @@ export default function RegisterPage() {
     }
   };
 
+  const handleResendEmail = async () => {
+    if (!registeredEmail) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: registeredEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+      toast.success("Confirmation email resent!");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to resend email";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -148,13 +169,23 @@ export default function RegisterPage() {
                     The link expires in 24 hours
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full h-11 text-sm font-bold rounded-xl border-slate-200 shadow-none"
-                  onClick={() => router.push("/login")}
-                >
-                  Back to Login
-                </Button>
+                <div className="space-y-3">
+                  <Button
+                    variant="outline"
+                    className="w-full h-11 text-sm font-bold rounded-xl border-slate-200 shadow-none hover:bg-slate-50"
+                    onClick={() => router.push("/login")}
+                  >
+                    Back to Login
+                  </Button>
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={handleResendEmail}
+                    className="w-full text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors py-2 disabled:opacity-50"
+                  >
+                    {loading ? "Resending..." : "Didn't receive an email? Resend"}
+                  </button>
+                </div>
               </CardContent>
             </Card>
           </motion.div>

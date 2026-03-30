@@ -1,7 +1,7 @@
 /**
- * proxy.ts — Route Protection Middleware
+ * proxy.ts — Route Protection Proxy (Formerly middleware.ts)
  *
- * Next.js middleware that runs before every matching request to enforce:
+ * Next.js proxy that runs before every matching request to enforce:
  * 1. Public route access (login, callback, landing page)
  * 2. Authentication — unauthenticated users are redirected to /login
  * 3. Profile completion — incomplete profiles are redirected to /profile-setup
@@ -15,7 +15,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** Routes accessible without authentication */
-const publicRoutes = ["/login", "/auth/callback", "/", "/register"];
+const publicRoutes = ["/login", "/auth/callback", "/", "/register", "/forgot-password", "/reset-password"];
 
 /** Route prefixes accessible without authentication (prefix match) */
 const publicPrefixes = ["/register-organization", "/api/organizations/apply"];
@@ -70,14 +70,18 @@ export async function proxy(request: NextRequest) {
     // Redirect authenticated users away from login based on their role
     if (pathname === "/login" && user) {
       let loginRole: string | null = null;
-      const { data: loginUser } = await supabase
+      const { data: userData } = await supabase
         .from("users")
-        .select("role")
+        .select("role, verification_status")
         .eq("id", user.id)
-        .single<{ role: string }>();
+        .single<{ role: string; verification_status: string }>();
 
-      if (loginUser) {
-        loginRole = loginUser.role;
+      if (userData) {
+        loginRole = userData.role;
+        // Block pending/rejected users during login redirect
+        if (userData.verification_status === "pending" || userData.verification_status === "rejected") {
+          return NextResponse.redirect(new URL("/pending-approval", request.url));
+        }
       } else {
         const { data: rpcRole } = await supabase.rpc("get_user_role", { user_id: user.id });
         loginRole = rpcRole as string | null;
@@ -130,11 +134,6 @@ export async function proxy(request: NextRequest) {
       if (dbUser && !dbUser.profile_completed && pathname !== "/profile-setup") {
         return NextResponse.redirect(new URL("/profile-setup", request.url));
       }
-
-      // Redirect pending-verification users to the waiting page
-      if (dbUser && dbUser.verification_status === "pending" && pathname !== "/pending-approval") {
-        return NextResponse.redirect(new URL("/pending-approval", request.url));
-      }
     }
 
     // --- Role-Based Access Control ---
@@ -152,7 +151,10 @@ export async function proxy(request: NextRequest) {
 
 /**
  * Matcher config — excludes static assets, images, and Next.js internals
- * from middleware processing for performance.
+ * from proxy processing for performance.
+ * 
+ * Updated to explicitly exclude manifest.json and other public assets
+ * that should not be intercepted by the auth gate.
  */
 export const config = {
   matcher: [
@@ -161,8 +163,12 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder
+     * - manifest.json (PWA manifest)
+     * - robots.txt (search engine optics)
+     * - static files with common extensions
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$).*)",
   ],
 };
+
+export default proxy;

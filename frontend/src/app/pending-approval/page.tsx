@@ -118,11 +118,12 @@ export default function PendingApprovalPage() {
                 <Clock className="h-8 w-8 text-amber-600" />
               </div>
               <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight">
-                Verification Pending
+                {dbUser?.role === "org_admin" ? "Organization Under Review" : "Verification Pending"}
               </CardTitle>
               <CardDescription className="text-sm font-medium pt-1 text-slate-500">
-                Your employee verification request is being reviewed by your
-                organization admin.
+                {dbUser?.role === "org_admin" 
+                  ? "Your organization application is being reviewed by the platform administrators."
+                  : "Your employee verification request is being reviewed by your organization admin."}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-10 space-y-6">
@@ -136,8 +137,9 @@ export default function PendingApprovalPage() {
               </div>
 
               <p className="text-sm text-slate-500 font-medium text-center leading-relaxed">
-                This usually takes 1–2 business days. You&apos;ll be able to
-                access organization content once approved.
+                {dbUser?.role === "org_admin"
+                  ? "We are verifying your organization registration details. This typically takes 24–48 hours."
+                  : "This usually takes 1–2 business days. You'll be able to access organization content once approved."}
               </p>
 
               <div className="flex flex-col gap-3 pt-2">

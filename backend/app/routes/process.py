@@ -7,6 +7,7 @@ Supports selection between Local, Gemini (Multimodal), and DeepSeek engines.
 """
 
 import logging
+import datetime
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 
 from app.schemas import ProcessRequest
@@ -132,10 +133,12 @@ def run_full_pipeline(
             qg_result = generate_questions(ocr_result["text"], q_count, difficulty)
 
         # Store Final Results
+        from app.utils.supabase import get_supabase_client
+        sb = get_supabase_client()
         sb.table(doc_type).update({
             "questions": qg_result["questions"],
             "processing_status": "completed",
-            "processed_at": "now()"
+            "processed_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }).eq("id", doc_id).execute()
         
         logger.info(f"[{doc_id}] Background pipeline completed successfully using {engine_pref}.")

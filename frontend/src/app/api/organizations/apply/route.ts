@@ -121,30 +121,36 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  console.log("[apply] Auth user created:", authData.user?.id, "email:", authData.user?.email);
+  if (authData.user) {
+    console.log("[apply] Auth user created:", authData.user.id, "email:", authData.user.email);
 
-  // Verify the trigger created a public.users row
-  const { data: publicUser, error: publicUserError } = await adminClient
-    .from("users")
-    .select("id, email, role")
-    .eq("id", authData.user.id)
-    .maybeSingle();
+    // Verify the trigger created a public.users row
+    const { data: publicUser, error: publicUserError } = await adminClient
+      .from("users")
+      .select("id, email, role")
+      .eq("id", authData.user.id)
+      .maybeSingle();
 
-  if (publicUser) {
-    console.log("[apply] public.users row confirmed:", publicUser.id, publicUser.email, publicUser.role);
-  } else {
-    console.error("[apply] public.users row NOT found after createUser. Trigger may have failed.", publicUserError?.message);
-    // Manually create the public.users row as fallback
-    const { error: insertError } = await adminClient.from("users").insert({
-      id: authData.user.id,
-      email: applicant_email as string,
-      full_name: applicant_name as string,
-    });
-    if (insertError) {
-      console.error("[apply] Manual public.users insert also failed:", insertError.message);
+    if (publicUser) {
+      console.log("[apply] public.users row confirmed:", publicUser.id, publicUser.email, publicUser.role);
     } else {
-      console.log("[apply] Manually created public.users row for:", authData.user.id);
+      console.error("[apply] public.users row NOT found after createUser. Trigger may have failed.", publicUserError?.message);
+      // Manually create the public.users row as fallback
+      const { error: insertError } = await adminClient.from("users").insert({
+        id: authData.user.id,
+        email: applicant_email as string,
+        full_name: applicant_name as string,
+        role: "org_admin",
+        verification_status: "pending",
+      });
+      if (insertError) {
+        console.error("[apply] Manual public.users insert also failed:", insertError.message);
+      } else {
+        console.log("[apply] Manually created public.users row (org_admin, pending) for:", authData.user.id);
+      }
     }
+  } else {
+    console.error("[apply] authData.user was null after administrative createUser call.");
   }
 
   return NextResponse.json(data, { status: 201 });

@@ -227,7 +227,7 @@ export default function ProgressDashboard() {
                             <CardTitle className="text-base font-bold text-slate-900">Accuracy by Subject</CardTitle>
                             <CardDescription className="text-xs">Your performance across various document categories</CardDescription>
                         </CardHeader>
-                        <CardContent className="p-6 flex-1 mt-4">
+                        <CardContent className="p-6 flex-1 mt-4" style={{ minHeight: 0 }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 40 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />

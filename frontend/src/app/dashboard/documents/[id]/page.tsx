@@ -285,6 +285,7 @@ export default function DocumentDetailPage({
     setSummarizing(true);
     try {
       const isChapter = selectedChapterIndex !== -1;
+      if (!doc) return;
       const textToSummarize = isChapter
         ? doc.chapters?.[selectedChapterIndex]?.content
         : doc.extracted_text;
@@ -316,6 +317,7 @@ export default function DocumentDetailPage({
     setGeneratingQuiz(true);
     try {
       const isChapter = selectedChapterIndex !== -1;
+      if (!doc) return;
       const textToProcess = isChapter
         ? doc.chapters?.[selectedChapterIndex]?.content
         : doc.extracted_text;
@@ -594,7 +596,7 @@ export default function DocumentDetailPage({
                   <p className="text-xs text-blue-600/80 mt-1 font-medium leading-relaxed">
                     Executing background OCR. AI functions will unlock once finished.
                   </p>
-                  <Progress value={Math.round(ocrProgress * 100)} className="h-2mt-3 bg-blue-100/50" />
+                  <Progress value={Math.round(ocrProgress * 100)} className="h-2 mt-3 bg-blue-100/50" />
                   <div className="flex justify-between items-center text-[10px] font-mono font-bold text-blue-500 uppercase mt-2">
                     <span>{Math.round(ocrProgress * 100)}%</span>
                     {ocrEta !== null && ocrEta >= 0 ? <span>{Math.floor(ocrEta / 60)}m {ocrEta % 60}s</span> : <span>Calculating...</span>}

@@ -1,0 +1,56 @@
+﻿Γû▓ Next.js 16.2.1 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 15.1s
+  Running TypeScript ...
+node.exe : Failed to type 
+check.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (F  
+  ailed to type check.:   
+ String) [], RemoteExc    
+eption
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+./src/app/dashboard/docume
+nts/[id]/page.tsx:289:11
+Type error: 'doc' is 
+possibly 'null'.
+
+  [90m287 |[0m       
+[36mconst[0m isChapter 
+= selectedChapterIndex 
+!== -[35m1[0m;
+  [90m288 |[0m       
+[36mconst[0m 
+textToSummarize = 
+isChapter
+[31m[1m>[0m [90m289 
+|[0m         ? doc.chapte
+rs?.[selectedChapterIndex]
+?.content
+  [90m    |[0m          
+ [31m[1m^[0m
+  [90m290 |[0m         
+: doc.extracted_text;
+  [90m291 |[0m
+  [90m292 |[0m       
+[36mconst[0m res = 
+[36mawait[0m fetch([32m
+`/api/documents/[0m${id[
+32m}/summarize`[0m, {
+Next.js build worker 
+exited with code: 1 and 
+signal: null

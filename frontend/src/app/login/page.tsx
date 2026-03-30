@@ -16,6 +16,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/components/providers/auth-provider";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -241,6 +242,14 @@ function LoginContent() {
                             {showPersonalPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
                         </div>
+                        <div className="flex justify-end pt-1">
+                          <Link
+                            href="/forgot-password"
+                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                          >
+                            Forgot your password?
+                          </Link>
+                        </div>
                       </div>
                       <Button
                         type="submit"
@@ -347,6 +356,14 @@ function LoginContent() {
                             {showOrgPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
                         </div>
+                        <div className="flex justify-end pt-1">
+                          <Link
+                            href="/forgot-password"
+                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                          >
+                            Forgot your password?
+                          </Link>
+                        </div>
                       </div>
                       <Button
                         type="submit"
@@ -413,6 +430,14 @@ function LoginContent() {
                           >
                             {showSaPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
+                        </div>
+                        <div className="flex justify-end pt-1">
+                          <Link
+                            href="/forgot-password"
+                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                          >
+                            Forgot your password?
+                          </Link>
                         </div>
                       </div>
                       <Button

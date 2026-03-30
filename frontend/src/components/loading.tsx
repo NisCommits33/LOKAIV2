@@ -16,6 +16,7 @@
  */
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 export function PageSkeleton() {
   return (
@@ -103,7 +104,7 @@ export function LokaiLoader({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 export function Spinner({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
-      <LokaiLoader size="sm" />
+      <Loader2 className="h-full w-full animate-spin" />
     </div>
   );
 }

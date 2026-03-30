@@ -26,6 +26,14 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+  explanation?: string;
+}
+
 interface GlobalQuiz {
   id: string;
   title: string;
@@ -33,7 +41,7 @@ interface GlobalQuiz {
   category: string;
   sub_category: string | null;
   difficulty: string;
-  questions: Record<string, unknown>[];
+  questions: QuizQuestion[];
   total_questions: number;
   time_limit_minutes: number;
   reward_xp: number;
@@ -155,7 +163,7 @@ export default function GlobalQuizManagerPage() {
     if (!category) { toast.error("Topic (category) is required."); return; }
     if (jsonError) { toast.error("Fix JSON errors before publishing."); return; }
 
-    let parsedQuestions: Record<string, unknown>[] = [];
+    let parsedQuestions: QuizQuestion[] = [];
     try {
       const raw = JSON.parse(jsonInput);
       parsedQuestions = Array.isArray(raw) ? raw : [raw];
@@ -346,12 +354,12 @@ export default function GlobalQuizManagerPage() {
                     {(() => {
                       try {
                         const arr = JSON.parse(jsonInput);
-                        const questions = Array.isArray(arr) ? arr : [arr];
-                        return questions.map((q: Record<string, unknown>, i: number) => (
+                        const questions = (Array.isArray(arr) ? arr : [arr]) as QuizQuestion[];
+                        return questions.map((q: QuizQuestion, i: number) => (
                           <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 space-y-2">
-                            <p className="text-sm font-bold text-slate-800">{i + 1}. {String(q.question || "")}</p>
+                            <p className="text-sm font-bold text-slate-800">{i + 1}. {q.question || ""}</p>
                             <div className="grid grid-cols-2 gap-1.5">
-                              {(q.options as string[] || []).map((opt, j) => (
+                              {(q.options || []).map((opt, j) => (
                                 <div key={j} className={cn("text-xs px-2 py-1.5 rounded-lg border font-medium",
                                   j === Number(q.correct_answer)
                                     ? "bg-emerald-50 border-emerald-200 text-emerald-700"
@@ -361,8 +369,8 @@ export default function GlobalQuizManagerPage() {
                                 </div>
                               ))}
                             </div>
-                            {q.explanation && (
-                              <p className="text-[11px] text-slate-500 italic border-t border-slate-100 pt-2">{String(q.explanation)}</p>
+                            {!!q.explanation && (
+                              <p className="text-[11px] text-slate-500 italic border-t border-slate-100 pt-2">{q.explanation}</p>
                             )}
                           </div>
                         ));

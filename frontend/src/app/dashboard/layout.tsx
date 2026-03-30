@@ -59,37 +59,37 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-    roles: ["public", "employee", "org_admin", "super_admin"],
+    roles: ["public", "employee"],
   },
   {
     label: "GK Quizzes",
     href: "/dashboard/quizzes",
     icon: BookOpen,
-    roles: ["public", "employee", "org_admin", "super_admin"],
+    roles: ["public", "employee"],
   },
   {
     label: "My Documents",
     href: "/dashboard/documents",
     icon: FileText,
-    roles: ["public", "employee", "org_admin", "super_admin"],
+    roles: ["public", "employee"],
   },
   {
     label: "Org Documents",
     href: "/dashboard/org-documents",
     icon: Layers,
-    roles: ["employee", "org_admin"],
+    roles: ["employee"],
   },
   {
     label: "My Progress",
     href: "/dashboard/progress",
     icon: BarChart3,
-    roles: ["employee", "org_admin"],
+    roles: ["employee"],
   },
   {
     label: "My Profile",
     href: "/dashboard/profile",
     icon: UserCircle,
-    roles: ["public", "employee", "org_admin", "super_admin"],
+    roles: ["public", "employee"],
   },
 ];
 
@@ -102,13 +102,7 @@ const adminNavItems: NavItem[] = [
     roles: ["org_admin"],
   },
   {
-    label: "Verifications",
-    href: "/admin/verifications",
-    icon: ShieldCheck,
-    roles: ["org_admin"],
-  },
-  {
-    label: "Manage Users",
+    label: "Users",
     href: "/admin/users",
     icon: Users,
     roles: ["org_admin"],
@@ -131,6 +125,12 @@ const adminNavItems: NavItem[] = [
     icon: FileText,
     roles: ["org_admin"],
   },
+  {
+    label: "My Profile",
+    href: "/dashboard/profile",
+    icon: UserCircle,
+    roles: ["org_admin"],
+  },
 ];
 
 /** Super admin navigation items */
@@ -148,7 +148,7 @@ const superAdminNavItems: NavItem[] = [
     roles: ["super_admin"],
   },
   {
-    label: "All Users",
+    label: "Users",
     href: "/super-admin/users",
     icon: Users,
     roles: ["super_admin"],
@@ -169,6 +169,12 @@ const superAdminNavItems: NavItem[] = [
     label: "Settings",
     href: "/super-admin/settings",
     icon: Settings,
+    roles: ["super_admin"],
+  },
+  {
+    label: "My Profile",
+    href: "/dashboard/profile",
+    icon: UserCircle,
     roles: ["super_admin"],
   },
 ];

@@ -15,7 +15,7 @@
  * @module app/layout
  */
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/providers/query-provider";
@@ -39,12 +39,17 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 /** Global SEO and PWA metadata for the platform */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#0f172a",
+};
+
 export const metadata: Metadata = {
   title: "LokAI - AI-Powered Exam Preparation",
   description: "AI-powered exam preparation platform for Nepal government employees",
   manifest: "/manifest.json",
-  themeColor: "#0f172a",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

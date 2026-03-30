@@ -1,5 +1,25 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin-client";
 import { NextResponse, type NextRequest } from "next/server";
+import { z } from "zod";
+
+const quizSchema = z.object({
+  title: z.string().min(3),
+  description: z.string().optional(),
+  category: z.string(),
+  sub_category: z.string().optional(),
+  thumbnail_url: z.string().url().nullable().optional(),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+  questions: z.array(z.object({
+    id: z.string(),
+    question: z.string(),
+    options: z.array(z.string()).min(2),
+    correct_answer: z.number().int().min(0),
+    explanation: z.string().optional(),
+  })),
+  time_limit_minutes: z.number().int().min(1).max(180).default(15),
+  reward_xp: z.number().int().min(0).default(0),
+});
 
 export async function GET() {
   const supabase = await createClient();
@@ -12,7 +32,8 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { data, error } = await supabase
+  const admin = createAdminClient();
+  const { data, error } = await admin
     .from("gk_quizzes")
     .select("*")
     .order('created_at', { ascending: false });
@@ -36,9 +57,16 @@ export async function POST(request: NextRequest) {
 
   try {
       const body = await request.json();
-      const { title, description, category, sub_category, thumbnail_url, difficulty, questions, time_limit_minutes, reward_xp } = body;
+      
+      const validation = quizSchema.safeParse(body);
+      if (!validation.success) {
+          return NextResponse.json({ error: "Invalid quiz data", details: validation.error.format() }, { status: 400 });
+      }
 
-      const { data, error } = await supabase
+      const { title, description, category, sub_category, thumbnail_url, difficulty, questions, time_limit_minutes, reward_xp } = validation.data;
+
+      const admin = createAdminClient();
+      const { data, error } = await admin
          .from("gk_quizzes")
          .insert({
              title,
@@ -58,7 +86,7 @@ export async function POST(request: NextRequest) {
 
       if (error) throw error;
 
-      await supabase.from("audit_logs").insert({
+      await admin.from("audit_logs").insert({
           user_id: user.id,
           action: "CREATED_GLOBAL_QUIZ",
           target_type: "gk_quizzes",

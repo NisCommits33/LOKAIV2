@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { 
-  Users, Search, Filter, Edit2, ShieldAlert, ShieldCheck, Loader2, Save, Trash2, X
+  Users, Search, Edit2, ShieldAlert, ShieldCheck, Loader2, Trash2, X, CheckCircle2, XCircle
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -68,10 +69,12 @@ export default function AdminUsersPage() {
   // Modals state
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
   
   // Current selection state
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
   
   // Edit Form state
   const [formData, setFormData] = useState({
@@ -137,6 +140,53 @@ export default function AdminUsersPage() {
   function openStatusModal(user: User) {
     setSelectedUser(user);
     setIsStatusOpen(true);
+  }
+
+  function openVerifyModal(user: User) {
+    setSelectedUser(user);
+    setRejectionReason("");
+    setIsVerifyOpen(true);
+  }
+
+  async function handleApprove() {
+    if (!selectedUser) return;
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/admin/verifications/${selectedUser.id}/approve`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to approve");
+      toast.success(`${selectedUser.full_name} has been verified as an employee.`);
+      setIsVerifyOpen(false);
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleReject() {
+    if (!selectedUser || !rejectionReason.trim()) {
+      toast.error("Please provide a rejection reason.");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/admin/verifications/${selectedUser.id}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: rejectionReason.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to reject");
+      toast.success(`Verification request for ${selectedUser.full_name} has been rejected.`);
+      setIsVerifyOpen(false);
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   async function handleEditSubmit() {
@@ -438,6 +488,75 @@ export default function AdminUsersPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Verification Review Modal */}
+      <Dialog open={isVerifyOpen} onOpenChange={setIsVerifyOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Review Verification Request</DialogTitle>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Name</span>
+                  <span className="font-semibold text-slate-900">{selectedUser.full_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Email</span>
+                  <span className="text-slate-700">{selectedUser.email}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Department</span>
+                  <span className="text-slate-700">{selectedUser.department?.name || "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Job Level</span>
+                  <span className="text-slate-700">{selectedUser.job_level?.name || "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Employee ID</span>
+                  <span className="text-slate-700">{selectedUser.employee_id || "—"}</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rejection_reason" className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                  Rejection Reason <span className="text-slate-400 normal-case font-normal">(required only if rejecting)</span>
+                </Label>
+                <Textarea
+                  id="rejection_reason"
+                  placeholder="Explain why the request is being rejected..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  className="resize-none bg-slate-50 border-slate-100"
+                  rows={3}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter className="gap-2 flex-col sm:flex-row">
+            <Button variant="outline" onClick={() => setIsVerifyOpen(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleReject}
+              disabled={isSubmitting}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <XCircle className="h-4 w-4 mr-2" />}
+              Reject
+            </Button>
+            <Button
+              onClick={handleApprove}
+              disabled={isSubmitting}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+              Approve
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

@@ -2,7 +2,7 @@
  * super-admin/layout.tsx — Super Admin Layout
  *
  * Wraps platform-wide admin pages with the shared dashboard sidebar layout.
- * Route protection is handled by the middleware (proxy.ts).
+ * Route protection is handled by the middleware (middleware.ts).
  *
  * @module app/super-admin/layout
  */

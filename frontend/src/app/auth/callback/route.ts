@@ -19,7 +19,17 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const type = searchParams.get("type");
   const next = searchParams.get("next") ?? "/dashboard";
+
+  // Handle password recovery flow
+  if (type === "recovery") {
+    if (code) {
+      const supabase = await createClient();
+      await supabase.auth.exchangeCodeForSession(code);
+    }
+    return NextResponse.redirect(`${origin}/reset-password`);
+  }
 
   if (code) {
     const supabase = await createClient();
