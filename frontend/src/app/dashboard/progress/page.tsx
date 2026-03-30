@@ -16,7 +16,7 @@ import {
   FileText,
   Award
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -31,12 +31,12 @@ import {
   Cell 
 } from "recharts";
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: { scale: 1, opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
 };

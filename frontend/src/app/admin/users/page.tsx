@@ -373,7 +373,17 @@ export default function AdminUsersPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Button 
+                                         {user.verification_status === "pending" && (
+                       <Button
+                         variant="ghost" size="icon"
+                         onClick={() => openVerifyModal(user)}
+                         className="h-8 w-8 text-amber-500 hover:text-emerald-600"
+                         title="Review Verification Request"
+                       >
+                         <ShieldCheck className="h-4 w-4" />
+                       </Button>
+                     )}
+                     <Button 
                       variant="ghost" size="icon" 
                       onClick={() => openEditModal(user)} 
                       className="h-8 w-8 text-slate-400 hover:text-indigo-600"

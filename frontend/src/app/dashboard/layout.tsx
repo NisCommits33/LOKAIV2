@@ -194,7 +194,7 @@ function getInitials(name: string | null): string {
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { dbUser, signOut } = useAuth();
-  const userRole = dbUser?.role ?? "public";
+  const userRole = (dbUser?.is_active === false) ? "public" : (dbUser?.role ?? "public");
 
   const filteredNavItems = navItems.filter((item) =>
     item.roles.includes(userRole)

@@ -47,6 +47,7 @@ interface ProfileData {
   email: string;
   role: string;
   verification_status: string;
+  is_active: boolean;
   organization_id: string | null;
   department_id: string | null;
   job_level_id: string | null;
@@ -138,6 +139,7 @@ export default function ProfilePage() {
   const isPending = profile?.verification_status === "pending";
   const isVerified = profile?.verification_status === "verified";
   const isRejected = profile?.verification_status === "rejected";
+  const isInactive = profile?.is_active === false;
 
   return (
     <div className="p-6 sm:p-8 space-y-6">
@@ -194,6 +196,12 @@ export default function ProfilePage() {
               <Badge className="bg-red-50 text-red-700 border border-red-100 font-bold text-[10px] uppercase tracking-widest">
                 <XCircle className="h-3 w-3 mr-1" />
                 Verification Rejected
+              </Badge>
+            )}
+            {isInactive && (
+              <Badge className="bg-red-50 text-red-700 border border-red-100 font-bold text-[10px] uppercase tracking-widest">
+                <XCircle className="h-3 w-3 mr-1" />
+                Account Deactivated
               </Badge>
             )}
           </div>

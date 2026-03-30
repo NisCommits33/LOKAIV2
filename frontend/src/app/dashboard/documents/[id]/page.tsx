@@ -285,10 +285,11 @@ export default function DocumentDetailPage({
     setSummarizing(true);
     try {
       const isChapter = selectedChapterIndex !== -1;
-      if (!doc) return;
+      const currentDoc = doc;
+      if (!currentDoc) return;
       const textToSummarize = isChapter
-        ? doc.chapters?.[selectedChapterIndex]?.content
-        : doc.extracted_text;
+        ? currentDoc.chapters?.[selectedChapterIndex]?.content
+        : currentDoc.extracted_text;
 
       const res = await fetch(`/api/documents/${id}/summarize`, {
         method: "POST",
@@ -317,10 +318,11 @@ export default function DocumentDetailPage({
     setGeneratingQuiz(true);
     try {
       const isChapter = selectedChapterIndex !== -1;
-      if (!doc) return;
+      const currentDoc = doc;
+      if (!currentDoc) return;
       const textToProcess = isChapter
-        ? doc.chapters?.[selectedChapterIndex]?.content
-        : doc.extracted_text;
+        ? currentDoc.chapters?.[selectedChapterIndex]?.content
+        : currentDoc.extracted_text;
 
       const res = await fetch(`/api/documents/${id}/generate-questions`, {
         method: "POST",

@@ -114,12 +114,13 @@ export async function proxy(request: NextRequest) {
     let userRole: string | null = null;
     const { data: dbUser } = await supabase
       .from("users")
-      .select("profile_completed, verification_status, role")
+      .select("profile_completed, verification_status, role, is_active")
       .eq("id", user.id)
-      .single<{ profile_completed: boolean; verification_status: string; role: string }>();
+      .single<{ profile_completed: boolean; verification_status: string; role: string; is_active: boolean }>();
 
     if (dbUser) {
-      userRole = dbUser.role;
+      // Deactivated users are treated as public — they can only access public features
+      userRole = dbUser.is_active ? dbUser.role : "public";
     } else {
       // Fallback: use SECURITY DEFINER function to bypass RLS
       const { data: rpcRole } = await supabase.rpc("get_user_role", { user_id: user.id });
