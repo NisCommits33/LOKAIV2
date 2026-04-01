@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use, useRef } from "react";
+import { useState, useEffect, use, useRef, useCallback } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { QuizPlayer, QuizPlayerQuestion } from "@/components/quiz/QuizPlayer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,18 +60,37 @@ export default function EmployeeOrgDocumentDetailPage({
   const [quizMode, setQuizMode] = useState(false);
   const [quizResults, setQuizResults] = useState<any>(null); // Details of the completed quiz
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(`/api/org/documents/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setDoc(data);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchDoc = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/org/documents/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setDoc(data);
+        
+        if (data.processing_status === "completed") {
+            if (pollingRef.current) clearInterval(pollingRef.current);
+            pollingRef.current = null;
         }
-      } catch (err) {}
-      setLoading(false);
-    })();
+      }
+    } catch (err) {}
+    setLoading(false);
   }, [id]);
+
+  useEffect(() => {
+    fetchDoc();
+  }, [fetchDoc]);
+
+  useEffect(() => {
+    if (doc && (doc.processing_status === "processing" || doc.processing_status === "pending")) {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      pollingRef.current = setInterval(fetchDoc, 5000);
+    }
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [doc?.processing_status, fetchDoc]);
 
   const handleQuizSubmit = async (answers: Record<string, number>, timeSpent: number) => {
     try {
@@ -234,12 +253,18 @@ export default function EmployeeOrgDocumentDetailPage({
                         <h3 className="text-sm font-bold text-slate-900">Knowledge Check</h3>
                         <p className="text-xs text-slate-500 mt-1 leading-relaxed px-2">Take a quick AI-generated quiz to test your understanding of this document.</p>
                     </div>
-                    <Button 
-                        onClick={() => setQuizMode(true)}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 rounded-lg shadow-md shadow-indigo-100"
-                    >
-                        <HelpCircle className="h-4 w-4 mr-2" /> Take Quiz
-                    </Button>
+                    {(dbUser?.role === "org_admin" || dbUser?.role === "super_admin") ? (
+                        <div className="w-full bg-white/60 p-3 rounded-lg border border-indigo-100 italic text-[10px] text-indigo-600 font-medium">
+                           Admins can review quizzes in the Admin Panel Document Management section.
+                        </div>
+                    ) : (
+                        <Button 
+                            onClick={() => setQuizMode(true)}
+                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 rounded-lg shadow-md shadow-indigo-100"
+                        >
+                            <HelpCircle className="h-4 w-4 mr-2" /> Take Quiz
+                        </Button>
+                    )}
                 </div>
             </section>
           )}

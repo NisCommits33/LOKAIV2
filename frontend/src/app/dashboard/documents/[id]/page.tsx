@@ -234,7 +234,7 @@ export default function DocumentDetailPage({
     if (isExtracting) {
       interval = setInterval(async () => {
         try {
-          const res = await fetch(`/api/ai/status/${id}`);
+          const res = await fetch(`/api/documents/${id}/status`);
           if (res.ok) {
             const data = await res.json();
             setOcrProgress(data.progress || 0);
@@ -629,7 +629,7 @@ export default function DocumentDetailPage({
                     File is ready. Run extraction to enable the Smart Summary and Quiz features.
                   </p>
                   <Button size="sm" onClick={handleStartOCR} className="bg-amber-500 hover:bg-amber-600 text-white w-full">
-                    <Upload className="h-3.5 w-3.5 mr-2" /> Start Extraction
+                    <FileText className="h-3.5 w-3.5 mr-2" /> Extract Text
                   </Button>
                 </div>
               </div>

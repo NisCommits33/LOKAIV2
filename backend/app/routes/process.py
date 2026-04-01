@@ -37,8 +37,7 @@ async def process_endpoint(req: ProcessRequest, background_tasks: BackgroundTask
         sb = get_supabase_client()
         
         # 0. Set initial status to 'processing'
-        table_name = getattr(req, "doc_type", "personal_documents")
-        sb.table(table_name).update({
+        sb.table(req.doc_type).update({
             "processing_status": "processing",
             "ocr_progress": 0,
             "ocr_eta": 0
@@ -53,14 +52,16 @@ async def process_endpoint(req: ProcessRequest, background_tasks: BackgroundTask
             req.question_count, 
             req.difficulty,
             req.engine_preference,
-            getattr(req, "doc_type", "personal_documents")
+            req.doc_type,
+            req.tasks
         )
         
         # Return immediately to the frontend
         return {
             "status": "started", 
             "doc_id": req.doc_id, 
-            "engine": req.engine_preference
+            "engine": req.engine_preference,
+            "tasks": req.tasks
         }
         
     except Exception as e:
@@ -75,12 +76,16 @@ def run_full_pipeline(
     q_count: int, 
     difficulty: str,
     engine_pref: str = "local",
-    doc_type: str = "personal_documents"
+    doc_type: str = "personal_documents",
+    tasks: list[str] = None
 ):
     """
     Heavy processing logic run as a background task. 
     Updates Supabase at each major milestone.
     """
+    if tasks is None:
+        tasks = ["extract", "summarize", "questions"]
+        
     try:
         from app.utils.supabase import get_supabase_client
         sb = get_supabase_client()
@@ -108,39 +113,52 @@ def run_full_pipeline(
             "extracted_text": ocr_result["text"],
             "ocr_total": page_count,
             "chapters": chapters,
-            "processing_status": "processing" 
+            "processing_status": "processing" if ("summarize" in tasks or "questions" in tasks) else "completed",
+            **({ "processed_at": datetime.datetime.now(datetime.timezone.utc).isoformat() } if not ("summarize" in tasks or "questions" in tasks) else {})
         }).eq("id", doc_id).execute()
+
+        # Exit early if no further tasks are requested
+        if "summarize" not in tasks and "questions" not in tasks:
+            logger.info(f"[{doc_id}] Background pipeline completed successfully (Extraction only).")
+            return
 
         # Step 2: Summarize
-        logger.info(f"[{doc_id}] Background step 2/3: Summarization ({engine_pref})")
-        
-        if engine_pref == "groq":
-            summary_result = summarize_with_groq(ocr_result["text"])
-        else:
-            summary_result = summarize_text(ocr_result["text"])
-        
-        sb.table(doc_type).update({
-            "ai_summary": summary_result["summary"],
-            "processing_status": "processing"
-        }).eq("id", doc_id).execute()
+        if "summarize" in tasks:
+            logger.info(f"[{doc_id}] Background step 2/3: Summarization ({engine_pref})")
+            
+            if engine_pref == "groq":
+                summary_result = summarize_with_groq(ocr_result["text"])
+            else:
+                summary_result = summarize_text(ocr_result["text"])
+            
+            sb.table(doc_type).update({
+                "ai_summary": summary_result["summary"],
+                "processing_status": "processing" if "questions" in tasks else "completed",
+                **({ "processed_at": datetime.datetime.now(datetime.timezone.utc).isoformat() } if "questions" not in tasks else {})
+            }).eq("id", doc_id).execute()
+
+            if "questions" not in tasks:
+                logger.info(f"[{doc_id}] Background pipeline completed successfully (Extraction + Summary).")
+                return
 
         # Step 3: Generate questions
-        logger.info(f"[{doc_id}] Background step 3/3: Question generation ({engine_pref})")
-        
-        if engine_pref == "groq":
-            qg_result = generate_questions_with_groq(ocr_result["text"], q_count, difficulty)
-        else:
-            qg_result = generate_questions(ocr_result["text"], q_count, difficulty)
+        if "questions" in tasks:
+            logger.info(f"[{doc_id}] Background step 3/3: Question generation ({engine_pref})")
+            
+            if engine_pref == "groq":
+                qg_result = generate_questions_with_groq(ocr_result["text"], q_count, difficulty)
+            else:
+                qg_result = generate_questions(ocr_result["text"], q_count, difficulty)
 
-        # Store Final Results
-        from app.utils.supabase import get_supabase_client
-        sb = get_supabase_client()
-        sb.table(doc_type).update({
-            "questions": qg_result["questions"],
-            "processing_status": "completed",
-            "processed_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
-        }).eq("id", doc_id).execute()
-        
+            # Store Final Results
+            from app.utils.supabase import get_supabase_client
+            sb = get_supabase_client()
+            sb.table(doc_type).update({
+                "questions": qg_result["questions"],
+                "processing_status": "completed",
+                "processed_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+            }).eq("id", doc_id).execute()
+            
         logger.info(f"[{doc_id}] Background pipeline completed successfully using {engine_pref}.")
 
     except Exception as e:

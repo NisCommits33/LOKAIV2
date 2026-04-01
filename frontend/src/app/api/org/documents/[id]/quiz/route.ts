@@ -25,10 +25,10 @@ export async function GET(
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
-  // Fetch document
+  // Fetch document with publishing metadata
   const { data: doc, error: docError } = await supabase
     .from("org_documents")
-    .select("id, title, department_id, questions")
+    .select("id, title, is_published, target_department_id, target_job_level_id, questions")
     .eq("id", id)
     .single();
 
@@ -36,9 +36,23 @@ export async function GET(
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }
 
-  // Enforce access control: Employee can only see doc if it matches their department (or is org-wide null)
-  if (profile.role === "employee" && doc.department_id && doc.department_id !== profile.department_id) {
-    return NextResponse.json({ error: "Access Denied: Department restriction" }, { status: 403 });
+  // Authorization Check for Employees
+  if (profile.role !== "org_admin" && profile.role !== "super_admin") {
+    // 1. MUST be published
+    if (!doc.is_published) {
+       return NextResponse.json({ error: "Access Denied: Quiz is not published" }, { status: 403 });
+    }
+
+    // 2. Targeting Enforcement - Department
+    if (doc.target_department_id && doc.target_department_id !== profile.department_id) {
+       return NextResponse.json({ error: "Access Denied: Not assigned to your department" }, { status: 403 });
+    }
+
+    // 3. Targeting Enforcement - Job Level
+    const { data: userDetails } = await supabase.from("users").select("job_level_id").eq("id", user.id).single();
+    if (doc.target_job_level_id && doc.target_job_level_id !== userDetails?.job_level_id) {
+       return NextResponse.json({ error: "Access Denied: Not assigned to your job level" }, { status: 403 });
+    }
   }
 
   const questions = doc.questions as any[];
@@ -86,15 +100,32 @@ export async function POST(
     return NextResponse.json({ error: "Answers are required" }, { status: 400 });
   }
 
-  // Fetch document to score answers and get tags
+  // Fetch profile to check targeting
+  const { data: profile } = await supabase
+    .from("users")
+    .select("role, department_id, job_level_id")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile) return NextResponse.json({ error: "Profile not found" }, { status: 403 });
+
+  // Fetch document to score answers and verify access
   const { data: doc, error: docError } = await supabase
     .from("org_documents")
-    .select("id, policy_tag, chapter_tag, questions")
+    .select("id, policy_tag, chapter_tag, questions, is_published, target_department_id, target_job_level_id")
     .eq("id", id)
     .single();
 
   if (docError || !doc) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  // Final security check for POST
+  // Admin/Super Admin can take the quiz but it won't impact their personal analytics (handled by DB trigger)
+  if (profile.role !== "org_admin" && profile.role !== "super_admin") {
+      if (!doc.is_published) return NextResponse.json({ error: "Forbidden: Not published" }, { status: 403 });
+      if (doc.target_department_id && doc.target_department_id !== profile.department_id) return NextResponse.json({ error: "Forbidden: Targeted dept mismatch" }, { status: 403 });
+      if (doc.target_job_level_id && doc.target_job_level_id !== profile.job_level_id) return NextResponse.json({ error: "Forbidden: Targeted level mismatch" }, { status: 403 });
   }
 
   const allQuestions = doc.questions as Array<any>;
@@ -105,19 +136,63 @@ export async function POST(
   // Calculate score
   let score = 0;
   const questionsMap = new Map(allQuestions.map(q => [q.id, q]));
-  const answeredQuestionIds = Object.keys(answers);
-  const totalAttemptedQuestions = answeredQuestionIds.length;
+  const answeredQuestionIds = Object.keys(answers || {});
   
   // Build detailed result array
   const detailedQuestions = [];
 
-  for (const qId of answeredQuestionIds) {
+  for (const qId of (allQuestions as any[]).map(q => q.id)) {
     const qData = questionsMap.get(qId);
     if (!qData) continue;
     
+    const userAnswer = answers?.[qId];
+    const isCorrect = userAnswer === qData.correct_option;
+    if (isCorrect) score++;
+
     detailedQuestions.push({
         id: qData.id,
         question: qData.question,
+        options: qData.options,
+        user_answer: userAnswer,
+        correct_answer: qData.correct_option,
+        is_correct: isCorrect,
+        explanation: qData.explanation
+    });
+  }
+
+  const totalQuestions = allQuestions.length;
+  const accuracy = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+
+  // Save Attempt
+  const { data: attempt, error: attemptError } = await supabase
+    .from("quiz_attempts")
+    .insert({
+      user_id: user.id,
+      source_id: id,
+      source_type: "org_document",
+      score: score,
+      total_questions: totalQuestions,
+      time_spent: time_spent || 0,
+      metadata: { 
+        accuracy,
+        detailed_results: detailedQuestions
+      }
+    })
+    .select()
+    .single();
+
+  if (attemptError) {
+    console.error("Quiz save error:", attemptError);
+    return NextResponse.json({ error: "Failed to save quiz result" }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    score,
+    total: totalQuestions,
+    accuracy,
+    results: detailedQuestions
+  });
+}
         options: qData.options,
         correct_answer: qData.correct_answer,
         explanation: qData.explanation
@@ -146,55 +221,6 @@ export async function POST(
 
   if (attemptError) {
     return NextResponse.json({ error: attemptError.message }, { status: 500 });
-  }
-
-  // 2. Update user_progress
-  // We use policy_tag as category_tag, and chapter_tag as sub_category_tag
-  const categoryTag = doc.policy_tag || 'uncategorized';
-  const subCategoryTag = doc.chapter_tag || 'uncategorized';
-
-  // Fetch existing progress
-  const { data: progressRow } = await supabase
-    .from("user_progress")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("category_tag", categoryTag)
-    .eq("sub_category_tag", subCategoryTag)
-    .single();
-
-  if (progressRow) {
-    // Update existing
-    const newTotalAttempts = progressRow.total_attempts + 1;
-    const newCorrect = progressRow.correct_answers + score;
-    const newTotalQs = progressRow.total_questions + totalAttemptedQuestions;
-    const newAccuracy = (newCorrect / newTotalQs) * 100;
-
-    await supabase
-      .from("user_progress")
-      .update({
-        total_attempts: newTotalAttempts,
-        correct_answers: newCorrect,
-        total_questions: newTotalQs,
-        accuracy_pct: newAccuracy,
-        last_attempted_at: new Date().toISOString()
-      })
-      .eq("id", progressRow.id);
-  } else {
-    // Insert new
-    const accuracy = totalAttemptedQuestions > 0 ? (score / totalAttemptedQuestions) * 100 : 0;
-    
-    await supabase
-      .from("user_progress")
-      .insert({
-        user_id: user.id,
-        category_tag: categoryTag,
-        sub_category_tag: subCategoryTag,
-        total_attempts: 1,
-        correct_answers: score,
-        total_questions: totalAttemptedQuestions,
-        accuracy_pct: accuracy,
-        last_attempted_at: new Date().toISOString()
-      });
   }
 
   return NextResponse.json({

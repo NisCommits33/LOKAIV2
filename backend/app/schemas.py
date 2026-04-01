@@ -58,11 +58,16 @@ class QuestionResponse(BaseModel):
 # ── Full Pipeline ───────────────────────────────────────────
 class ProcessRequest(BaseModel):
     doc_id: str = Field(..., description="Document ID for progress tracking")
+    doc_type: str = Field(default="personal_documents", description="Supabase table to update (personal_documents or org_documents)")
     file_base64: str = Field(..., description="Base64-encoded PDF file")
     language: str = Field(default="eng+nep")
     question_count: int = Field(default=5, ge=1, le=20)
     difficulty: str = Field(default="medium", pattern="^(easy|medium|hard)$")
     engine_preference: str = Field(default="local", pattern="^(local|groq)$")
+    tasks: list[str] = Field(
+        default=["extract", "summarize", "questions"], 
+        description="List of pipeline tasks to execute. Omit 'summarize' or 'questions' to skip them."
+    )
 
 
 class ProcessResponse(BaseModel):

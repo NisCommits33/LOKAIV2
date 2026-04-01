@@ -35,21 +35,34 @@ export async function GET(request: NextRequest) {
   const offset = parseInt(searchParams.get("offset") || "0", 10);
 
   // View filtering. If org_admin, they see all. If employee, they only see documents 
-  // linked to their department OR documents with no specific department mapping (org-wide).
+  // that are PUBLISHED and match their targeting (or are org-wide).
   let query = supabase
     .from("org_documents")
-    .select("id, title, description, file_name, file_size, processing_status, department_id, policy_tag, chapter_tag, created_at, processed_at", { count: "exact" })
+    .select("id, title, description, file_name, file_size, processing_status, is_published, target_department_id, target_job_level_id, department_id, policy_tag, chapter_tag, created_at, processed_at", { count: "exact" })
     .eq("organization_id", profile.organization_id)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
   if (profile.role !== "org_admin" && profile.role !== "super_admin") {
-    // Regular employees see documents that apply to them
-    if (profile.department_id) {
-      query = query.or(`department_id.eq.${profile.department_id},department_id.is.null`);
-    } else {
-       query = query.is("department_id", null);
-    }
+    // 1. Regular employees ONLY see published documents
+    query = query.eq("is_published", true);
+
+    // 2. Filter by targeted distribution (Department/Level)
+    // A document matches if (target is null OR target matches user)
+    const deptFilter = profile.department_id 
+      ? `target_department_id.eq.${profile.department_id},target_department_id.is.null`
+      : `target_department_id.is.null`;
+    
+    // We also check job level
+    const { data: userDetails } = await supabase.from("users").select("job_level_id").eq("id", user.id).single();
+    const levelFilter = userDetails?.job_level_id
+      ? `target_job_level_id.eq.${userDetails.job_level_id},target_job_level_id.is.null`
+      : `target_job_level_id.is.null`;
+
+    // Combine filters. This is tricky with Supabase .or() across columns, 
+    // so we use the .and() with .or() syntax or just keep it simple.
+    // For now, let's use the simplest logic: it matches if both filters allow it.
+    query = query.or(deptFilter).or(levelFilter);
   }
 
   if (search) {

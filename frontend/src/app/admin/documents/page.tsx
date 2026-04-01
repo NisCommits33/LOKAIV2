@@ -259,13 +259,20 @@ export default function OrgDocumentsPage() {
                   <CardContent className="p-5 space-y-4 flex-1">
                     {/* Status + actions row */}
                     <div className="flex items-start justify-between">
-                      <Badge variant="outline" className={statusColors[doc.processing_status]}>
-                        {doc.processing_status === "processing" && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
-                        {doc.processing_status === "completed" && <CheckCircle2 className="h-3 w-3 mr-1" />}
-                        {doc.processing_status === "failed" && <AlertCircle className="h-3 w-3 mr-1" />}
-                        {doc.processing_status === "pending" && <Clock className="h-3 w-3 mr-1" />}
-                        {statusLabels[doc.processing_status]}
-                      </Badge>
+                      <div className="flex flex-col gap-1.5 items-start">
+                        <Badge variant="outline" className={`h-5 text-[10px] ${statusColors[doc.processing_status]}`}>
+                          {doc.processing_status === "processing" && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+                          {doc.processing_status === "completed" && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                          {doc.processing_status === "failed" && <AlertCircle className="h-3 w-3 mr-1" />}
+                          {doc.processing_status === "pending" && <Clock className="h-3 w-3 mr-1" />}
+                          {statusLabels[doc.processing_status]}
+                        </Badge>
+                        {(doc as any).is_published ? (
+                          <Badge className="bg-indigo-600 text-white border-0 h-5 text-[9px] uppercase tracking-tighter">Published</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-slate-200 h-5 text-[9px] uppercase tracking-tighter">Draft</Badge>
+                        )}
+                      </div>
                       <div className="flex gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link href={`/admin/documents/${doc.id}`}>
                           <Button variant="ghost" size="icon" className="h-7 w-7 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 sm:bg-transparent">

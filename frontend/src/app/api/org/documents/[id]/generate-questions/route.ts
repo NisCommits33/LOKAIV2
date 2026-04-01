@@ -38,9 +38,9 @@ export async function POST(
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }
 
-  if (doc.processing_status !== "completed" || !doc.extracted_text) {
+  if (!doc.extracted_text) {
     return NextResponse.json(
-      { error: "Text has not been extracted yet" },
+      { error: "Text has not been extracted yet. Please wait for OCR to finish." },
       { status: 400 }
     );
   }

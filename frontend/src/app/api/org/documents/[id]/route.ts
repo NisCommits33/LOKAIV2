@@ -34,12 +34,25 @@ export async function GET(
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }
 
-  // Authorization Check
+  // Authorization Check for Employees
   if (profile.role !== "org_admin" && profile.role !== "super_admin") {
-    if (data.department_id && data.department_id !== profile.department_id) {
-      return NextResponse.json({ error: "Forbidden: Document belongs to a different department." }, { status: 403 });
+    // 1. MUST be published
+    if (!data.is_published) {
+       return NextResponse.json({ error: "Forbidden: This document is a draft and not visible to employees yet." }, { status: 403 });
     }
-    // Strip correct answers to prevent cheating
+
+    // 2. Targeting Enforcement - Department
+    if (data.target_department_id && data.target_department_id !== profile.department_id) {
+       return NextResponse.json({ error: "Forbidden: This document is not assigned to your department." }, { status: 403 });
+    }
+
+    // 3. Targeting Enforcement - Job Level
+    const { data: userDetails } = await supabase.from("users").select("job_level_id").eq("id", user.id).single();
+    if (data.target_job_level_id && data.target_job_level_id !== userDetails?.job_level_id) {
+       return NextResponse.json({ error: "Forbidden: This document is not assigned to your job level." }, { status: 403 });
+    }
+
+    // Strip answers to prevent cheating
     if (data.questions && Array.isArray(data.questions)) {
        data.questions = data.questions.map((q: any) => {
           const { correct_answer, explanation, ...safeQ } = q;
