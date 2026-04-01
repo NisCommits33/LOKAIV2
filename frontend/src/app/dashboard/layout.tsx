@@ -42,6 +42,7 @@ import {
   Menu,
   ChevronDown,
   Layers,
+  CreditCard,
 } from "lucide-react";
 import type { UserRole } from "@/types/database";
 
@@ -126,6 +127,12 @@ const adminNavItems: NavItem[] = [
     roles: ["org_admin"],
   },
   {
+    label: "Billing",
+    href: "/admin/billing",
+    icon: CreditCard,
+    roles: ["org_admin"],
+  },
+  {
     label: "My Profile",
     href: "/dashboard/profile",
     icon: UserCircle,
@@ -163,6 +170,12 @@ const superAdminNavItems: NavItem[] = [
     label: "Audit Logs",
     href: "/super-admin/audit-logs",
     icon: FileText,
+    roles: ["super_admin"],
+  },
+  {
+    label: "Billing",
+    href: "/super-admin/billing",
+    icon: CreditCard,
     roles: ["super_admin"],
   },
   {

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { checkOrgLimit, incrementUsage } from "@/lib/payments/subscription";
 
 const AI_BACKEND_URL = process.env.AI_BACKEND_URL || "http://localhost:8000";
 
@@ -32,6 +33,18 @@ export async function POST(
   if (doc.processing_status === "processing") {
     return NextResponse.json({ status: "processing", message: "Already processing" });
   }
+
+  // Check subscription AI request limit
+  const aiLimit = await checkOrgLimit(doc.organization_id, "ai_requests");
+  if (!aiLimit.allowed) {
+    return NextResponse.json(
+      { error: `AI processing limit reached (${aiLimit.used}/${aiLimit.limit}). Please upgrade your plan.` },
+      { status: 403 }
+    );
+  }
+
+  // Increment AI usage counter
+  await incrementUsage(doc.organization_id, "ai_requests");
 
   // Set status to processing
   await supabase

@@ -13,6 +13,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin-client";
 import { verifyOrgAdmin } from "@/lib/supabase/admin";
+import { checkOrgLimit } from "@/lib/payments/subscription";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -55,6 +56,15 @@ export async function POST(
     return NextResponse.json(
       { error: "User is not in pending verification status" },
       { status: 400 }
+    );
+  }
+
+  // Check subscription user limit before approving
+  const userLimit = await checkOrgLimit(organizationId, "users");
+  if (!userLimit.allowed) {
+    return NextResponse.json(
+      { error: `User limit reached (${userLimit.used}/${userLimit.limit}). Please upgrade your plan to add more users.` },
+      { status: 403 }
     );
   }
 

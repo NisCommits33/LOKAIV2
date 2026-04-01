@@ -41,3 +41,4 @@ uvicorn app.main:app --reload --port 8000
 | POST | /api/ai/questions | Generate MCQs from text |
 | POST | /api/ai/process | Full pipeline: OCR → Summarize → Generate Questions |
 
+

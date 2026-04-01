@@ -209,6 +209,84 @@ export interface PersonalDocument {
   processed_at: string | null;
 }
 
+/** Subscription plan tiers */
+export type SubscriptionStatus = "active" | "expired" | "cancelled" | "pending";
+export type BillingCycle = "monthly" | "yearly";
+export type PaymentGateway = "esewa" | "khalti";
+export type PaymentStatus = "initiated" | "completed" | "failed" | "refunded";
+
+/** Subscription plan definition */
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  display_name: string;
+  description: string | null;
+  price_monthly: number;
+  price_yearly: number;
+  max_users: number;
+  max_documents_per_month: number;
+  max_ai_requests_per_month: number;
+  max_storage_mb: number;
+  has_advanced_analytics: boolean;
+  has_export: boolean;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Active subscription for an organization */
+export interface OrganizationSubscription {
+  id: string;
+  organization_id: string;
+  plan_id: string;
+  status: SubscriptionStatus;
+  billing_cycle: BillingCycle;
+  current_period_start: string;
+  current_period_end: string;
+  cancelled_at: string | null;
+  created_at: string;
+  updated_at: string;
+  plan?: SubscriptionPlan;
+}
+
+/** Payment transaction record */
+export interface PaymentTransaction {
+  id: string;
+  organization_id: string;
+  subscription_id: string | null;
+  gateway: PaymentGateway;
+  gateway_transaction_id: string | null;
+  gateway_status: string | null;
+  amount: number;
+  tax_amount: number;
+  total_amount: number;
+  currency: string;
+  product_code: string;
+  transaction_uuid: string;
+  status: PaymentStatus;
+  plan_id: string | null;
+  billing_cycle: BillingCycle | null;
+  initiated_by: string | null;
+  completed_at: string | null;
+  failure_reason: string | null;
+  raw_response: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Monthly usage tracking per org */
+export interface SubscriptionUsage {
+  id: string;
+  organization_id: string;
+  period_start: string;
+  documents_used: number;
+  ai_requests_used: number;
+  storage_used_mb: number;
+  created_at: string;
+  updated_at: string;
+}
+
 /** Self-service organization registration application */
 export interface OrganizationApplication {
   id: string;

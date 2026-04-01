@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
+import { checkOrgLimit, incrementUsage } from "@/lib/payments/subscription";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
 const ALLOWED_MIME = "application/pdf";
@@ -112,6 +113,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden: Org Admin required to upload org docs" }, { status: 403 });
   }
 
+  // Check subscription document limit
+  const docLimit = await checkOrgLimit(profile.organization_id, "documents");
+  if (!docLimit.allowed) {
+    return NextResponse.json(
+      { error: `Document upload limit reached (${docLimit.used}/${docLimit.limit}). Please upgrade your plan.` },
+      { status: 403 }
+    );
+  }
+
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
   const title = (formData.get("title") as string) || "";
@@ -134,6 +144,9 @@ export async function POST(request: NextRequest) {
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json({ error: "File size exceeds 50 MB limit" }, { status: 400 });
   }
+
+  // Increment document usage counter
+  await incrementUsage(profile.organization_id, "documents");
 
   // Save to Storage: orgs/{org_id}/{timestamp}_{safeName}
   const timestamp = Date.now();
