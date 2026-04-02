@@ -160,14 +160,24 @@ export default function DocumentsPage() {
       });
 
       clearInterval(progressInterval);
+
+      if (!res.ok) {
+        let errorMsg = "Upload failed";
+        try {
+          const errData = await res.json();
+          errorMsg = errData.error || errorMsg;
+        } catch {
+          // Response body is empty or not JSON
+        }
+        toast.error(errorMsg);
+        return;
+      }
+
       const newDoc = await res.json();
-      console.log("Upload response doc:", newDoc);
       toast.success("Document uploaded — extracting text...");
-      // Show modal or toast after upload, do not navigate
       if (newDoc.id) {
         fetchDocuments();
       } else {
-        console.error("No document ID returned from upload");
         fetchDocuments();
       }
     } catch {

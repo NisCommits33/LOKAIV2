@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 import { 
   LineChart, 
   Line, 
@@ -38,10 +39,13 @@ interface TrendForecastChartProps {
 }
 
 export function TrendForecastChart({ history, forecast, stats, loading }: TrendForecastChartProps) {
+  const { resolvedTheme } = useTheme();
+  const gridStroke = resolvedTheme === 'dark' ? '#334155' : '#f1f5f9';
+
   if (loading) {
     return (
-      <Card className="border-none shadow-xl bg-white overflow-hidden h-[450px]">
-        <CardContent className="p-8 h-full bg-slate-50/50 animate-pulse" />
+      <Card className="border-none shadow-xl bg-white dark:bg-slate-900 overflow-hidden h-[450px]">
+        <CardContent className="p-8 h-full bg-slate-50/50 dark:bg-slate-800/50 animate-pulse" />
       </Card>
     );
   }
@@ -77,10 +81,10 @@ export function TrendForecastChart({ history, forecast, stats, loading }: TrendF
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.3 }}
     >
-      <Card className="border-none shadow-xl bg-white overflow-hidden flex flex-col h-[450px]">
+      <Card className="border-none shadow-xl bg-white dark:bg-slate-900 overflow-hidden flex flex-col h-[450px]">
         <CardHeader className="p-8 pb-4 flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2 italic">
+            <CardTitle className="text-xl font-black text-slate-900 dark:text-slate-50 tracking-tight flex items-center gap-2 italic">
                <TrendingUp className="h-5 w-5 text-indigo-600" /> Performance Trend
             </CardTitle>
             <CardDescription className="text-xs font-medium text-slate-400"> Historical scores and AI-driven 14-day readiness forecast.</CardDescription>
@@ -111,7 +115,7 @@ export function TrendForecastChart({ history, forecast, stats, loading }: TrendF
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
               <XAxis 
                 dataKey="date" 
                 axisLine={false} 

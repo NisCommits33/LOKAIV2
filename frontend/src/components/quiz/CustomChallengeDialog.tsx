@@ -173,7 +173,7 @@ export function CustomChallengeDialog({
         <Button
           onClick={handleStart}
           disabled={loading || !category}
-          className="w-full h-12 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-none transition-all flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-xl bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 text-white font-bold hover:bg-slate-800 shadow-none transition-all flex items-center justify-center gap-2"
         >
           {loading ? (
             <Loader2 className="h-5 w-5 animate-spin" />

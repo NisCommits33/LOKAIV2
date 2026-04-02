@@ -38,7 +38,7 @@ export default function PendingApprovalPage() {
   /** Signs the user out and redirects to login */
   const handleLogout = async () => {
     await signOut();
-    router.push("/login");
+    window.location.href = "/login";
   };
 
   /** Refreshes user data and redirects to dashboard if verified */
@@ -84,7 +84,7 @@ export default function PendingApprovalPage() {
                 <div className="flex flex-col gap-3">
                   <Button
                     onClick={() => router.push("/profile-setup")}
-                    className="w-full h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="w-full h-12 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     Update & Reapply
                   </Button>
@@ -152,7 +152,7 @@ export default function PendingApprovalPage() {
                 </Button>
                 <Button
                   onClick={() => router.push("/dashboard")}
-                  className="w-full h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                  className="w-full h-12 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                 >
                   Continue with Public Features
                 </Button>

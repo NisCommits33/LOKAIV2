@@ -146,7 +146,7 @@ export async function POST(
     if (!qData) continue;
     
     const userAnswer = answers?.[qId];
-    const isCorrect = userAnswer === qData.correct_option;
+    const isCorrect = userAnswer === qData.correct_answer;
     if (isCorrect) score++;
 
     detailedQuestions.push({
@@ -154,7 +154,7 @@ export async function POST(
         question: qData.question,
         options: qData.options,
         user_answer: userAnswer,
-        correct_answer: qData.correct_option,
+        correct_answer: qData.correct_answer,
         is_correct: isCorrect,
         explanation: qData.explanation
     });

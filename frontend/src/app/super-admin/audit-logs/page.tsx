@@ -58,7 +58,7 @@ export default function AuditLogsPage() {
     <div className="p-6 sm:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-           <div className="rounded-xl bg-slate-900 dark:bg-slate-100 p-2 text-white dark:text-slate-900">
+           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900">
               <ShieldAlert className="h-5 w-5" />
            </div>
            <div>

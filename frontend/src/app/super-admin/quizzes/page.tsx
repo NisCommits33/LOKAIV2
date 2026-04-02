@@ -208,11 +208,11 @@ export default function GlobalQuizManagerPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-indigo-600 p-3 text-white shadow-lg shadow-indigo-200">
-            <BookOpen className="h-6 w-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900">
+            <BookOpen className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">Global Quiz Manager</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Global Quiz Manager</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Publish GK quizzes with rich topics, chapters, and visual thumbnails.
             </p>
@@ -221,14 +221,14 @@ export default function GlobalQuizManagerPage() {
 
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200/50 h-11 px-6 font-bold rounded-xl">
+            <Button className="bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 hover:bg-slate-800 text-white h-11 px-6 font-bold rounded-xl shadow-none">
               <Plus className="mr-2 h-4 w-4" /> Create New Quiz
             </Button>
           </DialogTrigger>
 
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black tracking-tight">Publish New Global Quiz</DialogTitle>
+              <DialogTitle className="text-xl font-bold tracking-tight">Publish New Global Quiz</DialogTitle>
               <DialogDescription>
                 This quiz will immediately be visible to all platform users.
               </DialogDescription>

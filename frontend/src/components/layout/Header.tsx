@@ -52,6 +52,9 @@ export function Header() {
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center gap-10">
                         <Link href="/" className="flex items-center gap-2 group">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
+                                L
+                            </div>
                             <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 transition-colors group-hover:text-primary">
                                 LokAI
                             </span>
@@ -126,7 +129,10 @@ export function Header() {
                                     <DropdownMenuSeparator className="my-1 bg-slate-100 dark:bg-slate-800" />
                                     <DropdownMenuItem
                                         className="cursor-pointer py-2 px-3 rounded-lg font-medium text-sm text-red-500 focus:bg-red-50 dark:focus:bg-red-950/30 focus:text-red-500"
-                                        onClick={signOut}
+                                        onClick={async () => {
+                                            await signOut();
+                                            window.location.href = "/login";
+                                        }}
                                     >
                                         <LogOut className="mr-2.5 h-4 w-4" />
                                         Sign Out
@@ -154,7 +160,12 @@ export function Header() {
                                         </SheetTrigger>
                                         <SheetContent side="right" className="w-[300px] flex flex-col bg-white dark:bg-slate-950">
                                             <SheetHeader className="text-left border-b dark:border-slate-800 pb-4">
-                                                <SheetTitle className="text-xl font-bold dark:text-slate-50">LokAI</SheetTitle>
+                                                <SheetTitle className="flex items-center gap-2">
+                                                    <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-xs font-bold">
+                                                        L
+                                                    </div>
+                                                    <span className="text-xl font-bold dark:text-slate-50">LokAI</span>
+                                                </SheetTitle>
                                             </SheetHeader>
                                             <nav className="flex flex-col gap-4 mt-8">
                                                 <Link href="/#features" className="text-lg font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 px-2 transition-colors">

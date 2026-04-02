@@ -119,8 +119,14 @@ export default function OrgDocumentUploadPage() {
       clearInterval(progressInterval);
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to upload document");
+        let errorMsg = "Failed to upload document";
+        try {
+          const err = await res.json();
+          errorMsg = err.error || errorMsg;
+        } catch {
+          // Response body may be empty or not JSON
+        }
+        throw new Error(errorMsg);
       }
 
       setUploadProgress(100);

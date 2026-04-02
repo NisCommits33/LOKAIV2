@@ -106,11 +106,14 @@ export async function proxy(request: NextRequest) {
 
   // --- Profile & Verification Checks ---
   // Skip these checks for API routes (they handle their own auth)
-  if (
+  // Only query the DB for routes that need role/profile checks to avoid unnecessary round-trips
+  const needsRoleCheck = Object.keys(roleRoutes).some((prefix) => pathname.startsWith(prefix));
+  const needsProfileCheck =
     pathname !== "/profile-setup" &&
     pathname !== "/pending-approval" &&
-    !pathname.startsWith("/api/")
-  ) {
+    !pathname.startsWith("/api/");
+
+  if (needsProfileCheck || needsRoleCheck) {
     let userRole: string | null = null;
     const { data: dbUser } = await supabase
       .from("users")

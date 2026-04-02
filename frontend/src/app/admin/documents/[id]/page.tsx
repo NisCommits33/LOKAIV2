@@ -77,16 +77,16 @@ function CheckItem({ label, checked, subtext }: { label: string; checked: boolea
     <div className="flex items-start gap-2.5">
       <div className={cn(
         "mt-0.5 h-4 w-4 rounded-full flex items-center justify-center shrink-0 border",
-        checked ? "bg-emerald-500 border-emerald-500" : "bg-white border-slate-200"
+        checked ? "bg-emerald-500 border-emerald-500" : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
       )}>
         {checked ? <Check className="h-2.5 w-2.5 text-white" /> : null}
       </div>
       <div>
-        <p className={cn("text-xs font-medium", checked ? "text-slate-700" : "text-slate-400")}>
+        <p className={cn("text-xs font-medium", checked ? "text-slate-700 dark:text-slate-300" : "text-slate-400 dark:text-slate-500")}>
           {label}
         </p>
         {subtext && (
-          <p className="text-[10px] text-slate-400 mt-0.5">{subtext}</p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{subtext}</p>
         )}
       </div>
     </div>
@@ -94,10 +94,10 @@ function CheckItem({ label, checked, subtext }: { label: string; checked: boolea
 }
 
 const statusColors: Record<DocumentProcessingStatus, string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-100",
-  processing: "bg-blue-50 text-blue-700 border-blue-100",
-  completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  failed: "bg-red-50 text-red-700 border-red-100",
+  pending: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-800",
+  processing: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-800",
+  completed: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
+  failed: "bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800",
 };
 
 const statusLabels: Record<DocumentProcessingStatus, string> = {
@@ -137,18 +137,18 @@ function QuizReviewList({ questions }: { questions: GeneratedQuestion[] }) {
         <h4 className="text-xs font-semibold text-slate-700 flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-emerald-500" /> Admin Review Mode
         </h4>
-        <Badge variant="outline" className="text-[10px] text-slate-500 border-slate-200">
+        <Badge variant="outline" className="text-[10px] text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700">
           {questions.length} Questions
         </Badge>
       </div>
 
       {questions.map((q, qIdx) => (
-        <div key={q.id || qIdx} className="border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-start gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px] font-bold">
+        <div key={q.id || qIdx} className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+          <div className="p-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-start gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-[11px] font-bold">
               {qIdx + 1}
             </span>
-            <p className="text-sm font-medium text-slate-800 leading-relaxed pt-0.5">{q.question}</p>
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed pt-0.5">{q.question}</p>
           </div>
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-2">
             {q.options.map((option, oIdx) => (
@@ -157,8 +157,8 @@ function QuizReviewList({ questions }: { questions: GeneratedQuestion[] }) {
                 className={cn(
                   "p-3 rounded-lg border text-xs font-medium flex items-center justify-between",
                   oIdx === q.correct_answer
-                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                    : "bg-white border-slate-100 text-slate-500"
+                    ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400"
+                    : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400"
                 )}
               >
                 <span className="flex-1 pr-2">{option}</span>
@@ -168,11 +168,11 @@ function QuizReviewList({ questions }: { questions: GeneratedQuestion[] }) {
           </div>
           {q.explanation && (
             <div className="px-4 pb-4">
-              <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                <p className="text-[10px] uppercase font-semibold tracking-wider text-indigo-400 mb-1 flex items-center gap-1.5">
+              <div className="bg-indigo-50 dark:bg-indigo-950/30 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800">
+                <p className="text-[10px] uppercase font-semibold tracking-wider text-indigo-400 dark:text-indigo-500 mb-1 flex items-center gap-1.5">
                   <HelpCircle className="h-3 w-3" /> Explanation
                 </p>
-                <p className="text-xs text-indigo-700 leading-relaxed">{q.explanation}</p>
+                <p className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed">{q.explanation}</p>
               </div>
             </div>
           )}
@@ -608,8 +608,8 @@ export default function OrgDocumentDetailPage({
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <AlertCircle className="h-12 w-12 text-red-500" />
-        <h2 className="text-xl font-bold text-slate-900">Document Not Found</h2>
-        <p className="text-slate-500 max-w-md text-center">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Document Not Found</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-md text-center">
           {loadError || "The document you are looking for does not exist or has been removed."}
         </p>
         <BackButton />
@@ -628,7 +628,7 @@ export default function OrgDocumentDetailPage({
   return (
     <div className="p-4 sm:p-8 max-w-[1200px] mx-auto space-y-8 pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-slate-200 dark:border-slate-700 pb-6">
         <div className="flex items-start gap-4">
           <div className="mt-1"><BackButton /></div>
           <div>
@@ -650,7 +650,7 @@ export default function OrgDocumentDetailPage({
             ) : (
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1
-                  className="text-2xl font-bold tracking-tight text-slate-900 cursor-pointer group flex items-center gap-2"
+                  className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 cursor-pointer group flex items-center gap-2"
                   onClick={() => setEditing(true)}
                 >
                   {doc.title}
@@ -664,14 +664,14 @@ export default function OrgDocumentDetailPage({
                 {statusLabels[doc.processing_status]}
               </Badge>
               {doc.is_published && (
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 px-2 py-0.5 text-[10px] font-bold">
+                <Badge className="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800 px-2 py-0.5 text-[10px] font-bold">
                   Published
                 </Badge>
               )}
             </div>
 
             {doc.description && (
-              <p className="text-sm text-slate-500 max-w-2xl leading-relaxed mt-2">{doc.description}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed mt-2">{doc.description}</p>
             )}
           </div>
         </div>
@@ -679,7 +679,7 @@ export default function OrgDocumentDetailPage({
         <div className="flex flex-shrink-0 gap-2 items-center">
           {doc.download_url && (
             <a href={doc.download_url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="font-mono text-xs text-slate-600 border-slate-200 hover:bg-slate-50">
+              <Button variant="outline" size="sm" className="font-mono text-xs text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <Download className="h-3.5 w-3.5 mr-2" /> Download PDF
               </Button>
             </a>
@@ -696,14 +696,14 @@ export default function OrgDocumentDetailPage({
 
       {/* Processing Setup (when not ready) */}
       {!isReady ? (
-        <div className="bg-white border-2 border-dashed border-slate-200 rounded-xl p-10 text-center space-y-6 shadow-sm">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 mb-2">
+        <div className="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-10 text-center space-y-6 shadow-sm">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 mb-2">
             {doc.processing_status === "processing" ? <Loader2 className="h-8 w-8 animate-spin" /> : <Tags className="h-8 w-8" />}
           </div>
 
           <div className="max-w-md mx-auto space-y-2">
-            <h2 className="text-lg font-bold text-slate-900">AI Text Extraction</h2>
-            <p className="text-sm text-slate-500 leading-relaxed">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">AI Text Extraction</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
               Extract searchable text from the uploaded PDF. Choose your engine and we&apos;ll handle the rest.
             </p>
           </div>
@@ -723,7 +723,7 @@ export default function OrgDocumentDetailPage({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-lg w-full max-w-sm">
+              <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-full max-w-sm">
                 {(["groq", "local"] as const).map((mode) => (
                   <button
                     key={mode}
@@ -731,8 +731,8 @@ export default function OrgDocumentDetailPage({
                     className={cn(
                       "flex-1 py-2.5 px-4 rounded-md text-xs font-semibold transition-all",
                       modelPreference === mode
-                        ? "bg-white text-indigo-700 shadow-sm"
-                        : "text-slate-400 hover:text-slate-600"
+                        ? "bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm"
+                        : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                     )}
                   >
                     {mode === "groq" ? "Groq (Fast)" : "Local Engine"}
@@ -754,53 +754,53 @@ export default function OrgDocumentDetailPage({
           {/* Left Column */}
           <div className="lg:col-span-4 space-y-6">
             {/* Document Profile */}
-            <section className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+            <section className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 flex items-center gap-2">
                 <FileText className="h-3.5 w-3.5" /> Document Profile
               </h3>
 
               <div className="flex flex-wrap gap-2 mb-4">
                 {doc.department_id ? (
-                  <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-[11px] border-transparent font-medium">
+                  <Badge variant="secondary" className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[11px] border-transparent font-medium">
                     <Building2 className="w-3 h-3 mr-1" />
                     {typeof doc.department_id === "object" ? (doc.department_id as any).name : `Dept`}
                   </Badge>
                 ) : (
-                  <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100 text-[11px] font-medium">
+                  <Badge variant="secondary" className="bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800 text-[11px] font-medium">
                     <Building2 className="w-3 h-3 mr-1" /> Org-Wide
                   </Badge>
                 )}
                 {doc.policy_tag && (
-                  <Badge variant="outline" className="text-slate-500 font-mono text-[10px]">
+                  <Badge variant="outline" className="text-slate-500 dark:text-slate-400 font-mono text-[10px]">
                     # {doc.policy_tag}
                   </Badge>
                 )}
               </div>
 
-              <div className="space-y-3 font-mono text-[11px] text-slate-500 border-t border-slate-100 pt-4">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100/50">
-                  <span className="text-slate-400">File</span>
-                  <span className="truncate max-w-[150px] font-medium text-slate-600" title={doc.file_name}>{doc.file_name}</span>
+              <div className="space-y-3 font-mono text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-4">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-slate-400 dark:text-slate-500">File</span>
+                  <span className="truncate max-w-[150px] font-medium text-slate-600 dark:text-slate-300" title={doc.file_name}>{doc.file_name}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100/50">
-                  <span className="text-slate-400">Size</span>
-                  <span className="font-medium text-slate-600">{formatFileSize(doc.file_size)}</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-slate-400 dark:text-slate-500">Size</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{formatFileSize(doc.file_size)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100/50">
-                  <span className="text-slate-400">Added</span>
-                  <span className="font-medium text-slate-600">{formatDate(doc.created_at)}</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-slate-400 dark:text-slate-500">Added</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{formatDate(doc.created_at)}</span>
                 </div>
               </div>
             </section>
 
             {/* Topic Selection */}
             {hasChapters && (
-              <section className="bg-white rounded-xl border border-slate-200 shadow-sm">
+              <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <button
                   onClick={() => setShowTopics(!showTopics)}
                   className="w-full flex items-center justify-between p-5 text-left"
                 >
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                     <Tags className="h-3.5 w-3.5" /> Topic / Chapter
                   </h3>
                   <div className="flex items-center gap-2">
@@ -817,22 +817,22 @@ export default function OrgDocumentDetailPage({
                     className={cn(
                       "w-full text-left p-3 rounded-lg border transition-all",
                       selectedChapterIndex === -1
-                        ? "bg-indigo-50 border-indigo-200"
-                        : "bg-white border-slate-100 hover:bg-slate-50"
+                        ? "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800"
+                        : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
                     )}
                   >
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         "w-7 h-7 rounded-md flex items-center justify-center shrink-0",
-                        selectedChapterIndex === -1 ? "bg-indigo-500 text-white" : "bg-slate-100 text-slate-400"
+                        selectedChapterIndex === -1 ? "bg-indigo-500 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-400"
                       )}>
                         <FileText className="h-3.5 w-3.5" />
                       </div>
                       <div>
-                        <p className={cn("text-xs font-semibold", selectedChapterIndex === -1 ? "text-indigo-900" : "text-slate-600")}>
+                        <p className={cn("text-xs font-semibold", selectedChapterIndex === -1 ? "text-indigo-900 dark:text-indigo-300" : "text-slate-600 dark:text-slate-400")}>
                           Full Document
                         </p>
-                        <p className="text-[10px] text-slate-400">Use entire extraction</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">Use entire extraction</p>
                       </div>
                     </div>
                   </button>
@@ -844,19 +844,19 @@ export default function OrgDocumentDetailPage({
                       className={cn(
                         "w-full text-left p-3 rounded-lg border transition-all",
                         selectedChapterIndex === idx
-                          ? "bg-emerald-50 border-emerald-200"
-                          : "bg-white border-slate-100 hover:bg-slate-50"
+                          ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
+                          : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
                       )}
                     >
                       <div className="flex items-center gap-3">
                         <div className={cn(
                           "w-7 h-7 rounded-md flex items-center justify-center shrink-0",
-                          selectedChapterIndex === idx ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400"
+                          selectedChapterIndex === idx ? "bg-emerald-500 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-400"
                         )}>
                           <span className="text-[10px] font-bold">{idx + 1}</span>
                         </div>
                         <div className="min-w-0">
-                          <p className={cn("text-xs font-semibold truncate", selectedChapterIndex === idx ? "text-emerald-900" : "text-slate-600")}>
+                          <p className={cn("text-xs font-semibold truncate", selectedChapterIndex === idx ? "text-emerald-900 dark:text-emerald-300" : "text-slate-600 dark:text-slate-400")}>
                             {chapter.title}
                           </p>
                         </div>
@@ -868,12 +868,12 @@ export default function OrgDocumentDetailPage({
             )}
 
             {/* AI Actions */}
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm">
+            <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
               <button
                 onClick={() => setShowAI(!showAI)}
                 className="w-full flex items-center justify-between p-5 text-left"
               >
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                   <Brain className="h-3.5 w-3.5" /> AI Actions
                 </h3>
                 {showAI ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
@@ -882,8 +882,8 @@ export default function OrgDocumentDetailPage({
               {showAI && <div className="px-5 pb-5 space-y-4">
 
               {selectedChapterIndex !== -1 && (
-                <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-2.5">
-                  <p className="text-[10px] text-emerald-700 font-medium">
+                <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800 rounded-lg p-2.5">
+                  <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">
                     Targeting: <span className="font-bold">{doc.chapters?.[selectedChapterIndex]?.title}</span>
                   </p>
                 </div>
@@ -891,15 +891,15 @@ export default function OrgDocumentDetailPage({
 
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Difficulty</label>
-                  <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-lg">
+                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Difficulty</label>
+                  <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
                     {(["easy", "medium", "hard"] as const).map((level) => (
                       <button
                         key={level}
                         onClick={() => setQuizDifficulty(level)}
                         className={cn(
                           "py-1.5 rounded-md text-[10px] font-semibold capitalize transition-all",
-                          quizDifficulty === level ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                          quizDifficulty === level ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                         )}
                       >
                         {level}
@@ -909,8 +909,8 @@ export default function OrgDocumentDetailPage({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                    Questions: <span className="text-indigo-600">{quizCount}</span>
+                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Questions: <span className="text-indigo-600 dark:text-indigo-400">{quizCount}</span>
                   </label>
                   <input
                     type="range"
@@ -918,7 +918,7 @@ export default function OrgDocumentDetailPage({
                     max="50"
                     value={quizCount}
                     onChange={(e) => setQuizCount(parseInt(e.target.value))}
-                    className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                   />
                   <div className="flex justify-between text-[9px] text-slate-300">
                     <span>1</span>
@@ -953,12 +953,12 @@ export default function OrgDocumentDetailPage({
             </section>
 
             {/* Distribution Setup */}
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm">
+            <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
               <button
                 onClick={() => setShowDist(!showDist)}
                 className="w-full flex items-center justify-between p-5 text-left"
               >
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                   <Layout className="h-3.5 w-3.5" /> Distribution
                 </h3>
                 {showDist ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
@@ -967,18 +967,18 @@ export default function OrgDocumentDetailPage({
               {showDist && <div className="px-5 pb-5 space-y-4">
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Topic / Label</label>
+                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Topic / Label</label>
                   <Input
                     value={distTopic}
                     onChange={(e) => setDistTopic(e.target.value)}
                     placeholder="e.g. Fire Safety, Q1 Policy Refresher..."
                     className="h-9 text-xs"
                   />
-                  <p className="text-[10px] text-slate-400">Appears as the card label in the employee library</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500">Appears as the card label in the employee library</p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Target Department</label>
+                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Target Department</label>
                   <Select value={targetDept} onValueChange={setTargetDept}>
                     <SelectTrigger className="h-9 text-xs">
                       <SelectValue placeholder="All Departments" />
@@ -993,7 +993,7 @@ export default function OrgDocumentDetailPage({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Job Level</label>
+                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Job Level</label>
                   <Select value={targetLevel} onValueChange={setTargetLevel}>
                     <SelectTrigger className="h-9 text-xs">
                       <SelectValue placeholder="All Levels" />
@@ -1013,7 +1013,7 @@ export default function OrgDocumentDetailPage({
                   className={cn(
                     "w-full",
                     doc.is_published
-                      ? "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
+                      ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600"
                       : "bg-emerald-600 hover:bg-emerald-700 text-white"
                   )}
                   onClick={handlePublish}
@@ -1032,7 +1032,7 @@ export default function OrgDocumentDetailPage({
                 {doc.is_published && (
                   <Button
                     variant="outline"
-                    className="w-full border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                    className="w-full border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30"
                     onClick={handlePushNewVersion}
                     disabled={isPublishing}
                   >
@@ -1042,8 +1042,8 @@ export default function OrgDocumentDetailPage({
               </div>
 
               {doc.is_published && (
-                <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3 mt-2">
-                  <p className="text-[10px] font-semibold text-emerald-700 flex items-center gap-1.5">
+                <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800 rounded-lg p-3 mt-2">
+                  <p className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
                     <CheckCircle2 className="h-3 w-3" /> Published &amp; visible to targeted employees
                   </p>
                 </div>
@@ -1052,12 +1052,12 @@ export default function OrgDocumentDetailPage({
             </section>
 
             {/* Admin Checklist */}
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm">
+            <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
               <button
                 onClick={() => setShowChecklist(!showChecklist)}
                 className="w-full flex items-center justify-between p-5 text-left"
               >
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Checklist
                 </h3>
                 {showChecklist ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
@@ -1090,15 +1090,15 @@ export default function OrgDocumentDetailPage({
               </div>
 
               <TabsContent value="quiz">
-                <div className="bg-white border border-slate-200 rounded-xl shadow-sm min-h-[400px]">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm min-h-[400px]">
                   {questions.length > 0 ? (
                     <div>
-                      <div className="p-6 border-b border-slate-100 flex items-start justify-between gap-3">
+                      <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3">
-                          <ShieldCheck className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
+                          <ShieldCheck className="h-5 w-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
                           <div>
-                            <h3 className="text-sm font-bold text-slate-900">Admin Review Mode</h3>
-                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">Review the generated questions before publishing. Employees will receive these when you push this document.</p>
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-50">Admin Review Mode</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Review the generated questions before publishing. Employees will receive these when you push this document.</p>
                           </div>
                         </div>
                         <button
@@ -1119,8 +1119,8 @@ export default function OrgDocumentDetailPage({
                     <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
                       <Brain className="h-12 w-12 text-slate-300" />
                       <div>
-                        <p className="text-sm font-bold text-slate-700">No Quiz Generated Yet</p>
-                        <p className="text-xs text-slate-400 mt-1 max-w-xs">Generate a quiz using the AI Actions panel to review before publishing.</p>
+                        <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No Quiz Generated Yet</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-xs">Generate a quiz using the AI Actions panel to review before publishing.</p>
                       </div>
                       <Button
                         onClick={handleGenerateQuiz}
@@ -1136,10 +1136,10 @@ export default function OrgDocumentDetailPage({
               </TabsContent>
 
               <TabsContent value="summary">
-                <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 sm:p-8 shadow-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                      <Sparkles className="h-3.5 w-3.5 text-indigo-500" /> AI Executive Summary
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                      <Sparkles className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" /> AI Executive Summary
                     </h3>
                     <div className="flex items-center gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-indigo-600" onClick={() => doc.ai_summary && copyToClipboard(doc.ai_summary)}>
@@ -1152,13 +1152,13 @@ export default function OrgDocumentDetailPage({
                   </div>
 
                   {doc.ai_summary ? (
-                    <div className="prose prose-slate prose-sm max-w-none text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">
+                    <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
                       {doc.ai_summary}
                     </div>
                   ) : (
                     <div className="text-center py-12 space-y-4">
                       <Sparkles className="h-12 w-12 text-slate-300 mx-auto" />
-                      <p className="text-sm font-medium text-slate-400">No summary generated yet.</p>
+                      <p className="text-sm font-medium text-slate-400 dark:text-slate-500">No summary generated yet.</p>
                       <Button onClick={handleSummarize} disabled={summarizing} variant="outline" size="sm">
                         {summarizing ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : null}
                         Generate Summary
@@ -1169,15 +1169,15 @@ export default function OrgDocumentDetailPage({
               </TabsContent>
 
               <TabsContent value="raw">
-                <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 sm:p-8 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Extracted Text</h3>
-                    <Button variant="ghost" size="sm" className="h-8 text-xs text-slate-500" onClick={() => doc.extracted_text && copyToClipboard(doc.extracted_text)}>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Extracted Text</h3>
+                    <Button variant="ghost" size="sm" className="h-8 text-xs text-slate-500 dark:text-slate-400" onClick={() => doc.extracted_text && copyToClipboard(doc.extracted_text)}>
                       Copy All
                     </Button>
                   </div>
                   <div className="h-[500px] overflow-y-auto pr-4" style={{ scrollbarWidth: "thin" }}>
-                    <p className="text-xs text-slate-500 leading-relaxed font-mono whitespace-pre-wrap">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-mono whitespace-pre-wrap">
                       {doc.extracted_text}
                     </p>
                   </div>

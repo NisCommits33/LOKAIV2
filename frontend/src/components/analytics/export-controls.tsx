@@ -156,7 +156,7 @@ export function ExportControls({ data }: { data: ExportData | null }) {
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
-          className="bg-white border-slate-200 hover:bg-slate-50 text-slate-900 font-bold px-6 h-12 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+          className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-50 font-bold px-6 h-12 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
           disabled={!!exporting}
         >
           {exporting ? (
@@ -167,14 +167,14 @@ export function ExportControls({ data }: { data: ExportData | null }) {
           {exporting ? "Exporting..." : "Export Report"}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-slate-200 shadow-2xl">
+      <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-slate-200 dark:border-slate-700 shadow-2xl">
         <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 py-2">Select Format</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           onClick={exportPDF}
-          className="flex items-center gap-3 p-3 rounded-lg cursor-pointer focus:bg-indigo-50 focus:text-indigo-600 transition-colors"
+          className="flex items-center gap-3 p-3 rounded-lg cursor-pointer focus:bg-indigo-50 dark:focus:bg-indigo-950/30 focus:text-indigo-600 dark:focus:text-indigo-400 transition-colors"
         >
-          <div className="h-8 w-8 rounded-lg bg-red-50 flex items-center justify-center text-red-500">
+          <div className="h-8 w-8 rounded-lg bg-red-50 dark:bg-red-950/30 flex items-center justify-center text-red-500">
             <FileText className="h-4 w-4" />
           </div>
           <div>
@@ -184,9 +184,9 @@ export function ExportControls({ data }: { data: ExportData | null }) {
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={exportCSV}
-          className="flex items-center gap-3 p-3 rounded-lg cursor-pointer focus:bg-emerald-50 focus:text-emerald-600 transition-colors mt-1"
+          className="flex items-center gap-3 p-3 rounded-lg cursor-pointer focus:bg-emerald-50 dark:focus:bg-emerald-950/30 focus:text-emerald-600 dark:focus:text-emerald-400 transition-colors mt-1"
         >
-          <div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500">
+          <div className="h-8 w-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-500">
             <FileSpreadsheet className="h-4 w-4" />
           </div>
           <div>

@@ -29,7 +29,12 @@ export function Footer() {
             <Container>
                 <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
                     <div className="text-center md:text-left">
-                        <p className="text-lg font-bold text-primary">LokAI</p>
+                        <div className="flex items-center gap-2 justify-center md:justify-start">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-xs font-bold">
+                                L
+                            </div>
+                            <p className="text-lg font-bold text-slate-900 dark:text-slate-50">LokAI</p>
+                        </div>
                         <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
                             AI-powered exam preparation for Nepal government employees.
                         </p>

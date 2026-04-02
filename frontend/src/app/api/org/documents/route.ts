@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "org_admin") {
+  if (!profile || (profile.role !== "org_admin" && profile.role !== "super_admin")) {
     return NextResponse.json({ error: "Forbidden: Org Admin required to upload org docs" }, { status: 403 });
   }
 
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
   // Save to Storage: orgs/{org_id}/{timestamp}_{safeName}
   const timestamp = Date.now();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const filePath = `org_documents/${profile.organization_id}/${timestamp}_${safeName}`;
+  const filePath = `orgs/${profile.organization_id}/${timestamp}_${safeName}`;
 
   const { error: uploadError } = await supabase.storage
     .from("documents") // REUSING existing storage bucket

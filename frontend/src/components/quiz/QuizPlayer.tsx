@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Clock, ChevronLeft, ChevronRight, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { Clock, ChevronLeft, ChevronRight, Send, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -192,7 +192,7 @@ export function QuizPlayer({
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button 
                 onClick={() => setReviewMode(true)} 
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 h-12 text-base font-bold shadow-lg shadow-indigo-200"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 h-12 text-base font-bold shadow-none rounded-xl"
               >
                 Review Answers
               </Button>
@@ -247,7 +247,7 @@ export function QuizPlayer({
               </div>
             </div>
 
-            <Button onClick={startQuiz} className="w-full bg-slate-900 hover:bg-black h-14 text-lg font-bold shadow-xl shadow-slate-200 transition-all active:scale-95" size="lg">
+            <Button onClick={startQuiz} className="w-full bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 hover:bg-slate-800 h-14 text-lg font-bold shadow-none transition-all active:scale-95" size="lg">
               Start Quiz
             </Button>
           </CardContent>
@@ -302,15 +302,15 @@ export function QuizPlayer({
               className={cn(
                 "h-9 w-9 rounded-xl text-xs font-black transition-all border",
                 i === currentIndex 
-                  ? "bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-100" 
+                  ? "bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 border-slate-900 dark:border-slate-50 shadow-md ring-2 ring-slate-100 dark:ring-slate-800" 
                   : reviewMode
                     ? isCorrect
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                        ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800"
                         : isWrong
-                            ? "bg-red-50 text-red-700 border-red-100"
-                            : "bg-slate-50 text-slate-400 border-slate-100"
+                            ? "bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800"
+                            : "bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-100 dark:border-slate-700"
                     : isAnswered 
-                        ? "bg-indigo-50 text-indigo-700 border-indigo-100" 
+                        ? "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800" 
                         : "bg-white dark:bg-slate-900 text-slate-400 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
               )}
             >
@@ -333,15 +333,15 @@ export function QuizPlayer({
             <CardContent className="p-6 sm:p-8 space-y-8">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                    <span className="text-[10px] uppercase font-black tracking-widest text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">
+                    <span className="text-[10px] uppercase font-black tracking-widest text-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 px-2 py-0.5 rounded">
                         Question {currentIndex + 1}
                     </span>
                     {reviewMode && (
                         <span className={cn(
                             "text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded",
                             answers[currentQuestion.id] === (currentQuestion as any).correct_answer 
-                                ? "bg-emerald-50 text-emerald-600" 
-                                : "bg-red-50 text-red-600"
+                                ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400" 
+                                : "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"
                         )}>
                             {answers[currentQuestion.id] === (currentQuestion as any).correct_answer ? "Correct" : "Incorrect"}
                         </span>
@@ -366,11 +366,11 @@ export function QuizPlayer({
                         "w-full flex items-center gap-4 p-4 rounded-2xl border text-left text-sm font-bold transition-all group",
                         reviewMode
                             ? isCorrect
-                                ? "border-emerald-500 bg-emerald-50 text-emerald-900"
+                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-300"
                                 : isUserWrong
-                                    ? "border-red-500 bg-red-50 text-red-900"
+                                    ? "border-red-500 bg-red-50 dark:bg-red-950/20 text-red-900 dark:text-red-300"
                                     : isSelected 
-                                        ? "border-slate-200 bg-slate-50 text-slate-400"
+                                        ? "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-400"
                                         : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600"
                             : isSelected 
                                 ? "border-indigo-600 bg-indigo-50 text-indigo-900 shadow-md shadow-indigo-100" 
@@ -387,7 +387,7 @@ export function QuizPlayer({
                                     : "bg-slate-100 text-slate-400"
                             : isSelected 
                                 ? "bg-indigo-600 text-white" 
-                                : "bg-slate-50 text-slate-400 group-hover:bg-indigo-100 group-hover:text-indigo-600"
+                                : "bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-950/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
                       )}>
                         {String.fromCharCode(65 + optIdx)}
                       </span> 
@@ -435,7 +435,7 @@ export function QuizPlayer({
           <Button 
             size="lg" 
             onClick={() => setCurrentIndex((i) => Math.min(questions.length - 1, i + 1))} 
-            className="rounded-2xl h-12 px-8 font-bold bg-slate-900 hover:bg-black gap-2 shadow-lg shadow-slate-200"
+            className="rounded-xl h-12 px-8 font-bold bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 hover:bg-slate-800 gap-2 shadow-none"
           > 
             Next <ChevronRight className="h-4 w-4" /> 
           </Button>
@@ -444,7 +444,7 @@ export function QuizPlayer({
             size="lg" 
             onClick={() => setShowConfirm(true)} 
             disabled={submitting} 
-            className="rounded-2xl h-12 px-8 font-bold bg-indigo-600 hover:bg-indigo-700 gap-2 shadow-lg shadow-indigo-200"
+            className="rounded-xl h-12 px-8 font-bold bg-indigo-600 hover:bg-indigo-700 gap-2 shadow-none"
           > 
             <Send className="h-4 w-4" /> Finish Quiz 
           </Button>
@@ -452,7 +452,7 @@ export function QuizPlayer({
             <Button 
                 size="lg" 
                 onClick={() => setReviewMode(false)} 
-                className="rounded-2xl h-12 px-8 font-bold bg-slate-900 hover:bg-black gap-2 shadow-lg shadow-slate-200"
+                className="rounded-xl h-12 px-8 font-bold bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 hover:bg-slate-800 gap-2 shadow-none"
             > 
                 Done Reviewing
             </Button>
@@ -467,8 +467,8 @@ export function QuizPlayer({
             <AlertDialogDescription className="text-slate-500 dark:text-slate-400 font-medium pb-2">
               You've answered {answeredCount} out of {questions.length} questions.
               {answeredCount < questions.length && (
-                <span className="block mt-2 p-3 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold border border-amber-100">
-                  ⚠️ {questions.length - answeredCount} question{questions.length - answeredCount > 1 ? "s" : ""} left unanswered.
+                <span className="block mt-2 p-3 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 rounded-xl text-xs font-bold border border-amber-100 dark:border-amber-800 flex items-center gap-2">
+                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> {questions.length - answeredCount} question{questions.length - answeredCount > 1 ? "s" : ""} left unanswered.
                 </span>
               )}
             </AlertDialogDescription>
@@ -478,7 +478,7 @@ export function QuizPlayer({
             <AlertDialogAction 
                 onClick={(e) => { e.preventDefault(); handleSubmit(); }} 
                 disabled={submitting} 
-                className="rounded-2xl h-12 px-8 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-100"
+                className="rounded-xl h-12 px-8 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-none"
             >
                 {submitting ? "Submitting..." : "Yes, Finish Quiz"}
             </AlertDialogAction>

@@ -183,7 +183,7 @@ export default function SuperAdminBillingPage() {
     <div className="p-6 sm:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="rounded-xl bg-slate-900 dark:bg-slate-100 p-2 text-white dark:text-slate-900">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900">
           <CreditCard className="h-5 w-5" />
         </div>
         <div>

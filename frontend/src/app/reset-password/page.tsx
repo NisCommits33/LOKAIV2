@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
                 <CheckCircle2 className="h-8 w-8" />
               </div>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-3">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight mb-3">
               Password Updated
             </h1>
             <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
               <div className="mx-auto h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-4">
                 <Lock className="h-6 w-6 text-slate-900 dark:text-slate-100" />
               </div>
-              <CardTitle className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
+              <CardTitle className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                 New Password
               </CardTitle>
               <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">

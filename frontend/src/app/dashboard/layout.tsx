@@ -243,7 +243,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {filteredNavItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const exactMatchRoutes = ["/dashboard", "/admin", "/super-admin"];
+          const isActive = exactMatchRoutes.includes(item.href)
+            ? pathname === item.href
+            : pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}
@@ -269,7 +272,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               Organization Admin
             </p>
             {filteredAdminItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              const exactMatchRoutes = ["/dashboard", "/admin", "/super-admin"];
+              const isActive = exactMatchRoutes.includes(item.href)
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
                   key={item.href}
@@ -297,7 +303,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               Super Admin
             </p>
             {filteredSuperAdminItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              const exactMatchRoutes = ["/dashboard", "/admin", "/super-admin"];
+              const isActive = exactMatchRoutes.includes(item.href)
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
                   key={item.href}

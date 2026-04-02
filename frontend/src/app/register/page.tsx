@@ -208,6 +208,12 @@ export default function RegisterPage() {
 
           <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-10">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-base font-bold">
+                  L
+                </div>
+                <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">LokAI</span>
+              </div>
               <CardTitle className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                 Create Account
               </CardTitle>

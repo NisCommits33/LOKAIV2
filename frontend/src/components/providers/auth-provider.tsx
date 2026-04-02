@@ -164,18 +164,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /** Signs out the user and clears all local auth state */
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      // Use 'local' scope to clear the session immediately without waiting
+      // for the Supabase server round-trip (which can hang/fail and block logout)
+      await supabase.auth.signOut({ scope: 'local' });
     } catch (error) {
       console.warn("Supabase sign out error:", error);
     } finally {
       setDbUser(null);
       setSupabaseUser(null);
       setSession(null);
-      
-      // Force clearing browser storage to remove stuck auth tokens
-      if (typeof window !== "undefined") {
-         localStorage.removeItem("supabase.auth.token");
-      }
     }
   };
 

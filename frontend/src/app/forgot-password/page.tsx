@@ -65,11 +65,11 @@ export default function ForgotPasswordPage() {
             className="mx-auto max-w-lg text-center"
           >
             <div className="mb-6 flex justify-center">
-              <div className="h-16 w-16 rounded-2xl bg-slate-900 dark:bg-slate-100 flex items-center justify-center text-white dark:text-slate-900">
+              <div className="h-16 w-16 rounded-xl bg-slate-900 dark:bg-slate-100 flex items-center justify-center text-white dark:text-slate-900">
                 <Mail className="h-8 w-8" />
               </div>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-3">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight mb-3">
               Check your email
             </h1>
             <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
 
           <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-10">
-              <CardTitle className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
+              <CardTitle className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                 Reset Password
               </CardTitle>
               <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">

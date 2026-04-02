@@ -304,7 +304,7 @@ export default function ProfileSetupPage() {
                   <Button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     Next Step
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -313,7 +313,7 @@ export default function ProfileSetupPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting || (step === 2 && !organizationId)}
-                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     {isSubmitting ? (
                       <>

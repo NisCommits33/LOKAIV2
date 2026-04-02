@@ -287,14 +287,14 @@ export default function QuizzesPage() {
                             <LayoutGrid className="h-8 w-8" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-lg font-bold text-slate-900">No matching subjects</h3>
-                            <p className="text-slate-500 text-sm font-medium">
-                              We couldn't find "<span className="text-slate-900 font-bold">{search}</span>" in the library. 
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">No matching subjects</h3>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                              We couldn't find "<span className="text-slate-900 dark:text-slate-100 font-bold">{search}</span>" in the library. 
                               Start a personalized practice session on this topic.
                             </p>
                         </div>
                         <CustomChallengeDialog defaultCategory={search}>
-                            <Button className="h-11 px-8 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-none gap-2">
+                            <Button className="h-11 px-8 rounded-xl bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 text-white font-bold hover:bg-slate-800 shadow-none gap-2">
                               <Sparkles className="h-4 w-4" />
                               Build Custom Practice
                             </Button>
@@ -343,7 +343,7 @@ export default function QuizzesPage() {
                 <div className="flex items-center gap-3">
                    <button 
                      onClick={() => setSelectedTopic(null)}
-                     className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm"
+                     className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm"
                    >
                      <ChevronLeft className="h-5 w-5" />
                    </button>
@@ -351,9 +351,9 @@ export default function QuizzesPage() {
                       <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
                          <button onClick={() => setSelectedTopic(null)} className="hover:text-indigo-600">Base Academy</button>
                          <div className="h-1 w-1 rounded-full bg-slate-300" />
-                         <span className="text-slate-900">{selectedTopic}</span>
+                         <span className="text-slate-900 dark:text-slate-100">{selectedTopic}</span>
                       </div>
-                      <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+                      <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                         Subject curriculum explorer
                       </h1>
                    </div>
@@ -366,7 +366,7 @@ export default function QuizzesPage() {
                    availableCategories={Object.keys(groupedData)}
                    availableSubCategories={Object.keys(groupedData[selectedTopic] || {})}
                  >
-                   <Button className="h-11 px-6 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-none gap-2">
+                   <Button className="h-11 px-6 rounded-xl bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 text-white font-bold hover:bg-slate-800 shadow-none gap-2">
                        <Sparkles className="h-4 w-4" />
                        Personalized {selectedTopic} Practice
                    </Button>

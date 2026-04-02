@@ -21,8 +21,8 @@ interface BenchmarkingCardProps {
 export function BenchmarkingCard({ data, loading }: BenchmarkingCardProps) {
   if (loading) {
     return (
-      <Card className="border-none shadow-xl bg-white overflow-hidden h-full animate-pulse">
-        <CardContent className="p-8 h-[250px] bg-slate-50/50" />
+      <Card className="border-none shadow-xl bg-white dark:bg-slate-900 overflow-hidden h-full animate-pulse">
+        <CardContent className="p-8 h-[250px] bg-slate-50/50 dark:bg-slate-800/50" />
       </Card>
     );
   }
@@ -59,11 +59,9 @@ export function BenchmarkingCard({ data, loading }: BenchmarkingCardProps) {
 
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6">
             <div className="relative">
-               <img 
-                 src="https://img.icons8.com/isometric/100/medal.png" 
-                 alt="Rank" 
-                 className="h-16 w-16 mb-2 opacity-50 contrast-125"
-               />
+               <div className="h-16 w-16 mb-2 flex items-center justify-center opacity-60">
+                 <Trophy className="h-12 w-12 text-amber-400" />
+               </div>
                <div className="absolute inset-x-0 bottom-0 text-3xl font-black text-white italic drop-shadow-lg">
                  #{data.rank}
                </div>
