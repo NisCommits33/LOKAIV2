@@ -153,30 +153,30 @@ export default function BillingPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           Billing & Subscription
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
           Manage your organization&apos;s subscription plan and payment history.
         </p>
       </div>
 
       {/* Current Plan Card */}
       {billing?.subscription && currentPlan && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+              <div className="h-12 w-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 flex items-center justify-center">
                 <CreditCard className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                   Current Plan:{" "}
-                  <span className="text-indigo-600">
+                  <span className="text-indigo-600 dark:text-indigo-400">
                     {currentPlan.display_name}
                   </span>
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {billing.subscription.billing_cycle === "yearly"
                     ? "Yearly"
                     : "Monthly"}{" "}
@@ -192,7 +192,7 @@ export default function BillingPage() {
               </div>
             </div>
             {billing.isExpired && (
-              <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 px-4 py-2 rounded-lg">
                 <AlertCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   Subscription expired — please renew
@@ -239,7 +239,7 @@ export default function BillingPage() {
       {/* Billing Cycle Toggle */}
       <div className="flex items-center justify-center gap-4">
         <span
-          className={`text-sm font-medium ${billingCycle === "monthly" ? "text-slate-900" : "text-slate-400"}`}
+          className={`text-sm font-medium ${billingCycle === "monthly" ? "text-slate-900 dark:text-slate-100" : "text-slate-400"}`}
         >
           Monthly
         </span>
@@ -248,7 +248,7 @@ export default function BillingPage() {
             setBillingCycle((c) => (c === "monthly" ? "yearly" : "monthly"))
           }
           className={`relative w-14 h-7 rounded-full transition-colors ${
-            billingCycle === "yearly" ? "bg-indigo-600" : "bg-slate-300"
+            billingCycle === "yearly" ? "bg-indigo-600" : "bg-slate-300 dark:bg-slate-600"
           }`}
         >
           <span
@@ -258,7 +258,7 @@ export default function BillingPage() {
           />
         </button>
         <span
-          className={`text-sm font-medium ${billingCycle === "yearly" ? "text-slate-900" : "text-slate-400"}`}
+          className={`text-sm font-medium ${billingCycle === "yearly" ? "text-slate-900 dark:text-slate-100" : "text-slate-400"}`}
         >
           Yearly{" "}
           <span className="text-green-600 text-xs font-semibold">
@@ -281,12 +281,12 @@ export default function BillingPage() {
           return (
             <div
               key={plan.id}
-              className={`relative bg-white rounded-xl border-2 p-6 flex flex-col transition-all ${
+              className={`relative bg-white dark:bg-slate-900 rounded-xl border-2 p-6 flex flex-col transition-all ${
                 isPopular
-                  ? "border-indigo-500 shadow-lg shadow-indigo-100"
+                  ? "border-indigo-500 shadow-lg shadow-indigo-100 dark:shadow-indigo-950/30"
                   : isCurrentPlan
-                    ? "border-green-300 bg-green-50/30"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-green-300 dark:border-green-700 bg-green-50/30 dark:bg-green-950/20"
+                    : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
               }`}
             >
               {isPopular && (
@@ -299,26 +299,25 @@ export default function BillingPage() {
                 <div
                   className={`h-10 w-10 rounded-lg flex items-center justify-center ${
                     isPopular
-                      ? "bg-indigo-100 text-indigo-700"
-                      : "bg-slate-100 text-slate-600"
+                      ? "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >
                   <PlanIcon className="h-5 w-5" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                   {plan.display_name}
                 </h3>
               </div>
 
-              <p className="text-sm text-slate-500 mb-4">{plan.description}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{plan.description}</p>
 
               <div className="mb-6">
-                <span className="text-3xl font-extrabold text-slate-900">
+                <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
                   {price === 0 ? "Free" : formatNPR(price)}
                 </span>
                 {price > 0 && (
-                  <span className="text-slate-500 text-sm">
-                    /{billingCycle === "yearly" ? "year" : "month"}
+                  <span className="text-slate-500 dark:text-slate-400 text-sm">
                   </span>
                 )}
               </div>
@@ -349,14 +348,14 @@ export default function BillingPage() {
               {isCurrentPlan ? (
                 <button
                   disabled
-                  className="w-full py-2.5 rounded-lg bg-green-100 text-green-700 font-semibold text-sm cursor-default"
+                  className="w-full py-2.5 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-semibold text-sm cursor-default"
                 >
                   Current Plan
                 </button>
               ) : plan.name === "free" ? (
                 <button
                   disabled
-                  className="w-full py-2.5 rounded-lg bg-slate-100 text-slate-400 font-semibold text-sm cursor-default"
+                  className="w-full py-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 font-semibold text-sm cursor-default"
                 >
                   Default
                 </button>
@@ -367,7 +366,7 @@ export default function BillingPage() {
                   className={`w-full py-2.5 rounded-lg font-semibold text-sm transition-colors ${
                     isPopular
                       ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                      : "bg-slate-900 hover:bg-slate-800 text-white"
+                      : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900"
                   } disabled:opacity-50`}
                 >
                   {processingPlanId === plan.id
@@ -382,16 +381,16 @@ export default function BillingPage() {
 
       {/* Payment History */}
       {billing?.transactions && billing.transactions.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-          <div className="p-6 border-b border-slate-100">
-            <h2 className="text-lg font-semibold text-slate-900">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-700">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Payment History
             </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500 border-b border-slate-100">
+                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                   <th className="px-6 py-3 font-medium">Date</th>
                   <th className="px-6 py-3 font-medium">Amount</th>
                   <th className="px-6 py-3 font-medium">Gateway</th>
@@ -403,21 +402,21 @@ export default function BillingPage() {
                 {billing.transactions.map((txn) => (
                   <tr
                     key={txn.id}
-                    className="border-b border-slate-50 hover:bg-slate-50"
+                    className="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
-                    <td className="px-6 py-4 text-slate-900">
+                    <td className="px-6 py-4 text-slate-900 dark:text-slate-100">
                       {formatDate(txn.created_at)}
                     </td>
-                    <td className="px-6 py-4 font-medium text-slate-900">
+                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
                       {formatNPR(txn.total_amount)}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 uppercase text-xs font-semibold">
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400 uppercase text-xs font-semibold">
                       {txn.gateway}
                     </td>
                     <td className="px-6 py-4">
                       <PaymentStatusBadge status={txn.status} />
                     </td>
-                    <td className="px-6 py-4 text-slate-500 font-mono text-xs">
+                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400 font-mono text-xs">
                       {txn.gateway_transaction_id || "—"}
                     </td>
                   </tr>
@@ -452,13 +451,13 @@ function UsageMeter({
   const isOverLimit = percentage >= 100;
 
   return (
-    <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
       <div className="flex items-center gap-3 mb-3">
-        <Icon className="h-5 w-5 text-slate-500" />
-        <span className="text-sm font-medium text-slate-700">{label}</span>
+        <Icon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
       </div>
       <div className="flex items-baseline gap-1 mb-2">
-        <span className="text-2xl font-bold text-slate-900">
+        <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">
           {used}
           {unit && <span className="text-sm font-normal ml-0.5">{unit}</span>}
         </span>
@@ -467,7 +466,7 @@ function UsageMeter({
         </span>
       </div>
       {!isUnlimited && (
-        <div className="w-full bg-slate-100 rounded-full h-2">
+        <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
           <div
             className={`h-2 rounded-full transition-all ${
               isOverLimit
@@ -498,7 +497,7 @@ function PlanFeature({
 }) {
   const FeatureIcon = Icon || Check;
   return (
-    <li className="flex items-center gap-2 text-sm text-slate-600">
+    <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
       <FeatureIcon className="h-4 w-4 text-green-500 flex-shrink-0" />
       {label}
     </li>
@@ -507,10 +506,10 @@ function PlanFeature({
 
 function PaymentStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    completed: "bg-green-100 text-green-700",
-    initiated: "bg-amber-100 text-amber-700",
-    failed: "bg-red-100 text-red-700",
-    refunded: "bg-slate-100 text-slate-600",
+    completed: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+    initiated: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
+    failed: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
+    refunded: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
   };
 
   return (

@@ -20,6 +20,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/layout/Header";
@@ -69,17 +70,25 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
         <ErrorBoundary>
           <QueryProvider>
-            <AuthProvider>
-              <TooltipProvider>
-                <Header />
-                <main className="flex-1">{children}</main>
-                <Footer />
-              </TooltipProvider>
-            </AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <AuthProvider>
+                <TooltipProvider>
+                  <Header />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                </TooltipProvider>
+              </AuthProvider>
+            </ThemeProvider>
           </QueryProvider>
         </ErrorBoundary>
         <Toaster position="top-right" richColors closeButton />

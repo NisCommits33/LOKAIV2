@@ -1,16 +1,3 @@
-/**
- * dashboard/quizzes/history/page.tsx — Quiz History
- *
- * Lists the user's past quiz attempts with:
- * - Quiz title, category, difficulty
- * - Score and percentage
- * - Date taken
- * - Link to review results
- * - Pagination via load-more
- *
- * @module app/dashboard/quizzes/history
- */
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -23,17 +10,17 @@ import { FullPageSpinner } from "@/components/loading";
 import {
   ArrowLeft,
   History,
-  Eye,
   Trophy,
 } from "lucide-react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import type { QuizAttemptWithQuiz, QuizDifficulty } from "@/types/database";
 import { cn } from "@/lib/utils";
 
 const difficultyColors: Record<QuizDifficulty, string> = {
-  easy: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  medium: "bg-amber-50 text-amber-700 border-amber-100",
-  hard: "bg-red-50 text-red-700 border-red-100",
+  easy: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
+  medium: "bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-800",
+  hard: "bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800",
 };
 
 const PAGE_SIZE = 20;
@@ -80,24 +67,24 @@ export default function QuizHistoryPage() {
   if (authLoading || loading) return <FullPageSpinner />;
 
   return (
-    <div className="p-6 sm:p-8 max-w-3xl mx-auto space-y-6">
+    <div className="p-6 sm:p-8 max-w-4xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push("/dashboard/quizzes")}
-            className="gap-1 text-slate-500"
+            className="h-10 w-10 p-0 rounded-full border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-slate-900 shadow-sm"
           >
-            <ArrowLeft className="h-4 w-4" /> Back
+            <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
               Quiz History
             </h1>
-            <p className="text-sm text-slate-500 font-medium">
-              {total} attempt{total !== 1 ? "s" : ""} total
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+              {total} attempt{total !== 1 ? "s" : ""} recorded
             </p>
           </div>
         </div>
@@ -105,131 +92,118 @@ export default function QuizHistoryPage() {
 
       {/* Attempts list */}
       {attempts.length === 0 ? (
-        <div className="text-center py-20 space-y-3">
-          <History className="h-10 w-10 text-slate-300 mx-auto" />
-          <p className="text-slate-500 font-medium">No quiz attempts yet</p>
-          <p className="text-sm text-slate-400">
-            Start a quiz to see your history here
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/dashboard/quizzes")}
-            className="mt-2"
-          >
-            Browse Quizzes
-          </Button>
-        </div>
+        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800 bg-transparent">
+          <CardContent className="text-center py-20 space-y-4">
+            <div className="h-16 w-16 bg-slate-100 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto">
+              <History className="h-8 w-8 text-slate-300 dark:text-slate-600" />
+            </div>
+            <div>
+              <p className="text-slate-900 dark:text-slate-100 font-bold">No quiz history found</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Complete your first quiz to track your progress here.
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push("/dashboard/quizzes")}
+              className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              Start Learning Now
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="space-y-3">
-          {attempts.map((attempt, i) => {
-            const percentage = Math.round(
-              (attempt.score / attempt.total_questions) * 100
-            );
-            const quizMeta = attempt.gk_quizzes;
-            const date = new Date(attempt.created_at).toLocaleDateString(
-              "en-US",
-              { month: "short", day: "numeric", year: "numeric" }
-            );
-            const time = new Date(attempt.created_at).toLocaleTimeString(
-              "en-US",
-              { hour: "2-digit", minute: "2-digit" }
-            );
+        <div className="space-y-4">
+          <div className="grid gap-4">
+            {attempts.map((attempt, i) => {
+              const percentage = Math.round(
+                (attempt.score / attempt.total_questions) * 100
+              );
+              const quizMeta = attempt.gk_quizzes;
+              const date = new Date(attempt.created_at).toLocaleDateString(
+                "en-US",
+                { month: "short", day: "numeric" }
+              );
+              const time = new Date(attempt.created_at).toLocaleTimeString(
+                "en-US",
+                { hour: "2-digit", minute: "2-digit" }
+              );
 
-            return (
-              <motion.div
-                key={attempt.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.03 }}
-              >
-                <Card className="shadow-none border border-slate-100 overflow-hidden hover:border-slate-200 transition-colors">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    {/* Score circle */}
-                    <div
-                      className={cn(
-                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2",
-                        percentage >= 80
-                          ? "border-emerald-200 bg-emerald-50"
-                          : percentage >= 60
-                            ? "border-amber-200 bg-amber-50"
-                            : "border-red-200 bg-red-50"
-                      )}
-                    >
-                      <span
+              return (
+                <motion.div
+                  key={attempt.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                >
+                  <Card className="group border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-100 dark:hover:border-indigo-500/30 hover:shadow-lg dark:hover:shadow-indigo-500/10 transition-all duration-300 rounded-2xl overflow-hidden cursor-pointer">
+                    <Link href={`/dashboard/quizzes/${attempt.quiz_id}/results/${attempt.id}`} className="flex items-center gap-4 p-5">
+                      {/* Score ring */}
+                      <div
                         className={cn(
-                          "text-sm font-black",
+                          "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 transition-all group-hover:scale-105",
                           percentage >= 80
-                            ? "text-emerald-600"
+                            ? "border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/30"
                             : percentage >= 60
-                              ? "text-amber-600"
-                              : "text-red-600"
+                              ? "border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-950/30"
+                              : "border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-950/30"
                         )}
                       >
-                        {percentage}%
-                      </span>
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <p className="text-sm font-bold text-slate-900 truncate">
-                        {quizMeta?.title ?? "Unknown Quiz"}
-                      </p>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {quizMeta?.category && (
-                          <Badge
-                            variant="secondary"
-                            className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[9px] font-bold uppercase tracking-wider"
-                          >
-                            {quizMeta.category}
-                          </Badge>
-                        )}
-                        {quizMeta?.difficulty && (
-                          <Badge
-                            variant="secondary"
-                            className={`border text-[9px] font-bold uppercase tracking-wider ${difficultyColors[quizMeta.difficulty]}`}
-                          >
-                            {quizMeta.difficulty}
-                          </Badge>
-                        )}
-                        <span className="text-xs text-slate-400 font-medium">
-                          {attempt.score}/{attempt.total_questions} correct
+                        <span
+                          className={cn(
+                            "text-base font-black",
+                            percentage >= 80
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : percentage >= 60
+                                ? "text-amber-600 dark:text-amber-400"
+                                : "text-red-600 dark:text-red-400"
+                          )}
+                        >
+                          {percentage}%
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">
-                        {date} at {time}
-                      </p>
-                    </div>
 
-                    {/* View details */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() =>
-                        router.push(
-                          `/dashboard/quizzes/${attempt.quiz_id}/results/${attempt.id}`
-                        )
-                      }
-                      className="gap-1 text-slate-500 shrink-0"
-                    >
-                      <Eye className="h-4 w-4" /> Review
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
+                      {/* Details */}
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                          {quizMeta?.title ?? "Unknown Quiz"}
+                        </h3>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {quizMeta?.category && (
+                            <Badge
+                              variant="secondary"
+                              className="bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 text-[10px] font-bold uppercase tracking-wider"
+                            >
+                              {quizMeta.category}
+                            </Badge>
+                          )}
+                          <span className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                             <Trophy className="h-3 w-3" /> {attempt.score}/{attempt.total_questions}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                         <p className="text-xs font-black text-slate-900 dark:text-slate-200">{date}</p>
+                         <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{time}</p>
+                      </div>
+                    </Link>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
 
           {/* Load more */}
           {attempts.length < total && (
-            <div className="text-center pt-2">
+            <div className="text-center pt-6">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={loadMore}
                 disabled={loadingMore}
+                className="px-8 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400"
               >
-                {loadingMore ? "Loading..." : "Load More"}
+                {loadingMore ? "Loading..." : "Load More Activity"}
               </Button>
             </div>
           )}

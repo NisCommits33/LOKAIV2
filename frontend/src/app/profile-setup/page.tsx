@@ -142,7 +142,7 @@ export default function ProfileSetupPage() {
   };
 
   return (
-    <div className="py-12 bg-white flex-1 min-h-screen">
+    <div className="py-12 bg-white dark:bg-slate-950 flex-1 min-h-screen">
       <Container>
         <div className="mx-auto max-w-2xl">
           <div className="mb-10 flex items-center justify-end">
@@ -151,31 +151,31 @@ export default function ProfileSetupPage() {
                 <div
                   key={i}
                   className={`h-1.5 w-8 rounded-full transition-all duration-500 ${
-                    step >= i + 1 ? "bg-slate-900" : "bg-slate-100"
+                    step >= i + 1 ? "bg-slate-900 dark:bg-slate-100" : "bg-slate-100 dark:bg-slate-800"
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
-            <CardHeader className="pt-12 px-10 bg-slate-50/50 border-b border-slate-100">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
+            <CardHeader className="pt-12 px-10 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3 mb-6">
-                <div className="h-10 w-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
                   {step === 1 ? (
-                    <User className="h-5 w-5 text-slate-900" />
+                    <User className="h-5 w-5 text-slate-900 dark:text-slate-100" />
                   ) : (
-                    <Building2 className="h-5 w-5 text-slate-900" />
+                    <Building2 className="h-5 w-5 text-slate-900 dark:text-slate-100" />
                   )}
                 </div>
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                   Step {step} of {totalSteps}
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight">
+              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                 {step === 1 ? "Personal Identity" : "Organization Details"}
               </CardTitle>
-              <CardDescription className="text-sm font-medium pt-1 text-slate-500">
+              <CardDescription className="text-sm font-medium pt-1 text-slate-500 dark:text-slate-400">
                 {step === 1
                   ? "Tell us about yourself to set up your profile."
                   : "Link your account to your government organization."}
@@ -197,7 +197,7 @@ export default function ProfileSetupPage() {
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="full_name"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Full Name
                         </Label>
@@ -205,7 +205,7 @@ export default function ProfileSetupPage() {
                           id="full_name"
                           {...register("full_name")}
                           placeholder="Enter your full name"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                         />
                         {errors.full_name && (
                           <p className="text-sm text-red-500 font-medium pl-1">
@@ -214,7 +214,7 @@ export default function ProfileSetupPage() {
                         )}
                       </div>
 
-                      <div className="space-y-3 rounded-xl border border-slate-100 p-5 bg-slate-50/30">
+                      <div className="space-y-3 rounded-xl border border-slate-100 dark:border-slate-800 p-5 bg-slate-50/30 dark:bg-slate-900/30">
                         <div className="flex items-center gap-3">
                           <input
                             type="checkbox"
@@ -224,7 +224,7 @@ export default function ProfileSetupPage() {
                           />
                           <Label
                             htmlFor="wants_verification"
-                            className="text-sm font-semibold text-slate-700 leading-snug"
+                            className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-snug"
                           >
                             I am a government employee and want to verify my
                             identity
@@ -271,7 +271,7 @@ export default function ProfileSetupPage() {
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="employee_id"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Employee ID (Optional)
                         </Label>
@@ -279,7 +279,7 @@ export default function ProfileSetupPage() {
                           id="employee_id"
                           {...register("employee_id")}
                           placeholder="Enter your employee ID"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                         />
                       </div>
                     </motion.div>
@@ -294,7 +294,7 @@ export default function ProfileSetupPage() {
                     variant="outline"
                     onClick={() => setStep(1)}
                     disabled={isSubmitting}
-                    className="h-12 px-6 rounded-xl border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-all"
+                    className="h-12 px-6 rounded-xl border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
                   >
                     Back
                   </Button>
@@ -304,7 +304,7 @@ export default function ProfileSetupPage() {
                   <Button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="flex-1 h-12 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     Next Step
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -313,7 +313,7 @@ export default function ProfileSetupPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting || (step === 2 && !organizationId)}
-                    className="flex-1 h-12 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     {isSubmitting ? (
                       <>
@@ -335,7 +335,7 @@ export default function ProfileSetupPage() {
           </Card>
 
           <div className="mt-8 flex items-center justify-center gap-3">
-            <ShieldCheck className="h-4 w-4 text-slate-300" />
+            <ShieldCheck className="h-4 w-4 text-slate-600" />
             <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">
               Secured by LokAI Governance Protocol
             </p>

@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
   if (error) {
     console.error("Failed to record custom result:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to save custom quiz result" }, { status: 500 });
   }
 
   // Trigger cache revalidation for analytics

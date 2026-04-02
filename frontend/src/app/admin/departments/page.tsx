@@ -205,11 +205,11 @@ export default function AdminDepartmentsPage() {
 
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-8 pb-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-700 pb-6">
         <div>
           <div className="mt-1"><BackButton /></div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-4">Manage Departments</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 mt-4">Manage Departments</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Create and organize the departments mapping your organization's hierarchy. 
           </p>
         </div>
@@ -226,19 +226,19 @@ export default function AdminDepartmentsPage() {
         </div>
       </div>
 
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 sm:p-4">
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2 sm:p-4">
         {departments.length === 0 ? (
           <div className="text-center py-12 px-4">
             <Layout className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-medium text-slate-900">No departments found</h3>
-            <p className="text-slate-500 mt-1">Get started by creating your first department.</p>
+            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">No departments found</h3>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Get started by creating your first department.</p>
             <Button onClick={openAddModal} variant="outline" className="mt-4">
               <Plus className="h-4 w-4 mr-2" /> Create Department
             </Button>
           </div>
         ) : (
           <div>
-            <div className="flex px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
+            <div className="flex px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">
               <div className="w-10"></div>
               <div className="flex-1">Department Name</div>
               <div className="w-24">Code</div>
@@ -250,19 +250,19 @@ export default function AdminDepartmentsPage() {
                 <Reorder.Item 
                   key={dept.id} 
                   value={dept} 
-                  className={`bg-white border rounded-lg shadow-sm p-4 flex items-center gap-4 transition-colors ${!dept.is_active ? 'opacity-60 grayscale' : ''}`}
+                  className={`bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-sm p-4 flex items-center gap-4 transition-colors ${!dept.is_active ? 'opacity-60 grayscale' : ''}`}
                 >
-                  <div className="cursor-grab text-slate-300 hover:text-slate-500 active:cursor-grabbing w-10 flex justify-center shrink-0">
+                  <div className="cursor-grab text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 active:cursor-grabbing w-10 flex justify-center shrink-0">
                     <GripVertical className="h-5 w-5" />
                   </div>
-                  <div className="flex-1 font-semibold text-slate-800">
+                  <div className="flex-1 font-semibold text-slate-800 dark:text-slate-200">
                     {dept.name}
                   </div>
-                  <div className="w-24 font-mono text-xs text-slate-500">
+                  <div className="w-24 font-mono text-xs text-slate-500 dark:text-slate-400">
                     {dept.code}
                   </div>
                   <div className="w-20">
-                    <Badge variant="outline" className={dept.is_active ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-200 text-slate-500 bg-slate-50"}>
+                    <Badge variant="outline" className={dept.is_active ? "border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30" : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800"}>
                       {dept.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>

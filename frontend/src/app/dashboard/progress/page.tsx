@@ -88,23 +88,23 @@ export default function ProgressDashboard() {
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen">
       <div className="p-4 sm:p-8 max-w-[1500px] mx-auto space-y-8 pb-24">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm">
                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Live Analytics Suite</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Live Analytics Suite</span>
             </div>
             <div>
               <div className="flex items-center gap-4">
                 <div className="mt-1"><BackButton /></div>
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight italic">
+                <h1 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight italic">
                   Performance Hub
                 </h1>
               </div>
-              <p className="text-slate-500 font-medium ml-14 mt-1">
+              <p className="text-slate-500 dark:text-slate-400 font-medium ml-14 mt-1">
                 Deep insights, predictive forecasting, and organizational benchmarking.
               </p>
             </div>
@@ -116,16 +116,16 @@ export default function ProgressDashboard() {
         </div>
 
         {isBrandNewUser ? (
-           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 p-20 text-center max-w-2xl mx-auto mt-12 relative overflow-hidden group">
+           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-20 text-center max-w-2xl mx-auto mt-12 relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
-              <div className="bg-slate-50 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 transform group-hover:rotate-12 transition-transform duration-500">
+              <div className="bg-slate-50 dark:bg-slate-800 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 transform group-hover:rotate-12 transition-transform duration-500">
                   <LayoutGrid className="h-12 w-12 text-indigo-500" />
               </div>
-              <h2 className="text-3xl font-black text-slate-900 mb-4 italic tracking-tight">Data Collection Pending</h2>
-              <p className="text-slate-500 mb-10 max-w-sm mx-auto font-medium leading-relaxed">Our advanced analysis engine requires at least one completed quiz to build your learning persona and generate performance forecasts.</p>
+              <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-4 italic tracking-tight">Data Collection Pending</h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-10 max-w-sm mx-auto font-medium leading-relaxed">Our advanced analysis engine requires at least one completed quiz to build your learning persona and generate performance forecasts.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/dashboard/org-documents">
-                      <Button className="bg-slate-900 hover:bg-slate-800 text-white h-14 px-10 rounded-2xl font-black uppercase tracking-widest w-full sm:w-auto shadow-lg">Start Learning</Button>
+                      <Button className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 hover:bg-slate-800 text-white h-14 px-10 rounded-2xl font-black uppercase tracking-widest w-full sm:w-auto shadow-lg">Start Learning</Button>
                   </Link>
               </div>
            </motion.div>
@@ -151,13 +151,13 @@ export default function ProgressDashboard() {
               </div>
 
               <div className="lg:col-span-3 flex flex-col gap-6">
-                  <Card className="border-none shadow-xl bg-white flex-1 relative overflow-hidden group">
+                  <Card className="border-none shadow-xl bg-white dark:bg-slate-900 flex-1 relative overflow-hidden group">
                       <CardContent className="p-8 h-full flex flex-col justify-center">
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Readiness Baseline</p>
-                          <h3 className="text-5xl font-black text-slate-900 tracking-tighter italic">{baseData.readiness_score}%</h3>
+                          <h3 className="text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tighter italic">{baseData.readiness_score}%</h3>
                           <div className="mt-6 flex items-center gap-2">
                              <TrendingUp className="h-4 w-4 text-emerald-500" />
-                             <span className="text-xs font-bold text-emerald-600">Current Standing</span>
+                             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Current Standing</span>
                           </div>
                       </CardContent>
                   </Card>
@@ -177,19 +177,19 @@ export default function ProgressDashboard() {
 
               {/* Row 3: Focus Areas (Bottom Row) */}
               <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <Card className="border-none shadow-xl bg-white overflow-hidden">
-                    <CardHeader className="bg-slate-50 border-b border-slate-100">
-                        <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-900">Performance by Topic</CardTitle>
+                 <Card className="border-none shadow-xl bg-white dark:bg-slate-900 overflow-hidden">
+                    <CardHeader className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-slate-100">Performance by Topic</CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
                         <div className="space-y-6">
                            {baseData.progress_by_category.slice(0, 5).map((cat, idx) => (
                               <div key={idx} className="space-y-2">
                                  <div className="flex justify-between items-center">
-                                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wide">{cat.category.replace(/_/g, ' ')}</span>
-                                    <span className="text-xs font-black text-slate-900">{cat.accuracy}%</span>
+                                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{cat.category.replace(/_/g, ' ')}</span>
+                                    <span className="text-xs font-black text-slate-900 dark:text-slate-100">{cat.accuracy}%</span>
                                  </div>
-                                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                 <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                                      <motion.div 
                                         initial={{ width: 0 }}
                                         whileInView={{ width: `${cat.accuracy}%` }}
@@ -203,27 +203,27 @@ export default function ProgressDashboard() {
                     </CardContent>
                  </Card>
 
-                 <Card className="border-none shadow-xl bg-white overflow-hidden">
-                    <CardHeader className="bg-slate-50 border-b border-slate-100">
-                        <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-900">Priority Study Areas</CardTitle>
+                 <Card className="border-none shadow-xl bg-white dark:bg-slate-900 overflow-hidden">
+                    <CardHeader className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-slate-100">Priority Study Areas</CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
                         <div className="grid gap-4">
                            {baseData.weak_areas.length > 0 ? (
                                baseData.weak_areas.slice(0, 4).map((area, idx) => (
-                                   <div key={idx} className="flex items-center justify-between p-4 bg-red-50/50 border border-red-100 rounded-xl">
+                                   <div key={idx} className="flex items-center justify-between p-4 bg-red-50/50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl">
                                       <div className="flex items-center gap-3">
-                                         <div className="h-8 w-8 rounded-lg bg-red-100 flex items-center justify-center text-red-600">
+                                         <div className="h-8 w-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
                                             <Target className="h-4 w-4" />
                                          </div>
-                                         <span className="text-xs font-bold text-slate-900 uppercase tracking-tight">{area.category.replace(/_/g, ' ')}</span>
+                                         <span className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tight">{area.category.replace(/_/g, ' ')}</span>
                                       </div>
-                                      <span className="text-[10px] font-black text-red-600 bg-red-100 px-2.5 py-1 rounded-full">{area.accuracy}% Accuracy</span>
+                                      <span className="text-[10px] font-black text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 px-2.5 py-1 rounded-full">{area.accuracy}% Accuracy</span>
                                    </div>
                                ))
                            ) : (
                                <div className="py-12 text-center">
-                                  <p className="text-slate-400 font-medium">No weak areas identified. You're balanced!</p>
+                                  <p className="text-slate-400 dark:text-slate-500 font-medium">No weak areas identified. You're balanced!</p>
                                </div>
                            )}
                         </div>

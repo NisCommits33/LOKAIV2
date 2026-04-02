@@ -79,14 +79,14 @@ export default function CrossOrgUsersPage() {
     <div className="p-6 sm:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-           <div className="rounded-xl bg-slate-900 p-2 text-white">
+           <div className="rounded-xl bg-slate-900 dark:bg-slate-100 p-2 text-white dark:text-slate-900">
               <Users className="h-5 w-5" />
            </div>
            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                  Global User Directory
               </h1>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                  Search all verified members across any organization and manage hierarchical roles.
               </p>
            </div>
@@ -94,7 +94,7 @@ export default function CrossOrgUsersPage() {
       </div>
 
       <Card>
-        <CardHeader className="border-b bg-slate-50/50">
+        <CardHeader className="border-b bg-slate-50/50 dark:bg-slate-800/50">
            <div className="flex items-center gap-2">
               <Search className="h-4 w-4 text-slate-400" />
               <Input
@@ -130,7 +130,7 @@ export default function CrossOrgUsersPage() {
                   ))
                 ) : filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500 dark:text-slate-400">
                       No users matched your search.
                     </TableCell>
                   </TableRow>
@@ -138,14 +138,14 @@ export default function CrossOrgUsersPage() {
                   filteredUsers.map((u) => (
                     <TableRow key={u.id}>
                       <TableCell>
-                        <p className="font-medium text-slate-900">{u.full_name}</p>
-                        <p className="text-sm text-slate-500">{u.email}</p>
+                        <p className="font-medium text-slate-900 dark:text-slate-100">{u.full_name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{u.email}</p>
                       </TableCell>
                       <TableCell>
                         {u.organization?.name ? (
                            <div className="whitespace-nowrap">
-                              <p className="font-medium text-slate-700">{u.organization.name}</p>
-                              <p className="text-xs text-slate-500">{u.department?.name || "No Dept"} • {u.job_level?.name || "No Level"}</p>
+                              <p className="font-medium text-slate-700 dark:text-slate-300">{u.organization.name}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">{u.department?.name || "No Dept"} • {u.job_level?.name || "No Level"}</p>
                            </div>
                         ) : (
                           <span className="text-slate-400 italic">No Organization</span>
@@ -169,7 +169,7 @@ export default function CrossOrgUsersPage() {
                                size="sm"
                                className={cn(
                                  "whitespace-nowrap",
-                                 u.role === 'employee' ? 'text-blue-600 border-blue-200 hover:bg-blue-50' : 'text-red-600 hover:bg-red-50'
+                                 u.role === 'employee' ? 'text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950/30' : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30'
                                )}
                                onClick={() => handleRoleToggle(u.id, u.role)}
                             >

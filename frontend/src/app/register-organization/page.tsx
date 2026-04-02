@@ -230,7 +230,7 @@ export default function OrgRegistrationPage() {
   const StepIcon = stepIcons[step - 1];
 
   return (
-    <div className="py-12 bg-white flex-1 min-h-screen">
+    <div className="py-12 bg-white dark:bg-slate-950 flex-1 min-h-screen">
       <Container>
         <div className="mx-auto max-w-2xl">
           <div className="mb-8">
@@ -238,7 +238,7 @@ export default function OrgRegistrationPage() {
               type="button"
               variant="ghost"
               onClick={() => router.push("/login")}
-              className="text-slate-500 hover:bg-slate-50 hover:text-slate-900 -ml-4"
+              className="text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 -ml-4"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Login
@@ -247,33 +247,33 @@ export default function OrgRegistrationPage() {
 
           {/* Progress */}
           <div className="mb-10 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">Register Organization</h2>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-slate-50">Register Organization</h2>
             <div className="flex items-center gap-2">
               {Array.from({ length: totalSteps }).map((_, i) => (
                 <div
                   key={i}
                   className={`h-1.5 w-8 rounded-full transition-all duration-500 ${
-                    step >= i + 1 ? "bg-slate-900" : "bg-slate-100"
+                    step >= i + 1 ? "bg-slate-900 dark:bg-slate-100" : "bg-slate-100 dark:bg-slate-800"
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
-            <CardHeader className="pt-12 px-10 bg-slate-50/50 border-b border-slate-100">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
+            <CardHeader className="pt-12 px-10 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3 mb-6">
-                <div className="h-10 w-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                  <StepIcon className="h-5 w-5 text-slate-900" />
+                <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
+                  <StepIcon className="h-5 w-5 text-slate-900 dark:text-slate-100" />
                 </div>
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                   Step {step} of {totalSteps}
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight">
+              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                 {stepTitles[step - 1]}
               </CardTitle>
-              <CardDescription className="text-sm font-medium pt-1 text-slate-500">
+              <CardDescription className="text-sm font-medium pt-1 text-slate-500 dark:text-slate-400">
                 {stepDescriptions[step - 1]}
               </CardDescription>
             </CardHeader>
@@ -300,13 +300,13 @@ export default function OrgRegistrationPage() {
                       className="space-y-5"
                     >
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                        <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                           Organization Name *
                         </Label>
                         <Input
                           {...register("name")}
                           placeholder="e.g., Ministry of Education"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                         />
                         {errors.name && (
                           <p className="text-sm text-red-500 font-medium pl-1">{errors.name.message}</p>
@@ -315,13 +315,13 @@ export default function OrgRegistrationPage() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Organization Code *
                           </Label>
                           <Input
                             {...register("code")}
                             placeholder="e.g., MOE"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none uppercase"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none uppercase"
                           />
                           {errors.code && (
                             <p className="text-sm text-red-500 font-medium pl-1">{errors.code.message}</p>
@@ -329,14 +329,14 @@ export default function OrgRegistrationPage() {
                         </div>
 
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Contact Email *
                           </Label>
                           <Input
                             {...register("contact_email")}
                             type="email"
                             placeholder="org@example.gov.np"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                           {errors.contact_email && (
                             <p className="text-sm text-red-500 font-medium pl-1">{errors.contact_email.message}</p>
@@ -345,47 +345,47 @@ export default function OrgRegistrationPage() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                        <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                           Description
                         </Label>
                         <Textarea
                           {...register("description")}
                           placeholder="Brief description of the organization"
-                          className="rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none min-h-[80px]"
+                          className="rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none min-h-[80px]"
                         />
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                        <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                           Address
                         </Label>
                         <Input
                           {...register("address")}
                           placeholder="Organization address"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Phone
                           </Label>
                           <Input
                             {...register("contact_phone")}
                             placeholder="+977-01-XXXXXXX"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                         </div>
 
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Website
                           </Label>
                           <Input
                             {...register("website")}
                             placeholder="https://example.gov.np"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                           {errors.website && (
                             <p className="text-sm text-red-500 font-medium pl-1">{errors.website.message}</p>
@@ -406,13 +406,13 @@ export default function OrgRegistrationPage() {
                       className="space-y-5"
                     >
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                        <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                           Your Full Name *
                         </Label>
                         <Input
                           {...register("applicant_name")}
                           placeholder="Enter your full name"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                         />
                         {errors.applicant_name && (
                           <p className="text-sm text-red-500 font-medium pl-1">{errors.applicant_name.message}</p>
@@ -420,14 +420,14 @@ export default function OrgRegistrationPage() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                        <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                           Your Email *
                         </Label>
                         <Input
                           {...register("applicant_email")}
                           type="email"
                           placeholder="your@email.com"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                         />
                         {errors.applicant_email && (
                           <p className="text-sm text-red-500 font-medium pl-1">{errors.applicant_email.message}</p>
@@ -436,24 +436,24 @@ export default function OrgRegistrationPage() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Position / Title
                           </Label>
                           <Input
                             {...register("applicant_position")}
                             placeholder="e.g., Director"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                         </div>
 
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Phone Number
                           </Label>
                           <Input
                             {...register("applicant_phone")}
                             placeholder="+977-98XXXXXXXX"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                         </div>
                       </div>
@@ -467,14 +467,14 @@ export default function OrgRegistrationPage() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Password *
                           </Label>
                           <Input
                             {...register("password")}
                             type="password"
                             placeholder="Min 6 characters"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                           {errors.password && (
                             <p className="text-sm text-red-500 font-medium pl-1">{errors.password.message}</p>
@@ -482,14 +482,14 @@ export default function OrgRegistrationPage() {
                         </div>
 
                         <div className="space-y-1.5">
-                          <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                          <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                             Confirm Password *
                           </Label>
                           <Input
                             {...register("confirm_password")}
                             type="password"
                             placeholder="Re-enter password"
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           />
                           {errors.confirm_password && (
                             <p className="text-sm text-red-500 font-medium pl-1">{errors.confirm_password.message}</p>
@@ -510,17 +510,17 @@ export default function OrgRegistrationPage() {
                       className="space-y-5"
                     >
                       <div className="space-y-3">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
+                        <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
                           Supporting Documents
                         </Label>
                         <p className="text-xs text-slate-400 font-medium pl-1">
                           Upload registration certificate, official letter, or other supporting documents (PDF, max 10MB each).
                         </p>
 
-                        <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/30 p-8 cursor-pointer hover:border-slate-300 hover:bg-slate-50 transition-all">
-                          <Upload className="h-8 w-8 text-slate-300" />
+                        <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 p-8 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+                          <Upload className="h-8 w-8 text-slate-300 dark:text-slate-600" />
                           <div className="text-center">
-                            <span className="text-sm font-semibold text-slate-600">
+                            <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">
                               Click to add files
                             </span>
                             <p className="text-xs text-slate-400 mt-1">PDF, JPG, PNG up to 10MB</p>
@@ -539,7 +539,7 @@ export default function OrgRegistrationPage() {
                             {stagedFiles.map((staged, idx) => (
                               <div
                                 key={idx}
-                                className="flex items-center gap-3 rounded-lg border border-slate-100 px-4 py-3 bg-white"
+                                className="flex items-center gap-3 rounded-lg border border-slate-100 dark:border-slate-800 px-4 py-3 bg-white dark:bg-slate-900"
                               >
                                 <FileText className="h-4 w-4 text-slate-400 shrink-0" />
                                 <span className="text-sm font-medium text-slate-700 truncate flex-1">
@@ -559,26 +559,26 @@ export default function OrgRegistrationPage() {
                       </div>
 
                       {/* Application Summary */}
-                      <div className="rounded-xl border border-slate-100 bg-slate-50/30 p-5 space-y-3">
+                      <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 p-5 space-y-3">
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
                           Application Summary
                         </p>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
                             <span className="text-slate-400 text-xs">Organization</span>
-                            <p className="font-semibold text-slate-700">{watch("name") || "—"}</p>
+                            <p className="font-semibold text-slate-700 dark:text-slate-300">{watch("name") || "—"}</p>
                           </div>
                           <div>
                             <span className="text-slate-400 text-xs">Code</span>
-                            <p className="font-semibold text-slate-700">{watch("code") || "—"}</p>
+                            <p className="font-semibold text-slate-700 dark:text-slate-300">{watch("code") || "—"}</p>
                           </div>
                           <div>
                             <span className="text-slate-400 text-xs">Applicant</span>
-                            <p className="font-semibold text-slate-700">{watch("applicant_name") || "—"}</p>
+                            <p className="font-semibold text-slate-700 dark:text-slate-300">{watch("applicant_name") || "—"}</p>
                           </div>
                           <div>
                             <span className="text-slate-400 text-xs">Documents</span>
-                            <p className="font-semibold text-slate-700">{stagedFiles.length} file(s)</p>
+                            <p className="font-semibold text-slate-700 dark:text-slate-300">{stagedFiles.length} file(s)</p>
                           </div>
                         </div>
                       </div>
@@ -594,7 +594,7 @@ export default function OrgRegistrationPage() {
                     variant="outline"
                     onClick={() => setStep(step - 1)}
                     disabled={isSubmitting}
-                    className="h-12 px-6 rounded-xl border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
+                    className="h-12 px-6 rounded-xl border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
@@ -605,7 +605,7 @@ export default function OrgRegistrationPage() {
                   <Button
                     type="button"
                     onClick={handleNextStep}
-                    className="flex-1 h-12 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     Next Step
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -615,7 +615,7 @@ export default function OrgRegistrationPage() {
                     type="button"
                     onClick={handleSubmit(onSubmit)}
                     disabled={isSubmitting}
-                    className="flex-1 h-12 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="flex-1 h-12 bg-slate-900 dark:bg-slate-50 hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest shadow-none"
                   >
                     {isSubmitting ? (
                       <>

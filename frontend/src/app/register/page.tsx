@@ -137,29 +137,29 @@ export default function RegisterPage() {
   // Email confirmation sent view
   if (emailSent) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+      <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-lg"
           >
-            <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
+            <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
               <CardContent className="p-10 text-center space-y-6">
-                <div className="h-16 w-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto">
-                  <Mail className="h-8 w-8 text-emerald-600" />
+                <div className="h-16 w-16 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-center mx-auto">
+                  <Mail className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                     Check your email
                   </h2>
-                  <p className="text-sm text-slate-500 font-medium mt-2 leading-relaxed">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-2 leading-relaxed">
                     We&apos;ve sent a confirmation link to{" "}
-                    <span className="font-bold text-slate-700">{registeredEmail}</span>.
+                    <span className="font-bold text-slate-700 dark:text-slate-300">{registeredEmail}</span>.
                     Click the link in the email to activate your account.
                   </p>
                 </div>
-                <div className="rounded-xl bg-slate-50 border border-slate-100 p-4 text-xs text-slate-500 font-medium space-y-1">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 text-xs text-slate-500 dark:text-slate-400 font-medium space-y-1">
                   <p className="flex items-center gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                     Check your spam folder if you don&apos;t see it
@@ -172,7 +172,7 @@ export default function RegisterPage() {
                 <div className="space-y-3">
                   <Button
                     variant="outline"
-                    className="w-full h-11 text-sm font-bold rounded-xl border-slate-200 shadow-none hover:bg-slate-50"
+                    className="w-full h-11 text-sm font-bold rounded-xl border-slate-200 dark:border-slate-700 shadow-none hover:bg-slate-50 dark:hover:bg-slate-900"
                     onClick={() => router.push("/login")}
                   >
                     Back to Login
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                     type="button"
                     disabled={loading}
                     onClick={handleResendEmail}
-                    className="w-full text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors py-2 disabled:opacity-50"
+                    className="w-full text-xs font-bold text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-2 disabled:opacity-50"
                   >
                     {loading ? "Resending..." : "Didn't receive an email? Resend"}
                   </button>
@@ -195,7 +195,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -206,12 +206,12 @@ export default function RegisterPage() {
             <BackButton />
           </div>
 
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-10">
-              <CardTitle className="text-3xl font-bold text-slate-900 tracking-tight">
+              <CardTitle className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                 Create Account
               </CardTitle>
-              <CardDescription className="text-base pt-3 font-medium text-slate-500">
+              <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">
                 Sign up to start your Lok Sewa preparation.
               </CardDescription>
             </CardHeader>
@@ -221,7 +221,7 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="reg-name"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Full Name
                   </Label>
@@ -230,14 +230,14 @@ export default function RegisterPage() {
                     name="fullName"
                     type="text"
                     placeholder="Your full name"
-                    className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                    className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                     required
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="reg-email"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Email
                   </Label>
@@ -246,14 +246,14 @@ export default function RegisterPage() {
                     name="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                    className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                     required
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="reg-password"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Password
                   </Label>
@@ -263,14 +263,14 @@ export default function RegisterPage() {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="At least 6 characters"
-                      className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                      className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -280,7 +280,7 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="reg-confirm"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Confirm Password
                   </Label>
@@ -290,14 +290,14 @@ export default function RegisterPage() {
                       name="confirmPassword"
                       type={showConfirm ? "text" : "password"}
                       placeholder="Re-enter your password"
-                      className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                      className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                       tabIndex={-1}
                     >
                       {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -306,7 +306,7 @@ export default function RegisterPage() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                  className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
                   disabled={loading}
                 >
                   {loading ? "Creating account..." : "Create Account"}
@@ -316,17 +316,17 @@ export default function RegisterPage() {
               {/* Divider */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-slate-100" />
+                  <span className="w-full border-t border-slate-100 dark:border-slate-800" />
                 </div>
                 <div className="relative flex justify-center text-[10px] uppercase tracking-widest">
-                  <span className="bg-white px-3 text-slate-400 font-bold">or</span>
+                  <span className="bg-white dark:bg-slate-950 px-3 text-slate-400 font-bold">or</span>
                 </div>
               </div>
 
               {/* Google OAuth */}
               <Button
                 variant="outline"
-                className="w-full h-12 gap-3 text-sm font-bold border-slate-200 rounded-xl hover:bg-slate-50 transition-all active:scale-[0.98] shadow-none"
+                className="w-full h-12 gap-3 text-sm font-bold border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all active:scale-[0.98] shadow-none"
                 onClick={handleGoogleSignup}
                 disabled={loading}
               >
@@ -355,12 +355,12 @@ export default function RegisterPage() {
                 Sign up with Google
               </Button>
             </CardContent>
-            <CardFooter className="flex justify-center border-t border-slate-50 py-6 bg-slate-50/20 text-center px-10">
+            <CardFooter className="flex justify-center border-t border-slate-50 dark:border-slate-800 py-6 bg-slate-50/20 dark:bg-slate-900/20 text-center px-10">
               <p className="text-xs text-slate-400 font-medium">
                 Already have an account?{" "}
                 <a
                   href="/login"
-                  className="text-slate-900 font-bold hover:underline"
+                  className="text-slate-900 dark:text-slate-100 font-bold hover:underline"
                 >
                   Sign in
                 </a>

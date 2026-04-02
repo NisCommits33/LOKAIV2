@@ -43,9 +43,9 @@ import type { GKQuiz, QuizQuestion, QuizDifficulty } from "@/types/database";
 import { cn } from "@/lib/utils";
 
 const difficultyColors: Record<QuizDifficulty, string> = {
-  easy: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  medium: "bg-amber-50 text-amber-700 border-amber-100",
-  hard: "bg-red-50 text-red-700 border-red-100",
+  easy: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
+  medium: "bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-800",
+  hard: "bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800",
 };
 
 export default function QuizPlayerPage() {
@@ -191,60 +191,60 @@ export default function QuizPlayerPage() {
           variant="ghost"
           size="sm"
           onClick={() => router.push("/dashboard/quizzes")}
-          className="gap-1 text-slate-500"
+          className="gap-1 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
         >
           <ChevronLeft className="h-4 w-4" /> Back to Quizzes
         </Button>
 
-        <Card className="shadow-none border border-slate-100">
+        <Card className="shadow-none border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <CardContent className="p-6 sm:p-8 space-y-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge
                   variant="secondary"
-                  className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] font-bold uppercase tracking-wider"
+                  className="bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 text-[10px] font-bold uppercase tracking-wider"
                 >
                   {quiz.category}
                 </Badge>
                 <Badge
                   variant="secondary"
-                  className={`border text-[10px] font-bold uppercase tracking-wider ${difficultyColors[quiz.difficulty]}`}
+                  className={`border text-[10px] font-bold uppercase tracking-wider \${difficultyColors[quiz.difficulty]}`}
                 >
                   {quiz.difficulty}
                 </Badge>
               </div>
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {quiz.title}
               </h1>
               {quiz.description && (
-                <p className="text-sm text-slate-500 font-medium">
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                   {quiz.description}
                 </p>
               )}
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="p-3 rounded-lg bg-slate-50">
-                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-wider">
                   Questions
                 </p>
-                <p className="text-slate-900 font-bold text-lg">
+                <p className="text-slate-900 dark:text-slate-100 font-black text-lg">
                   {quiz.total_questions}
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-50">
-                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-wider">
                   Time Limit
                 </p>
-                <p className="text-slate-900 font-bold text-lg">
+                <p className="text-slate-900 dark:text-slate-100 font-black text-lg">
                   {quiz.time_limit_minutes} min
                 </p>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-amber-50 border border-amber-100 flex gap-3">
-              <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
-              <div className="text-xs text-amber-700 font-medium space-y-1">
+            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-800 flex gap-3">
+              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
+              <div className="text-xs text-amber-700 dark:text-amber-400 font-medium space-y-1">
                 <p>The quiz will auto-submit when the timer runs out.</p>
                 <p>You can navigate between questions and change your answers before submitting.</p>
               </div>
@@ -252,7 +252,7 @@ export default function QuizPlayerPage() {
 
             <Button
               onClick={startQuiz}
-              className="w-full bg-slate-900 hover:bg-slate-800"
+              className="w-full bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-700 text-white"
               size="lg"
             >
               Start Quiz
@@ -269,17 +269,17 @@ export default function QuizPlayerPage() {
       {/* Top bar: timer + progress */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1">
-          <Progress value={progressPercent} className="h-2" />
-          <p className="text-xs text-slate-400 font-medium mt-1">
+          <Progress value={progressPercent} className="h-2 bg-slate-100 dark:bg-slate-800" />
+          <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">
             {answeredCount} of {questions.length} answered
           </p>
         </div>
         <div
           className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-sm font-bold",
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-sm font-bold shadow-sm border",
             timerDanger
-              ? "bg-red-50 text-red-600 animate-pulse"
-              : "bg-slate-50 text-slate-700"
+              ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-100 dark:border-red-900 animate-pulse"
+              : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-100 dark:border-slate-800"
           )}
         >
           <Clock className="h-4 w-4" />
@@ -298,12 +298,12 @@ export default function QuizPlayerPage() {
             key={q.id}
             onClick={() => setCurrentIndex(i)}
             className={cn(
-              "h-7 w-7 rounded-md text-xs font-bold transition-colors",
+              "h-8 w-8 rounded-lg text-xs font-black transition-all border",
               i === currentIndex
-                ? "bg-slate-900 text-white"
+                ? "bg-slate-900 dark:bg-indigo-600 text-white border-slate-900 dark:border-indigo-600 shadow-md scale-110"
                 : answers[q.id] !== undefined
-                  ? "bg-indigo-100 text-indigo-700"
-                  : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                  ? "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 border-indigo-100 dark:border-indigo-900"
+                  : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-600 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
             )}
           >
             {i + 1}
@@ -315,24 +315,24 @@ export default function QuizPlayerPage() {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.15 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
         >
-          <Card className="shadow-none border border-slate-100">
-            <CardContent className="p-5 sm:p-6 space-y-5">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <CardContent className="p-6 sm:p-8 space-y-6">
               <div className="space-y-1">
-                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-[0.2em]">
                   Question {currentIndex + 1} of {questions.length}
                 </p>
-                <h2 className="text-base font-bold text-slate-900 leading-relaxed">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-relaxed">
                   {currentQuestion.question}
                 </h2>
               </div>
 
               {/* Options */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {currentQuestion.options.map((option, optIdx) => {
                   const isSelected = answers[currentQuestion.id] === optIdx;
                   return (
@@ -340,18 +340,18 @@ export default function QuizPlayerPage() {
                       key={optIdx}
                       onClick={() => selectAnswer(optIdx)}
                       className={cn(
-                        "w-full flex items-center gap-3 p-3.5 rounded-lg border text-left text-sm font-medium transition-all",
+                        "w-full flex items-center gap-4 p-4 rounded-xl border text-left text-sm font-bold transition-all group",
                         isSelected
-                          ? "border-indigo-200 bg-indigo-50 text-indigo-900"
-                          : "border-slate-100 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-200"
+                          ? "border-indigo-200 dark:border-indigo-500/50 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-100 shadow-sm"
+                          : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700"
                       )}
                     >
                       <span
                         className={cn(
-                          "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                          "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black transition-colors",
                           isSelected
                             ? "bg-indigo-600 text-white"
-                            : "bg-slate-100 text-slate-500"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500 group-hover:bg-slate-200 dark:group-hover:bg-slate-700"
                         )}
                       >
                         {String.fromCharCode(65 + optIdx)}
@@ -367,13 +367,13 @@ export default function QuizPlayerPage() {
       </AnimatePresence>
 
       {/* Navigation controls */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 pt-2">
         <Button
           variant="outline"
           size="sm"
           onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
           disabled={currentIndex === 0}
-          className="gap-1"
+          className="gap-1 border-slate-200 dark:border-slate-800 dark:text-slate-400"
         >
           <ChevronLeft className="h-4 w-4" /> Previous
         </Button>
@@ -384,7 +384,7 @@ export default function QuizPlayerPage() {
             onClick={() =>
               setCurrentIndex((i) => Math.min(questions.length - 1, i + 1))
             }
-            className="gap-1 bg-slate-900 hover:bg-slate-800"
+            className="gap-1 bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-700"
           >
             Next <ChevronRight className="h-4 w-4" />
           </Button>
@@ -393,7 +393,7 @@ export default function QuizPlayerPage() {
             size="sm"
             onClick={() => setShowConfirm(true)}
             disabled={submitting}
-            className="gap-1 bg-indigo-600 hover:bg-indigo-700"
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6"
           >
             <Send className="h-4 w-4" /> Submit Quiz
           </Button>

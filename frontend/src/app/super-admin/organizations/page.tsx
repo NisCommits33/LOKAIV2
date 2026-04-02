@@ -144,8 +144,8 @@ export default function SuperAdminOrganizationsPage() {
   return (
     <div className="p-6 sm:p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Organizations</h1>
-        <p className="text-slate-500 font-medium mt-1">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Organizations</h1>
+        <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
           Review and manage organization registration applications.
         </p>
       </div>
@@ -158,14 +158,14 @@ export default function SuperAdminOrganizationsPage() {
             onClick={() => setFilterStatus(status)}
             className={`rounded-xl border p-4 text-left transition-all ${
               filterStatus === status
-                ? "border-slate-900 bg-slate-50"
-                : "border-slate-100 bg-white hover:border-slate-200"
+                ? "border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800"
+                : "border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-200 dark:hover:border-slate-600"
             }`}
           >
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
               {status === "all" ? "Total" : status}
             </p>
-            <p className="text-2xl font-bold text-slate-900 mt-1">{statusCounts[status]}</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{statusCounts[status]}</p>
           </button>
         ))}
       </div>
@@ -177,7 +177,7 @@ export default function SuperAdminOrganizationsPage() {
           placeholder="Search by name, code, or applicant..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+          className="pl-10 h-11 rounded-xl border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-800/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
         />
       </div>
 
@@ -198,19 +198,19 @@ export default function SuperAdminOrganizationsPage() {
             return (
               <Card
                 key={app.id}
-                className="shadow-none border border-slate-100 bg-white hover:border-slate-200 transition-all"
+                className="shadow-none border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-200 dark:hover:border-slate-600 transition-all"
               >
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     {/* Left: Info */}
                     <div className="flex items-start gap-4 min-w-0 flex-1">
-                      <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                      <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0">
                         <Building2 className="h-5 w-5 text-slate-400" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-3">
-                          <h3 className="font-bold text-slate-900 truncate">{app.name}</h3>
-                          <span className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md shrink-0">
+                          <h3 className="font-bold text-slate-900 dark:text-slate-100 truncate">{app.name}</h3>
+                          <span className="text-xs font-mono text-slate-400 bg-slate-50 dark:bg-slate-800 px-2 py-0.5 rounded-md shrink-0">
                             {app.code}
                           </span>
                         </div>
@@ -434,7 +434,7 @@ export default function SuperAdminOrganizationsPage() {
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 placeholder="admin@example.gov.np"
-                className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
               />
               <p className="text-xs text-slate-400 font-medium pl-1">
                 Defaults to the applicant&apos;s email. Change to assign a different admin.
@@ -493,7 +493,7 @@ export default function SuperAdminOrganizationsPage() {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="Provide the reason for rejection..."
-                className="rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none min-h-[100px]"
+                className="rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none min-h-[100px]"
               />
             </div>
           </div>

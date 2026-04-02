@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+      <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -81,18 +81,18 @@ export default function ResetPasswordPage() {
             className="mx-auto max-w-lg text-center"
           >
             <div className="mb-6 flex justify-center">
-              <div className="h-16 w-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+              <div className="h-16 w-16 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="h-8 w-8" />
               </div>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">
+            <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-3">
               Password Updated
             </h1>
-            <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+            <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
               Your password has been reset successfully. You can now use your new password to sign in.
             </p>
             <Button
-              className="w-full h-11 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-none"
+              className="w-full h-11 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold rounded-xl shadow-none"
               onClick={() => router.push("/login")}
             >
               Sign in to Dashboard
@@ -104,22 +104,22 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mx-auto max-w-lg"
         >
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-10">
-              <div className="mx-auto h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center mb-4">
-                <Lock className="h-6 w-6 text-slate-900" />
+              <div className="mx-auto h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-4">
+                <Lock className="h-6 w-6 text-slate-900 dark:text-slate-100" />
               </div>
-              <CardTitle className="text-3xl font-black text-slate-900 tracking-tight">
+              <CardTitle className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
                 New Password
               </CardTitle>
-              <CardDescription className="text-base pt-3 font-medium text-slate-500">
+              <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">
                 Please enter a new secure password for your account.
               </CardDescription>
             </CardHeader>
@@ -128,7 +128,7 @@ export default function ResetPasswordPage() {
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="password"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     New Password
                   </Label>
@@ -138,14 +138,14 @@ export default function ResetPasswordPage() {
                       name="password"
                       type={showPw ? "text" : "password"}
                       placeholder="At least 6 characters"
-                      className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                      className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPw(!showPw)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                       tabIndex={-1}
                     >
                       {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -155,7 +155,7 @@ export default function ResetPasswordPage() {
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="confirmPassword"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Confirm New Password
                   </Label>
@@ -165,13 +165,13 @@ export default function ResetPasswordPage() {
                       name="confirmPassword"
                       type={showConfirm ? "text" : "password"}
                       placeholder="Re-enter password"
-                      className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                      className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                       tabIndex={-1}
                     >
                       {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -180,7 +180,7 @@ export default function ResetPasswordPage() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                  className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
                   disabled={loading}
                 >
                   {loading ? "Updating..." : "Update Password"}

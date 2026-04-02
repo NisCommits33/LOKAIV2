@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+      <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -65,28 +65,28 @@ export default function ForgotPasswordPage() {
             className="mx-auto max-w-lg text-center"
           >
             <div className="mb-6 flex justify-center">
-              <div className="h-16 w-16 rounded-2xl bg-slate-900 flex items-center justify-center text-white">
+              <div className="h-16 w-16 rounded-2xl bg-slate-900 dark:bg-slate-100 flex items-center justify-center text-white dark:text-slate-900">
                 <Mail className="h-8 w-8" />
               </div>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">
+            <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-3">
               Check your email
             </h1>
-            <p className="text-slate-500 font-medium mb-8 leading-relaxed">
-              We've sent a password recovery link to <span className="text-slate-900 font-bold">{email}</span>. 
+            <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
+              We've sent a password recovery link to <span className="text-slate-900 dark:text-slate-100 font-bold">{email}</span>. 
               Click the link in the email to reset your password.
             </p>
             <div className="space-y-4">
               <Button
                 variant="outline"
-                className="w-full h-11 rounded-xl border-slate-200 font-bold shadow-none"
+                className="w-full h-11 rounded-xl border-slate-200 dark:border-slate-700 font-bold shadow-none"
                 onClick={() => setSubmitted(false)}
               >
                 Use a different email
               </Button>
               <Button
                 variant="ghost"
-                className="w-full h-11 text-slate-500 font-bold"
+                className="w-full h-11 text-slate-500 dark:text-slate-400 font-bold"
                 onClick={() => router.push("/login")}
               >
                 Back to Login
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -110,12 +110,12 @@ export default function ForgotPasswordPage() {
             <BackButton />
           </div>
 
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-10">
-              <CardTitle className="text-3xl font-black text-slate-900 tracking-tight">
+              <CardTitle className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
                 Reset Password
               </CardTitle>
-              <CardDescription className="text-base pt-3 font-medium text-slate-500">
+              <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">
                 Enter your email address and we'll send you a link to reset your password.
               </CardDescription>
             </CardHeader>
@@ -124,7 +124,7 @@ export default function ForgotPasswordPage() {
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="email"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Email Address
                   </Label>
@@ -134,13 +134,13 @@ export default function ForgotPasswordPage() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                    className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                     required
                   />
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                  className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
                   disabled={loading}
                 >
                   {loading ? "Sending..." : "Send Recovery Link"}
@@ -148,7 +148,7 @@ export default function ForgotPasswordPage() {
                 </Button>
               </form>
             </CardContent>
-            <CardFooter className="flex justify-center border-t border-slate-50 py-6 bg-slate-50/20 text-center px-10">
+            <CardFooter className="flex justify-center border-t border-slate-50 dark:border-slate-800 py-6 bg-slate-50/20 dark:bg-slate-900/20 text-center px-10">
               <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
                 If the email doesn't arrive within 5 minutes, please check your spam folder.
               </p>

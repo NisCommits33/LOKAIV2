@@ -148,8 +148,8 @@ export default function OrgDocumentUploadPage() {
           </Button>
         </Link>
         <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Upload Document</h1>
-            <p className="text-sm text-slate-500 font-medium">Add a new file to the organization library.</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Upload Document</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Add a new file to the organization library.</p>
         </div>
       </div>
 
@@ -168,8 +168,8 @@ export default function OrgDocumentUploadPage() {
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={(e) => { e.preventDefault(); setDragOver(false); }}
                 className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg transition-colors cursor-pointer ${
-                  dragOver ? "border-indigo-400 bg-indigo-50" : "border-slate-200 bg-slate-50 hover:border-slate-300"
-                } ${file ? "bg-emerald-50 border-emerald-200" : ""}`}
+                  dragOver ? "border-indigo-400 bg-indigo-50 dark:bg-indigo-950/30" : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+                } ${file ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800" : ""}`}
                 onClick={() => !file && fileInputRef.current?.click()}
               >
                 <input
@@ -183,8 +183,8 @@ export default function OrgDocumentUploadPage() {
                 {file ? (
                   <div className="text-center space-y-2">
                     <FileUp className="h-8 w-8 text-emerald-500 mx-auto" />
-                    <p className="text-sm font-semibold text-emerald-700">{file.name}</p>
-                    <p className="text-xs text-emerald-600/70">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{file.name}</p>
+                    <p className="text-xs text-emerald-600/70 dark:text-emerald-500/70">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
                     <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setFile(null); }}>
                       Remove File
                     </Button>
@@ -192,7 +192,7 @@ export default function OrgDocumentUploadPage() {
                 ) : (
                   <div className="text-center space-y-2 pointer-events-none">
                     <FileUp className="h-8 w-8 text-slate-400 mx-auto" />
-                    <p className="text-sm font-medium text-slate-700">Drop PDF here or click to browse</p>
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Drop PDF here or click to browse</p>
                     <p className="text-xs text-slate-400">Up to 50MB</p>
                   </div>
                 )}
@@ -255,7 +255,7 @@ export default function OrgDocumentUploadPage() {
           <div className="pt-4 space-y-3">
              {uploading && (
                 <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-600">
+                  <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
                      <span>Uploading & Processing</span>
                      <span>{uploadProgress}%</span>
                   </div>

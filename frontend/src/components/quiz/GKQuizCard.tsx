@@ -1,12 +1,10 @@
 "use client";
 
 import { GKQuiz } from "@/types/database";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { 
   Clock, 
   Layers, 
-  Trophy, 
   ArrowRight, 
   ChevronRight,
   Zap
@@ -29,32 +27,32 @@ const categoryImages: Record<string, string> = {
 
 export function GKQuizCard({ quiz, compact = false }: GKQuizCardProps) {
   const difficultyColors = {
-    easy: "bg-emerald-50 text-emerald-700",
-    medium: "bg-amber-50 text-amber-700",
-    hard: "bg-red-50 text-red-700",
-  }[quiz.difficulty] || "bg-slate-50 text-slate-700";
+    easy: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400",
+    medium: "bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400",
+    hard: "bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400",
+  }[quiz.difficulty] || "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
 
   const thumbnail = quiz.thumbnail_url || categoryImages[quiz.category] || categoryImages["General Knowledge"];
 
   // COMPACT VERSION (HORIZONTAL MINIMAL)
   if (compact) {
     return (
-      <Card className="group border border-slate-100 bg-white hover:border-indigo-200 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden cursor-pointer">
+      <Card className="group border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:shadow-md dark:hover:shadow-indigo-500/10 transition-all duration-300 rounded-xl overflow-hidden cursor-pointer">
         <Link href={`/dashboard/quizzes/${quiz.id}`} className="flex items-center gap-4">
-           <div className="h-20 w-24 relative overflow-hidden shrink-0">
-              <img src={thumbnail} alt="" className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110" />
+           <div className="h-20 w-24 relative overflow-hidden shrink-0 border-r border-slate-50 dark:border-slate-800">
+              <img src={thumbnail} alt="" className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110 opacity-90 dark:opacity-70 group-hover:opacity-100" />
               <div className="absolute inset-0 bg-indigo-900/10 group-hover:bg-transparent transition-colors" />
            </div>
            <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-0.5">
-                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Module Practice</span>
+                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Module Practice</span>
               </div>
-              <h4 className="text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                  {quiz.title}
               </h4>
            </div>
            <div className="pr-4">
-              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transform group-hover:translate-x-0.5 transition-transform" />
+              <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transform group-hover:translate-x-0.5 transition-transform" />
            </div>
         </Link>
       </Card>
@@ -63,67 +61,47 @@ export function GKQuizCard({ quiz, compact = false }: GKQuizCardProps) {
 
   // PRIMARY VERSION (HORIZONTAL WITH IMAGERY & STATS)
   return (
-    <Card className="group flex flex-row h-32 border-slate-200 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 rounded-2xl overflow-hidden bg-white">
+    <Card className="group flex flex-row h-32 border-slate-200 dark:border-slate-800 hover:shadow-xl dark:hover:shadow-indigo-500/10 hover:border-indigo-100 dark:hover:border-indigo-500/30 transition-all duration-300 rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
       <Link href={`/dashboard/quizzes/${quiz.id}`} className="flex-1 flex flex-row">
           {/* Left: Visual Thumbnail */}
-          <div className="w-32 sm:w-44 h-full relative overflow-hidden shrink-0 border-r border-slate-50">
+          <div className="w-32 sm:w-44 h-full relative overflow-hidden shrink-0 border-r border-slate-50 dark:border-slate-800">
              <img 
                src={thumbnail} 
                alt={quiz.title} 
-               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" 
+               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 dark:opacity-70 group-hover:opacity-100" 
              />
              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/20 to-transparent" />
              <div className="absolute bottom-2 left-2">
-                <div className={cn("px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-1", difficultyColors)}>
+                <div className={cn("px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-sm", difficultyColors)}>
                    <Zap className="w-3 h-3" />
                    {quiz.difficulty}
                 </div>
              </div>
           </div>
 
-          {/* Right: Content Block */}
-          <CardContent className="flex-1 p-4 flex flex-col justify-between min-w-0">
-             <div className="space-y-1">
-                <div className="flex items-center justify-between gap-2">
-                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      <span>{quiz.category}</span>
-                      {quiz.reward_xp > 0 && (
-                        <>
-                           <div className="h-1 w-1 rounded-full bg-slate-200" />
-                           <span className="text-indigo-600 flex items-center gap-1">
-                              <Trophy className="w-3 h-3" />
-                              {quiz.reward_xp} XP
-                           </span>
-                        </>
-                      )}
-                   </div>
-                </div>
-                <h3 className="text-base font-bold text-slate-900 line-clamp-2 leading-tight group-hover:text-indigo-600 transition-colors">
-                  {quiz.title}
-                </h3>
+          {/* Right: Info Area */}
+          <div className="flex-1 p-5 min-w-0 flex flex-col justify-center">
+             <div className="flex items-center gap-4 text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1.5">
+                <span className="flex items-center gap-1.5">
+                   <Clock className="w-3 h-3" /> 10 mins
+                </span>
+                <span className="flex items-center gap-1.5">
+                   <Layers className="w-3 h-3" /> {quiz.total_questions} Questions
+                </span>
              </div>
-
-             {/* Footer Row (Integrated Header Style) */}
-             <div className="flex items-center justify-between gap-4 mt-auto">
-                <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                   <div className="flex items-center gap-1.5 font-mono">
-                      <Layers className="h-3.5 w-3.5" />
-                      {quiz.total_questions}
-                   </div>
-                   {quiz.time_limit_minutes > 0 && (
-                      <div className="flex items-center gap-1.5 font-mono">
-                         <Clock className="h-3.5 w-3.5" />
-                         {quiz.time_limit_minutes}m
-                      </div>
-                   )}
-                </div>
-                
-                <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-900 group-hover:text-indigo-600 transition-colors">
-                   Practice
-                   <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 transition-transform" />
-                </div>
+             <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                {quiz.title}
+             </h3>
+             <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-1 font-medium">
+                {quiz.sub_category} Practice
+             </p>
+          </div>
+          
+          <div className="pr-6 flex items-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+             <div className="h-8 w-8 rounded-full bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <ArrowRight className="h-4 w-4" />
              </div>
-          </CardContent>
+          </div>
       </Link>
     </Card>
   );

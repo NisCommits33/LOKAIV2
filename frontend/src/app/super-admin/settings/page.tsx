@@ -64,14 +64,14 @@ export default function SystemSettingsPage() {
   return (
     <div className="p-6 sm:p-8 space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3">
-        <div className="rounded-xl bg-slate-900 p-2 text-white">
+        <div className="rounded-xl bg-slate-900 dark:bg-slate-100 p-2 text-white dark:text-slate-900">
           <Settings className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             System Settings
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Configure global platform constraints and defaults.
           </p>
         </div>
@@ -96,10 +96,10 @@ export default function SystemSettingsPage() {
              ) : (
                 settings.map(setting => (
                    <div key={setting.key} className="space-y-2">
-                       <Label htmlFor={setting.key} className="font-semibold text-slate-700">
+                       <Label htmlFor={setting.key} className="font-semibold text-slate-700 dark:text-slate-300">
                           {setting.key}
                        </Label>
-                       <p className="text-xs text-slate-500 mb-2">{setting.description}</p>
+                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{setting.description}</p>
                        <Input 
                           id={setting.key}
                           value={String(setting.value)}
@@ -110,7 +110,7 @@ export default function SystemSettingsPage() {
                 ))
              )}
           </CardContent>
-          <CardFooter className="bg-slate-50 border-t justify-end py-4">
+          <CardFooter className="bg-slate-50 dark:bg-slate-800 border-t justify-end py-4">
              <Button type="submit" disabled={loading || saving}>
                 {saving ? (
                    "Saving..."

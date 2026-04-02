@@ -202,11 +202,11 @@ export default function AdminJobLevelsPage() {
 
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-8 pb-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-700 pb-6">
         <div>
           <div className="mt-1"><BackButton /></div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-4">Manage Job Levels</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 mt-4">Manage Job Levels</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Define and reorder the seniority ranking of positions in your organization. (Top is Lowest Rank, Bottom is Highest Rank)
           </p>
         </div>
@@ -223,19 +223,19 @@ export default function AdminJobLevelsPage() {
         </div>
       </div>
 
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 sm:p-4">
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2 sm:p-4">
         {jobLevels.length === 0 ? (
           <div className="text-center py-12 px-4">
             <Layers className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-medium text-slate-900">No Job Levels Found</h3>
-            <p className="text-slate-500 mt-1">Start by creating the base title of employment.</p>
+            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">No Job Levels Found</h3>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Start by creating the base title of employment.</p>
             <Button onClick={openAddModal} variant="outline" className="mt-4">
               <Plus className="h-4 w-4 mr-2" /> Create Job Level
             </Button>
           </div>
         ) : (
           <div>
-            <div className="flex px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 items-center">
+            <div className="flex px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 items-center">
               <div className="w-10"></div>
               <div className="w-16"><ArrowDownUp className="h-3 w-3 inline mr-1 text-slate-300" /> Rank</div>
               <div className="flex-1">Level Name</div>
@@ -243,26 +243,26 @@ export default function AdminJobLevelsPage() {
               <div className="w-24 text-right">Actions</div>
             </div>
             <Reorder.Group axis="y" values={jobLevels} onReorder={handleReorder} className="space-y-2 relative">
-              <div className="absolute left-9 top-0 bottom-0 w-px bg-slate-200 z-0"></div>
+              <div className="absolute left-9 top-0 bottom-0 w-px bg-slate-200 dark:bg-slate-700 z-0"></div>
               {jobLevels.map((level, index) => (
                 <Reorder.Item 
                   key={level.id} 
                   value={level} 
-                  className={`relative z-10 bg-white border rounded-lg shadow-sm p-4 flex items-center gap-4 transition-colors ${!level.is_active ? 'opacity-60 grayscale' : ''}`}
+                  className={`relative z-10 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-sm p-4 flex items-center gap-4 transition-colors ${!level.is_active ? 'opacity-60 grayscale' : ''}`}
                 >
-                  <div className="cursor-grab text-slate-300 hover:text-slate-500 active:cursor-grabbing w-10 flex justify-center shrink-0">
+                  <div className="cursor-grab text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 active:cursor-grabbing w-10 flex justify-center shrink-0">
                     <GripVertical className="h-5 w-5" />
                   </div>
                   <div className="w-16 flex items-center justify-center">
-                     <span className="h-6 w-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-black font-mono text-slate-500">
+                     <span className="h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-[10px] font-black font-mono text-slate-500 dark:text-slate-400">
                         {index + 1}
                      </span>
                   </div>
-                  <div className="flex-1 font-semibold text-slate-800">
+                  <div className="flex-1 font-semibold text-slate-800 dark:text-slate-200">
                     {level.name}
                   </div>
                   <div className="w-20">
-                    <Badge variant="outline" className={level.is_active ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-200 text-slate-500 bg-slate-50"}>
+                    <Badge variant="outline" className={level.is_active ? "border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30" : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800"}>
                       {level.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>

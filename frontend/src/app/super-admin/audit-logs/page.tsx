@@ -58,14 +58,14 @@ export default function AuditLogsPage() {
     <div className="p-6 sm:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-           <div className="rounded-xl bg-slate-900 p-2 text-white">
+           <div className="rounded-xl bg-slate-900 dark:bg-slate-100 p-2 text-white dark:text-slate-900">
               <ShieldAlert className="h-5 w-5" />
            </div>
            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                  Platform Audit Logs
               </h1>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                  Review all administrative actions executed across the platform.
               </p>
            </div>
@@ -73,7 +73,7 @@ export default function AuditLogsPage() {
       </div>
 
       <Card>
-        <CardHeader className="border-b bg-slate-50/50">
+        <CardHeader className="border-b bg-slate-50/50 dark:bg-slate-800/50">
            <div className="flex items-center gap-2">
               <Search className="h-4 w-4 text-slate-400" />
               <Input
@@ -109,19 +109,19 @@ export default function AuditLogsPage() {
                   ))
                 ) : filteredLogs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500 dark:text-slate-400">
                       No audit logs found.
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredLogs.map((log) => (
                     <TableRow key={log.id}>
-                      <TableCell className="whitespace-nowrap text-sm text-slate-500">
+                      <TableCell className="whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                         {format(new Date(log.created_at), "MMM d, yyyy HH:mm")}
                       </TableCell>
                       <TableCell>
-                        <p className="font-medium text-slate-900">{log.user?.full_name || "System"}</p>
-                        <p className="text-xs text-slate-500">{log.user?.email || "internal"}</p>
+                        <p className="font-medium text-slate-900 dark:text-slate-100">{log.user?.full_name || "System"}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{log.user?.email || "internal"}</p>
                       </TableCell>
                       <TableCell>
                         {log.organization?.name ? (

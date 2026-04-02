@@ -183,14 +183,14 @@ export default function SuperAdminBillingPage() {
     <div className="p-6 sm:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="rounded-xl bg-slate-900 p-2 text-white">
+        <div className="rounded-xl bg-slate-900 dark:bg-slate-100 p-2 text-white dark:text-slate-900">
           <CreditCard className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             Billing Overview
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Monitor subscriptions, revenue, and payment transactions across all
             organizations.
           </p>
@@ -230,8 +230,8 @@ export default function SuperAdminBillingPage() {
       {/* Plan Distribution */}
       {stats && stats.planDistribution.length > 0 && (
         <Card>
-          <CardHeader className="border-b bg-slate-50/50 py-4 px-6">
-            <h2 className="text-sm font-semibold text-slate-700">
+          <CardHeader className="border-b bg-slate-50/50 dark:bg-slate-800/50 py-4 px-6">
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
               Plan Distribution
             </h2>
           </CardHeader>
@@ -242,16 +242,16 @@ export default function SuperAdminBillingPage() {
                 const pct = Math.round((p.count / total) * 100);
                 return (
                   <div key={p.name} className="flex flex-col items-center gap-2 flex-1">
-                    <span className="text-2xl font-bold text-slate-900">
+                    <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                       {p.count}
                     </span>
-                    <div className="w-full bg-slate-100 rounded-full h-2">
+                    <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
                       <div
                         className="h-2 rounded-full bg-indigo-500"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <span className="text-xs text-slate-500 font-medium">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                       {p.name} ({pct}%)
                     </span>
                   </div>
@@ -264,13 +264,13 @@ export default function SuperAdminBillingPage() {
 
       {/* Tabs + Search */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+        <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
           <button
             onClick={() => setTab("subscriptions")}
             className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
               tab === "subscriptions"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
             Subscriptions ({subscriptions.length})
@@ -279,8 +279,8 @@ export default function SuperAdminBillingPage() {
             onClick={() => setTab("transactions")}
             className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
               tab === "transactions"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
             Transactions ({transactions.length})
@@ -325,7 +325,7 @@ export default function SuperAdminBillingPage() {
                 ) : (
                   filteredSubs.map((sub) => (
                     <TableRow key={sub.id}>
-                      <TableCell className="font-medium text-slate-900">
+                      <TableCell className="font-medium text-slate-900 dark:text-slate-100">
                         {sub.organization?.name || "—"}
                       </TableCell>
                       <TableCell>{sub.plan?.display_name || "—"}</TableCell>
@@ -339,13 +339,13 @@ export default function SuperAdminBillingPage() {
                           {sub.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="capitalize text-slate-600">
+                      <TableCell className="capitalize text-slate-600 dark:text-slate-400">
                         {sub.billing_cycle}
                       </TableCell>
-                      <TableCell className="text-slate-600">
+                      <TableCell className="text-slate-600 dark:text-slate-400">
                         {formatDate(sub.current_period_start)}
                       </TableCell>
-                      <TableCell className="text-slate-600">
+                      <TableCell className="text-slate-600 dark:text-slate-400">
                         {formatDate(sub.current_period_end)}
                       </TableCell>
                     </TableRow>
@@ -387,17 +387,17 @@ export default function SuperAdminBillingPage() {
                 ) : (
                   filteredTxns.map((txn) => (
                     <TableRow key={txn.id}>
-                      <TableCell className="text-slate-600">
+                      <TableCell className="text-slate-600 dark:text-slate-400">
                         {formatDate(txn.created_at)}
                       </TableCell>
-                      <TableCell className="font-medium text-slate-900">
+                      <TableCell className="font-medium text-slate-900 dark:text-slate-100">
                         {txn.organization?.name || "—"}
                       </TableCell>
                       <TableCell>{txn.plan?.display_name || "—"}</TableCell>
-                      <TableCell className="font-semibold text-slate-900">
+                      <TableCell className="font-semibold text-slate-900 dark:text-slate-100">
                         {formatNPR(txn.total_amount)}
                       </TableCell>
-                      <TableCell className="uppercase text-xs font-semibold text-slate-500">
+                      <TableCell className="uppercase text-xs font-semibold text-slate-500 dark:text-slate-400">
                         {txn.gateway}
                       </TableCell>
                       <TableCell>
@@ -410,7 +410,7 @@ export default function SuperAdminBillingPage() {
                           {txn.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-slate-500 font-mono text-xs">
+                      <TableCell className="text-slate-500 dark:text-slate-400 font-mono text-xs">
                         {txn.gateway_transaction_id || "—"}
                       </TableCell>
                       <TableCell>
@@ -468,13 +468,13 @@ function StatCard({
     <Card>
       <CardContent className="p-5">
         <div className="flex items-center gap-3 mb-2">
-          <div className="h-9 w-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="h-9 w-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
             <Icon className="h-4 w-4" />
           </div>
-          <span className="text-sm font-medium text-slate-500">{label}</span>
+          <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</span>
         </div>
-        <p className="text-2xl font-bold text-slate-900">{value}</p>
-        <p className="text-xs text-slate-400 mt-1">{sub}</p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sub}</p>
       </CardContent>
     </Card>
   );

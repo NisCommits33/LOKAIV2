@@ -123,8 +123,8 @@ export default function Home() {
   // Show a loading spinner while checking auth state or if user is logged in
   if (isLoading || dbUser) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-slate-900" />
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-slate-950">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 dark:border-slate-700 border-t-slate-900 dark:border-t-slate-100" />
       </div>
     );
   }
@@ -132,9 +132,9 @@ export default function Home() {
   const q = quizQuestions[currentQ];
 
   return (
-    <div className="relative bg-white text-slate-900">
+    <div className="relative bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
       {/* Hero Section */}
-      <div className="pt-16 pb-12 sm:pt-20 sm:pb-20 border-b border-slate-50">
+      <div className="pt-16 pb-12 sm:pt-20 sm:pb-20 border-b border-slate-50 dark:border-slate-800">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -142,15 +142,15 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl"
           >
-            <div className="mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <div className="mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               <Sparkles className="h-3 w-3 text-indigo-500" />
               LokAI v2.0 Available for 2081
             </div>
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-50 leading-[1.1]">
               Nepal&apos;s AI-Powered <br />
               Exam Preparation Platform.
             </h1>
-            <p className="mt-8 text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
+            <p className="mt-8 text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-2xl">
               A comprehensive environment for civil service aspirants. Harness AI
               for document intelligence, manage official materials securely, and
               master GK with ease.
@@ -159,7 +159,7 @@ export default function Home() {
               <Link href="/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full px-8 text-base font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none transition-all"
+                  className="h-12 w-full px-8 text-base font-semibold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none transition-all"
                 >
                   Start Preparation
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -169,7 +169,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 w-full px-8 text-base font-semibold rounded-xl border-slate-200 hover:bg-slate-50 text-slate-700 shadow-none transition-all"
+                  className="h-12 w-full px-8 text-base font-semibold rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-300 shadow-none transition-all"
                 >
                   Register Organization
                   <ChevronRight className="ml-2 h-4 w-4" />
@@ -378,13 +378,13 @@ export default function Home() {
       </div>
 
       {/* Project Summary Section */}
-      <div className="py-16 bg-slate-50/30">
+      <div className="py-16 bg-slate-50/30 dark:bg-slate-900/30">
         <Container>
           <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
               Innovative Approach to Lok Sewa.
             </h2>
-            <p className="text-base text-slate-500 font-medium leading-relaxed max-w-xl mx-auto">
+            <p className="text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto">
               LokAI represents a paradigm shift in how government exam
               materials are processed. Our architecture focuses on performance,
               accessibility, and AI integration.
@@ -399,7 +399,7 @@ export default function Home() {
               ].map((point, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 text-sm text-slate-700 font-semibold"
+                  className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 font-semibold"
                 >
                   <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />
                   {point}
@@ -411,14 +411,14 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="py-10 border-t border-slate-50">
+      <footer className="py-10 border-t border-slate-50 dark:border-slate-800">
         <Container>
           <div className="flex flex-col items-center gap-6">
             <span className="text-sm font-bold tracking-tight text-slate-400">
               LokAI Project Team &copy; 2081
             </span>
             <div className="flex items-center gap-8">
-              <Globe2 className="h-4 w-4 text-slate-300 hover:text-slate-900 cursor-pointer transition-colors" />
+              <Globe2 className="h-4 w-4 text-slate-300 dark:text-slate-600 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer transition-colors" />
             </div>
           </div>
         </Container>

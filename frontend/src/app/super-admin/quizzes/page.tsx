@@ -72,9 +72,9 @@ const QUESTION_TEMPLATE = JSON.stringify([
 ], null, 2);
 
 const difficultyColor: Record<string, string> = {
-  easy: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  medium: "bg-amber-50 text-amber-700 border-amber-200",
-  hard: "bg-red-50 text-red-700 border-red-200",
+  easy: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
+  medium: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+  hard: "bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800",
 };
 
 export default function GlobalQuizManagerPage() {
@@ -212,8 +212,8 @@ export default function GlobalQuizManagerPage() {
             <BookOpen className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">Global Quiz Manager</h1>
-            <p className="text-sm text-slate-500 font-medium">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">Global Quiz Manager</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Publish GK quizzes with rich topics, chapters, and visual thumbnails.
             </p>
           </div>
@@ -356,21 +356,21 @@ export default function GlobalQuizManagerPage() {
                         const arr = JSON.parse(jsonInput);
                         const questions = (Array.isArray(arr) ? arr : [arr]) as QuizQuestion[];
                         return questions.map((q: QuizQuestion, i: number) => (
-                          <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 space-y-2">
-                            <p className="text-sm font-bold text-slate-800">{i + 1}. {q.question || ""}</p>
+                          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-2">
+                            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{i + 1}. {q.question || ""}</p>
                             <div className="grid grid-cols-2 gap-1.5">
                               {(q.options || []).map((opt, j) => (
                                 <div key={j} className={cn("text-xs px-2 py-1.5 rounded-lg border font-medium",
                                   j === Number(q.correct_answer)
-                                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                                    : "bg-slate-50 border-slate-100 text-slate-600"
+                                    ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400"
+                                    : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400"
                                 )}>
                                   {String.fromCharCode(65 + j)}. {opt}
                                 </div>
                               ))}
                             </div>
                             {!!q.explanation && (
-                              <p className="text-[11px] text-slate-500 italic border-t border-slate-100 pt-2">{q.explanation}</p>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 italic border-t border-slate-100 dark:border-slate-700 pt-2">{q.explanation}</p>
                             )}
                           </div>
                         ));
@@ -436,7 +436,7 @@ export default function GlobalQuizManagerPage() {
         ].map(stat => (
           <Card key={stat.label} className="border border-slate-200 shadow-none">
             <CardContent className="p-4">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{stat.label}</p>
               <p className={`text-3xl font-black tracking-tighter mt-1 ${stat.color}`}>{stat.value}</p>
             </CardContent>
           </Card>
@@ -444,14 +444,14 @@ export default function GlobalQuizManagerPage() {
       </div>
 
       {/* Quiz Table */}
-      <Card className="border border-slate-200 shadow-none overflow-hidden">
-        <CardHeader className="border-b border-slate-100 px-6 py-4">
-          <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-500">Published Quizzes</CardTitle>
+      <Card className="border border-slate-200 dark:border-slate-700 shadow-none overflow-hidden">
+        <CardHeader className="border-b border-slate-100 dark:border-slate-700 px-6 py-4">
+          <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Published Quizzes</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50/70">
+              <TableRow className="bg-slate-50/70 dark:bg-slate-800/70">
                 <TableHead className="pl-6 font-black text-slate-500 text-[10px] uppercase tracking-widest">Quiz</TableHead>
                 <TableHead className="font-black text-slate-500 text-[10px] uppercase tracking-widest">Topic / Chapter</TableHead>
                 <TableHead className="font-black text-slate-500 text-[10px] uppercase tracking-widest">Difficulty</TableHead>
@@ -466,7 +466,7 @@ export default function GlobalQuizManagerPage() {
                 [...Array(4)].map((_, i) => (
                   <TableRow key={i}>
                     <TableCell colSpan={7} className="h-14">
-                      <div className="h-4 w-full rounded-lg bg-slate-100 animate-pulse" />
+                      <div className="h-4 w-full rounded-lg bg-slate-100 dark:bg-slate-700 animate-pulse" />
                     </TableCell>
                   </TableRow>
                 ))
@@ -478,7 +478,7 @@ export default function GlobalQuizManagerPage() {
                 </TableRow>
               ) : (
                 quizzes.map(quiz => (
-                  <TableRow key={quiz.id} className="hover:bg-slate-50/70 transition-colors">
+                  <TableRow key={quiz.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
                     <TableCell className="pl-6">
                       <div className="flex items-center gap-3">
                         {quiz.thumbnail_url && (
@@ -488,7 +488,7 @@ export default function GlobalQuizManagerPage() {
                           </div>
                         )}
                         <div>
-                          <p className="font-bold text-slate-900 text-sm">{quiz.title}</p>
+                          <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{quiz.title}</p>
                           {quiz.description && (
                             <p className="text-xs text-slate-400 line-clamp-1">{quiz.description}</p>
                           )}
@@ -510,7 +510,7 @@ export default function GlobalQuizManagerPage() {
                         {quiz.difficulty}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-mono font-bold text-slate-700">{quiz.total_questions}</TableCell>
+                    <TableCell className="font-mono font-bold text-slate-700 dark:text-slate-300">{quiz.total_questions}</TableCell>
                     <TableCell className="font-mono font-bold text-amber-600">{quiz.reward_xp > 0 ? `+${quiz.reward_xp}` : "—"}</TableCell>
                     <TableCell>
                       {quiz.thumbnail_url ? (

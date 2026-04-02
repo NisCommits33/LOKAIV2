@@ -240,30 +240,30 @@ export default function AdminUsersPage() {
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 pb-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-700 pb-6">
         <div>
           <div className="mt-1"><BackButton /></div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-4">Manage Users</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 mt-4">Manage Users</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             View and manage all members within your organization.
           </p>
         </div>
       </div>
 
       {/* Filters Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="flex-1 relative">
            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
            <Input 
              placeholder="Search by name, email, or Employee ID..." 
              value={searchTerm}
              onChange={(e) => setSearchTerm(e.target.value)}
-             className="pl-9 h-10 w-full bg-slate-50"
+             className="pl-9 h-10 w-full bg-slate-50 dark:bg-slate-800"
            />
         </div>
         <div className="w-full sm:w-48">
           <Select value={deptFilter} onValueChange={setDeptFilter}>
-            <SelectTrigger className="h-10 bg-slate-50">
+            <SelectTrigger className="h-10 bg-slate-50 dark:bg-slate-800">
               <SelectValue placeholder="Department Filter" />
             </SelectTrigger>
             <SelectContent>
@@ -276,7 +276,7 @@ export default function AdminUsersPage() {
         </div>
         <div className="w-full sm:w-40">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-10 bg-slate-50">
+            <SelectTrigger className="h-10 bg-slate-50 dark:bg-slate-800">
               <SelectValue placeholder="Status Filter" />
             </SelectTrigger>
             <SelectContent>
@@ -289,12 +289,12 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Main Table Container */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto shadow-sm">
         {filteredUsers.length === 0 ? (
           <div className="text-center py-16 px-4">
             <Users className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-slate-900">No users found</h3>
-            <p className="text-slate-500 mt-1">Check your filter combinations or clear them to see all users.</p>
+            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">No users found</h3>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Check your filter combinations or clear them to see all users.</p>
             {(searchTerm || deptFilter !== "all" || statusFilter !== "all") && (
               <Button 
                 variant="outline" 
@@ -307,7 +307,7 @@ export default function AdminUsersPage() {
           </div>
         ) : (
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs uppercase font-bold tracking-wider text-slate-500">
+            <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-xs uppercase font-bold tracking-wider text-slate-500 dark:text-slate-400">
               <tr>
                 <th className="px-6 py-4">User Details</th>
                 <th className="px-6 py-4">Role / Verification</th>
@@ -316,12 +316,12 @@ export default function AdminUsersPage() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center shrink-0 border border-indigo-200 overflow-hidden">
+                      <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 font-bold flex items-center justify-center shrink-0 border border-indigo-200 dark:border-indigo-800 overflow-hidden">
                         {user.avatar_url ? (
                            <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -329,14 +329,14 @@ export default function AdminUsersPage() {
                         )}
                       </div>
                       <div>
-                        <div className="font-semibold text-slate-900">{user.full_name || "Unknown"}</div>
-                        <div className="text-slate-500 text-xs">{user.email}</div>
+                        <div className="font-semibold text-slate-900 dark:text-slate-100">{user.full_name || "Unknown"}</div>
+                        <div className="text-slate-500 dark:text-slate-400 text-xs">{user.email}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="space-y-1.5">
-                       <Badge variant="outline" className="font-mono text-[10px] tracking-wider uppercase bg-slate-50 text-slate-600 border-slate-200">
+                       <Badge variant="outline" className="font-mono text-[10px] tracking-wider uppercase bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700">
                          {user.role}
                        </Badge>
                        {user.verification_status === 'verified' ? (
@@ -352,7 +352,7 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4">
                      <div className="space-y-0.5">
-                       <div className="font-medium text-slate-700">
+                       <div className="font-medium text-slate-700 dark:text-slate-300">
                          {user.department?.name || <span className="text-slate-400 italic">No Dept</span>}
                        </div>
                        <div className="text-xs text-slate-500">
@@ -365,8 +365,8 @@ export default function AdminUsersPage() {
                     <span 
                       className={`inline-flex items-center justify-center h-6 px-2.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         user.is_active 
-                          ? "bg-emerald-100 text-emerald-800" 
-                          : "bg-red-100 text-red-800"
+                          ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400" 
+                          : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
                       }`}
                     >
                       {user.is_active ? "Active" : "Inactive"}
@@ -507,26 +507,26 @@ export default function AdminUsersPage() {
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4 py-2">
-              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-2 text-sm">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Name</span>
-                  <span className="font-semibold text-slate-900">{selectedUser.full_name}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Name</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedUser.full_name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Email</span>
-                  <span className="text-slate-700">{selectedUser.email}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Email</span>
+                  <span className="text-slate-700 dark:text-slate-300">{selectedUser.email}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Department</span>
-                  <span className="text-slate-700">{selectedUser.department?.name || "—"}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Department</span>
+                  <span className="text-slate-700 dark:text-slate-300">{selectedUser.department?.name || "—"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Job Level</span>
-                  <span className="text-slate-700">{selectedUser.job_level?.name || "—"}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Job Level</span>
+                  <span className="text-slate-700 dark:text-slate-300">{selectedUser.job_level?.name || "—"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Employee ID</span>
-                  <span className="text-slate-700">{selectedUser.employee_id || "—"}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Employee ID</span>
+                  <span className="text-slate-700 dark:text-slate-300">{selectedUser.employee_id || "—"}</span>
                 </div>
               </div>
               <div className="space-y-2">
@@ -538,7 +538,7 @@ export default function AdminUsersPage() {
                   placeholder="Explain why the request is being rejected..."
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
-                  className="resize-none bg-slate-50 border-slate-100"
+                  className="resize-none bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700"
                   rows={3}
                 />
               </div>

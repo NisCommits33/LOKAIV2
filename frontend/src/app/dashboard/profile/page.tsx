@@ -142,31 +142,31 @@ export default function ProfilePage() {
   const isInactive = profile?.is_active === false;
 
   return (
-    <div className="p-6 sm:p-8 space-y-6">
+    <div className="p-6 sm:p-8 space-y-6 bg-white dark:bg-slate-950 min-h-full">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
           My Profile
         </h1>
-        <p className="text-slate-500 font-medium mt-1">
+        <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
           Manage your account and verification status.
         </p>
       </motion.div>
 
       {/* Profile Info Card */}
-      <Card className="shadow-none border border-slate-100 bg-white">
+      <Card className="shadow-none border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
         <CardHeader className="px-6 pt-6 pb-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center">
-              <User className="h-5 w-5 text-slate-600" />
+            <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center">
+              <User className="h-5 w-5 text-slate-600 dark:text-slate-400" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold text-slate-900">
+              <CardTitle className="text-lg font-bold text-slate-900 dark:text-slate-50">
                 {profile?.full_name || dbUser?.full_name || "User"}
               </CardTitle>
-              <CardDescription className="text-sm font-medium text-slate-500">
+              <CardDescription className="text-sm font-medium text-slate-500 dark:text-slate-400">
                 {profile?.email || dbUser?.email}
               </CardDescription>
             </div>
@@ -176,30 +176,30 @@ export default function ProfilePage() {
           <div className="flex flex-wrap items-center gap-2">
             <Badge
               variant="secondary"
-              className="capitalize bg-slate-50 text-slate-600 border border-slate-100 font-bold text-[10px] uppercase tracking-widest"
+              className="capitalize bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-100 dark:border-slate-700 font-bold text-[10px] uppercase tracking-widest"
             >
               {(profile?.role || dbUser?.role || "public").replace("_", " ")}
             </Badge>
             {isVerified && (
-              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold text-[10px] uppercase tracking-widest">
+              <Badge className="bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 font-bold text-[10px] uppercase tracking-widest">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Verified Employee
               </Badge>
             )}
             {isPending && (
-              <Badge className="bg-amber-50 text-amber-700 border border-amber-100 font-bold text-[10px] uppercase tracking-widest">
+              <Badge className="bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30 font-bold text-[10px] uppercase tracking-widest">
                 <Clock className="h-3 w-3 mr-1" />
                 Verification Pending
               </Badge>
             )}
             {isRejected && (
-              <Badge className="bg-red-50 text-red-700 border border-red-100 font-bold text-[10px] uppercase tracking-widest">
+              <Badge className="bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30 font-bold text-[10px] uppercase tracking-widest">
                 <XCircle className="h-3 w-3 mr-1" />
                 Verification Rejected
               </Badge>
             )}
             {isInactive && (
-              <Badge className="bg-red-50 text-red-700 border border-red-100 font-bold text-[10px] uppercase tracking-widest">
+              <Badge className="bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30 font-bold text-[10px] uppercase tracking-widest">
                 <XCircle className="h-3 w-3 mr-1" />
                 Account Deactivated
               </Badge>
@@ -208,38 +208,38 @@ export default function ProfilePage() {
 
           {/* Show org details if user has them */}
           {profile?.organization && (
-            <div className="rounded-xl bg-slate-50 border border-slate-100 p-4 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 p-4 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                 <Building2 className="h-3.5 w-3.5" />
                 Organization Details
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div>
-                  <span className="text-slate-400 font-medium">Organization: </span>
-                  <span className="text-slate-700 font-semibold">
+                  <span className="text-slate-400 dark:text-slate-500 font-medium">Organization: </span>
+                  <span className="text-slate-700 dark:text-slate-300 font-semibold">
                     {profile.organization.name}
                   </span>
                 </div>
                 {profile.department && (
                   <div>
-                    <span className="text-slate-400 font-medium">Department: </span>
-                    <span className="text-slate-700 font-semibold">
+                    <span className="text-slate-400 dark:text-slate-500 font-medium">Department: </span>
+                    <span className="text-slate-700 dark:text-slate-300 font-semibold">
                       {profile.department.name}
                     </span>
                   </div>
                 )}
                 {profile.job_level && (
                   <div>
-                    <span className="text-slate-400 font-medium">Job Level: </span>
-                    <span className="text-slate-700 font-semibold">
+                    <span className="text-slate-400 dark:text-slate-500 font-medium">Job Level: </span>
+                    <span className="text-slate-700 dark:text-slate-300 font-semibold">
                       {profile.job_level.name}
                     </span>
                   </div>
                 )}
                 {profile.employee_id && (
                   <div>
-                    <span className="text-slate-400 font-medium">Employee ID: </span>
-                    <span className="text-slate-700 font-semibold">
+                    <span className="text-slate-400 dark:text-slate-500 font-medium">Employee ID: </span>
+                    <span className="text-slate-700 dark:text-slate-300 font-semibold">
                       {profile.employee_id}
                     </span>
                   </div>
@@ -250,7 +250,7 @@ export default function ProfilePage() {
 
           {/* Rejection reason */}
           {isRejected && profile?.rejection_reason && (
-            <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-sm text-red-600 font-medium">
+            <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-4 text-sm text-red-600 dark:text-red-400 font-medium">
               <strong>Rejection Reason:</strong> {profile.rejection_reason}
             </div>
           )}
@@ -259,20 +259,20 @@ export default function ProfilePage() {
 
       {/* Employee Verification Section */}
       {(canApply || isRejected) && !showVerifyForm && (
-        <Card className="shadow-none border border-slate-100 bg-white">
+        <Card className="shadow-none border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="h-11 w-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                  <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                <div className="h-11 w-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center">
+                  <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-50">
                     {isRejected
                       ? "Reapply for Employee Verification"
                       : "Apply for Employee Verification"}
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                     {isRejected
                       ? "Update your details and submit a new verification request."
                       : "Link your account to your government organization for full access."}
@@ -281,7 +281,7 @@ export default function ProfilePage() {
               </div>
               <Button
                 onClick={() => setShowVerifyForm(true)}
-                className="h-10 px-5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-xs shadow-none shrink-0"
+                className="h-10 px-5 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-xs shadow-none shrink-0"
               >
                 {isRejected ? "Reapply" : "Apply Now"}
               </Button>
@@ -296,17 +296,17 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Card className="shadow-none border border-emerald-100 bg-white">
+          <Card className="shadow-none border border-emerald-100 dark:border-emerald-900/30 bg-white dark:bg-slate-900">
             <CardHeader className="px-6 pt-6 pb-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                  <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center">
+                  <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-bold text-slate-900">
+                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-slate-50">
                     Employee Verification
                   </CardTitle>
-                  <CardDescription className="text-sm font-medium text-slate-500">
+                  <CardDescription className="text-sm font-medium text-slate-500 dark:text-slate-400">
                     Select your organization and provide your details.
                   </CardDescription>
                 </div>
@@ -338,7 +338,7 @@ export default function ProfilePage() {
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="profile-emp-id"
-                    className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                   >
                     Employee ID (Optional)
                   </Label>
@@ -347,7 +347,7 @@ export default function ProfilePage() {
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     placeholder="Enter your employee ID"
-                    className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                    className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                   />
                 </div>
 
@@ -357,14 +357,14 @@ export default function ProfilePage() {
                     variant="outline"
                     onClick={() => setShowVerifyForm(false)}
                     disabled={submitting}
-                    className="h-11 px-6 rounded-xl border-slate-100 text-sm font-bold text-slate-500 shadow-none"
+                    className="h-11 px-6 rounded-xl border-slate-100 dark:border-slate-800 text-sm font-bold text-slate-500 dark:text-slate-400 shadow-none"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={submitting || !orgId}
-                    className="flex-1 h-11 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm shadow-none"
+                    className="flex-1 h-11 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold text-sm shadow-none"
                   >
                     {submitting ? (
                       "Submitting..."
@@ -384,17 +384,17 @@ export default function ProfilePage() {
 
       {/* Pending status info */}
       {isPending && (
-        <Card className="shadow-none border border-amber-100 bg-amber-50/30">
+        <Card className="shadow-none border border-amber-100 dark:border-amber-900/30 bg-amber-50/30 dark:bg-amber-950/10">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="h-11 w-11 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-amber-700" />
+              <div className="h-11 w-11 rounded-xl bg-amber-100 dark:bg-amber-950/30 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-amber-700 dark:text-amber-400" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-amber-900">
+                <h3 className="text-sm font-bold text-amber-900 dark:text-amber-300">
                   Verification In Progress
                 </h3>
-                <p className="text-xs text-amber-700 font-medium mt-0.5">
+                <p className="text-xs text-amber-700 dark:text-amber-400 font-medium mt-0.5">
                   Your request is being reviewed by your organization admin. This usually takes 1–2 business days.
                 </p>
               </div>

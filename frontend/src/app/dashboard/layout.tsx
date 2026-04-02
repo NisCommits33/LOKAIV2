@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -225,18 +226,19 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-white dark:bg-slate-950">
       {/* Logo */}
-      <div className="flex h-16 items-center px-6">
+      <div className="flex h-16 items-center justify-between px-6">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-bold">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
             L
           </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900">LokAI</span>
+          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LokAI</span>
         </Link>
+        <ThemeToggle />
       </div>
 
-      <Separator />
+      <Separator className="dark:bg-slate-800" />
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
@@ -250,8 +252,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-slate-50 text-slate-900 font-semibold"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                  ? "bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-semibold"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -262,8 +264,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         {filteredAdminItems.length > 0 && (
           <>
-            <Separator className="my-3" />
-            <p className="px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <Separator className="my-3 dark:bg-slate-800" />
+            <p className="px-3 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
               Organization Admin
             </p>
             {filteredAdminItems.map((item) => {
@@ -276,8 +278,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-slate-50 text-slate-900 font-semibold"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
                   )}
                 >
                   <item.icon className="h-4 w-4" />
@@ -290,8 +292,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         {filteredSuperAdminItems.length > 0 && (
           <>
-            <Separator className="my-3" />
-            <p className="px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <Separator className="my-3 dark:bg-slate-800" />
+            <p className="px-3 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
               Super Admin
             </p>
             {filteredSuperAdminItems.map((item) => {
@@ -304,8 +306,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-slate-50 text-slate-900 font-semibold"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
                   )}
                 >
                   <item.icon className="h-4 w-4" />
@@ -318,27 +320,27 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* User profile section */}
-      <Separator />
+      <Separator className="dark:bg-slate-800" />
       <div className="p-3">
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 hover:ring-2 hover:ring-indigo-500 transition-all">
             <AvatarImage src={dbUser?.avatar_url ?? undefined} />
-            <AvatarFallback className="text-xs">
+            <AvatarFallback className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
               {getInitials(dbUser?.full_name ?? null)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
+            <p className="text-sm font-semibold truncate text-slate-900 dark:text-slate-100">
               {dbUser?.full_name || "User"}
             </p>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
               {dbUser?.email}
             </p>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0"
+            className="h-8 w-8 shrink-0 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
             onClick={handleLogout}
             title="Sign out"
           >
@@ -358,15 +360,15 @@ export default function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       {/* Desktop Sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-slate-100 bg-white md:block">
+      <aside className="hidden w-64 shrink-0 border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 md:block">
         <SidebarContent />
       </aside>
 
       {/* Mobile Sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-64 p-0 dark:bg-slate-950 border-r dark:border-slate-800">
           <SidebarContent onNavigate={() => setMobileOpen(false)} />
         </SheetContent>
       </Sheet>
@@ -374,24 +376,28 @@ export default function DashboardLayout({
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile header */}
-        <header className="flex h-16 items-center gap-4 border-b border-slate-100 bg-white px-4 md:hidden">
+        <header className="flex h-16 items-center gap-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 md:hidden shrink-0">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setMobileOpen(true)}
           >
-            <Menu className="h-5 w-5 text-slate-500" />
+            <Menu className="h-5 w-5 text-slate-500 dark:text-slate-400" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-xs font-bold">
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-xs font-bold">
               L
             </div>
-            <span className="text-lg font-bold tracking-tight text-slate-900">LokAI</span>
+            <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LokAI</span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-white">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
+          <div className="min-h-full">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

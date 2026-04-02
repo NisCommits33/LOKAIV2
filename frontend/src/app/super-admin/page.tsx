@@ -81,25 +81,25 @@ export default function SuperAdminPage() {
       title: "Organizations",
       value: stats?.totalOrganizations || 0,
       icon: Building2,
-      color: "text-blue-600 bg-blue-50",
+      color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30",
     },
     {
       title: "Total Users",
       value: stats?.totalUsers || 0,
       icon: Users,
-      color: "text-emerald-600 bg-emerald-50",
+      color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30",
     },
     {
       title: "Org Documents",
       value: stats?.totalDocuments || 0,
       icon: FileText,
-      color: "text-purple-600 bg-purple-50",
+      color: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30",
     },
     {
       title: "GK Quizzes",
       value: stats?.totalQuizzes || 0,
       icon: BookOpen,
-      color: "text-indigo-600 bg-indigo-50",
+      color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30",
     },
   ];
 
@@ -107,14 +107,14 @@ export default function SuperAdminPage() {
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900">
           <Shield className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
             Platform Overview
           </h1>
-          <p className="text-slate-500 font-medium">
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
             Monitor and manage the LokAI platform.
           </p>
         </div>
@@ -125,7 +125,7 @@ export default function SuperAdminPage() {
         {statCards.map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-500">
+              <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">
                 {card.title}
               </CardTitle>
               <div className={`rounded-lg p-2 ${card.color}`}>
@@ -136,7 +136,7 @@ export default function SuperAdminPage() {
               {loading ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                   {card.value}
                 </p>
               )}
@@ -186,12 +186,12 @@ export default function SuperAdminPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Review pending organization applications, approve or reject
               registrations, and assign organization admins.
             </p>
             {pendingApps > 0 && (
-              <Badge variant="secondary" className="bg-amber-50 text-amber-700">
+              <Badge variant="secondary" className="bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400">
                 {pendingApps} pending review
               </Badge>
             )}
@@ -212,11 +212,11 @@ export default function SuperAdminPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Create and push General Knowledge Quizzes straight to all normal 
               users platform-wide.
             </p>
-            <Button asChild variant="outline" className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+            <Button asChild variant="outline" className="w-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30">
               <Link href="/super-admin/quizzes">
                 Quiz Manager
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -233,7 +233,7 @@ export default function SuperAdminPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Configure platform-wide settings, manage global defaults, and
               review system audit logs.
             </p>

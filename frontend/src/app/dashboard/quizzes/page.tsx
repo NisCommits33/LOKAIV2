@@ -32,36 +32,41 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const topicMetadata: Record<string, { icon: any; color: string; gradient: string; tint: string }> = {
+const topicMetadata: Record<string, { icon: any; color: string; gradient: string; tint: string; darkTint: string }> = {
   "Nepal Constitution": {
     icon: BookOpen,
-    color: "text-indigo-600",
+    color: "text-indigo-600 dark:text-indigo-400",
     gradient: "from-indigo-600 to-indigo-900",
     tint: "bg-indigo-50",
+    darkTint: "bg-indigo-950/30",
   },
   "Geography": {
     icon: Map,
-    color: "text-emerald-600",
+    color: "text-emerald-600 dark:text-emerald-400",
     gradient: "from-emerald-600 to-emerald-900",
     tint: "bg-emerald-50",
+    darkTint: "bg-emerald-950/30",
   },
   "History": {
     icon: History,
-    color: "text-amber-600",
+    color: "text-amber-600 dark:text-amber-400",
     gradient: "from-amber-600 to-amber-900",
     tint: "bg-amber-50",
+    darkTint: "bg-amber-950/30",
   },
   "Current Affairs": {
     icon: Sparkles,
-    color: "text-violet-600",
+    color: "text-violet-600 dark:text-violet-400",
     gradient: "from-violet-600 to-violet-900",
     tint: "bg-violet-50",
+    darkTint: "bg-violet-950/30",
   },
   "General Knowledge": {
     icon: Layers,
-    color: "text-slate-600",
+    color: "text-slate-600 dark:text-slate-400",
     gradient: "from-slate-700 to-slate-900",
     tint: "bg-slate-50",
+    darkTint: "bg-slate-900/50",
   },
 };
 
@@ -161,7 +166,7 @@ export default function QuizzesPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Mastery Snapshot Card */}
                   <Card className="border-none shadow-xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white overflow-hidden relative group">
-                      <div className="absolute -right-6 -top-10 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
+                      <div className="absolute -right-6 -top-10 opacity-20 dark:opacity-10 transform group-hover:scale-110 transition-transform duration-500">
                           <Target className="w-40 h-40" />
                       </div>
                       <CardContent className="p-6 relative z-10 flex items-center h-full">
@@ -179,27 +184,27 @@ export default function QuizzesPage() {
                   </Card>
 
                   {/* Streak Card */}
-                  <Card className="border border-slate-200 bg-white shadow-sm overflow-hidden group hover:border-slate-300 hover:shadow-lg transition-all">
+                  <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden group hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg dark:hover:shadow-indigo-500/10 transition-all">
                       <CardContent className="p-6 flex items-center gap-5">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 transition-transform group-hover:scale-110 group-hover:-rotate-3">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 transition-transform group-hover:scale-110 group-hover:-rotate-3">
                               <TrendingUp className="h-6 w-6" />
                           </div>
                           <div>
-                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Current Streak</p>
-                              <h3 className="text-2xl font-bold text-slate-900">{stats?.streak ?? "--"} Days</h3>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Current Streak</p>
+                              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{stats?.streak ?? "--"} Days</h3>
                           </div>
                       </CardContent>
                   </Card>
 
                   {/* Rank Card */}
-                  <Card className="border border-slate-200 bg-white shadow-sm overflow-hidden group hover:border-slate-300 hover:shadow-lg transition-all">
+                  <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden group hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg dark:hover:shadow-indigo-500/10 transition-all">
                       <CardContent className="p-6 flex items-center gap-5">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 transition-transform group-hover:scale-110 group-hover:-rotate-3">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 transition-transform group-hover:scale-110 group-hover:-rotate-3">
                               <Trophy className="h-6 w-6" />
                           </div>
                           <div>
-                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Academy Rank</p>
-                              <h3 className="text-2xl font-bold text-slate-900">Top {stats?.rank.percentile ?? "--"}%</h3>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Academy Rank</p>
+                              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Top {stats?.rank.percentile ?? "--"}%</h3>
                           </div>
                       </CardContent>
                   </Card>
@@ -207,22 +212,22 @@ export default function QuizzesPage() {
             )}
 
             {/* 2. Page Header / Breadcrumbs */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-bold">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
                     L
                   </div>
-                  <span className="text-lg font-bold tracking-tight text-slate-900">LokAI Learning Library</span>
+                  <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LokAI Learning Library</span>
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      <span className="text-indigo-600">Base Library</span>
-                      <div className="h-1 w-1 rounded-full bg-slate-300" />
-                      <span className="text-slate-900">Subject Discovery</span>
+                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                      <span className="text-indigo-600 dark:text-indigo-400">Base Library</span>
+                      <div className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <span className="text-slate-900 dark:text-slate-100">Subject Discovery</span>
                   </div>
-                  <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+                  <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
                     Skill Academy subjects
                   </h1>
                 </div>
@@ -230,12 +235,12 @@ export default function QuizzesPage() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 dark:group-focus-within:text-indigo-400 transition-colors" />
                     <Input
                       placeholder="Search subjects or topics..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="pl-10 h-11 bg-white border-slate-200 rounded-xl focus:ring-slate-900/5 shadow-none text-sm font-medium w-full md:w-64"
+                      className="pl-10 h-11 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl focus:ring-slate-900/5 dark:focus:ring-slate-100/5 shadow-none text-sm font-medium w-full md:w-64 text-slate-900 dark:text-slate-100"
                     />
                 </div>
                 
@@ -244,14 +249,14 @@ export default function QuizzesPage() {
                   availableCategories={Object.keys(groupedData)}
                   availableSubCategories={search && groupedData[search] ? Object.keys(groupedData[search]) : []}
                 >
-                  <Button variant="outline" className="h-11 rounded-xl border-slate-200 bg-white font-bold text-slate-700 gap-2 hover:bg-slate-50 hover:border-slate-300 shadow-none transition-all px-5">
-                      <Sparkles className="h-4 w-4 text-indigo-600" />
+                  <Button variant="outline" className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-slate-300 gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-none transition-all px-5">
+                      <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       Personalized Practice
                   </Button>
                 </CustomChallengeDialog>
 
                 <Link href="/dashboard/quizzes/history">
-                    <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl border-slate-200 bg-white hover:bg-slate-50 shadow-none">
+                    <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-none">
                       <History className="h-5 w-5 text-slate-600" />
                     </Button>
                 </Link>
@@ -433,16 +438,16 @@ export default function QuizzesPage() {
                <Accordion type="multiple" defaultValue={Object.keys(groupedData[selectedTopic] || {})} className="space-y-4">
                   {Object.entries(groupedData[selectedTopic] || {}).map(([sub, items], idx) => {
                       const chapterMastery = stats?.subCategories?.[`${selectedTopic}::${sub}`] || 0;
-                      const colorClass = chapterMastery >= 80 ? "text-emerald-500 bg-emerald-50 border-emerald-100" 
-                                      : chapterMastery >= 60 ? "text-amber-500 bg-amber-50 border-amber-100" 
-                                      : chapterMastery > 0 ? "text-indigo-500 bg-indigo-50 border-indigo-100"
-                                      : "text-slate-400 bg-slate-50 border-slate-100";
+                      const colorClass = chapterMastery >= 80 ? "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900" 
+                                      : chapterMastery >= 60 ? "text-amber-500 bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900" 
+                                      : chapterMastery > 0 ? "text-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 border-indigo-100 dark:border-indigo-900"
+                                      : "text-slate-400 bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700";
                       
                       return (
                         <AccordionItem 
                           key={sub} 
                           value={sub} 
-                          className="border border-slate-200 rounded-[2rem] bg-white px-8 shadow-sm overflow-hidden group hover:border-slate-300 hover:shadow-md transition-all"
+                          className="border border-slate-200 dark:border-slate-800 rounded-[2rem] bg-white dark:bg-slate-900 px-8 shadow-sm overflow-hidden group hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md transition-all"
                         >
                            <AccordionTrigger className="hover:no-underline py-6">
                               <div className="flex items-center gap-6 text-left">
@@ -450,7 +455,7 @@ export default function QuizzesPage() {
                                     {String(idx + 1).padStart(2, '0')}
                                  </div>
                                  <div className="space-y-1">
-                                    <p className="text-2xl font-bold text-slate-900 tracking-tight">{sub}</p>
+                                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">{sub}</p>
                                     <div className="flex items-center gap-4">
                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-mono">{items.length} Modules</p>
                                        <div className="h-1 w-1 rounded-full bg-slate-200" />

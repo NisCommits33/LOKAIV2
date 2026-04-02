@@ -75,7 +75,7 @@ export function CustomChallengeDialog({
         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Target Subject</Label>
         {availableCategories.length > 0 ? (
            <Select value={category} onValueChange={(val) => { setCategory(val); setSubCategory("All Chapters"); }}>
-              <SelectTrigger className="h-11 rounded-xl border-slate-200 bg-white">
+              <SelectTrigger className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                  <div className="flex items-center gap-2">
                     <LayoutGrid className="h-4 w-4 text-slate-400" />
                     <SelectValue placeholder="Select Subject" />
@@ -95,7 +95,7 @@ export function CustomChallengeDialog({
                value={category}
                onChange={(e) => setCategory(e.target.value)}
                placeholder="e.g. Nepal Constitution"
-               className="pl-10 h-11 rounded-xl border-slate-200 bg-white"
+               className="pl-10 h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
              />
           </div>
         )}
@@ -105,7 +105,7 @@ export function CustomChallengeDialog({
       <div className="space-y-2">
          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Specific Chapter (Optional)</Label>
          <Select value={subCategory} onValueChange={setSubCategory}>
-            <SelectTrigger className="h-11 rounded-xl border-slate-200 bg-white">
+            <SelectTrigger className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                <div className="flex items-center gap-2">
                   <Layers className="h-4 w-4 text-slate-400" />
                   <SelectValue placeholder="Focus on chapter..." />
@@ -155,7 +155,7 @@ export function CustomChallengeDialog({
       <div className="space-y-2">
         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Difficulty Level</Label>
         <Select value={difficulty} onValueChange={setDifficulty}>
-          <SelectTrigger className="h-11 rounded-xl border-slate-200 bg-white">
+          <SelectTrigger className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
              <div className="flex items-center gap-2">
                 <Gauge className="h-4 w-4 text-slate-400" />
                 <SelectValue placeholder="Select level" />
@@ -192,10 +192,10 @@ export function CustomChallengeDialog({
     return (
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger render={children as any} />
-        <SheetContent side="bottom" className="rounded-t-[2.5rem] border-none p-8 outline-none bg-white shadow-2xl">
+        <SheetContent side="bottom" className="rounded-t-[2.5rem] border-none p-8 outline-none bg-white dark:bg-slate-900 shadow-2xl">
           <SheetHeader className="text-left pb-2">
-            <SheetTitle className="text-2xl font-bold text-slate-900">Personalized Practice</SheetTitle>
-            <div className="text-sm font-medium text-slate-500 mt-1">Configure your AI-powered curriculum focus.</div>
+            <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-slate-50">Personalized Practice</SheetTitle>
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Configure your AI-powered curriculum focus.</div>
           </SheetHeader>
           {Content}
         </SheetContent>
@@ -206,11 +206,11 @@ export function CustomChallengeDialog({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger render={children as any} />
-      <SheetContent side="right" className="w-screen max-w-none p-0 h-full flex flex-col border-none shadow-none bg-white">
+      <SheetContent side="right" className="w-screen max-w-none p-0 h-full flex flex-col border-none shadow-none bg-white dark:bg-slate-900">
         <div className="flex-1 flex flex-col w-full max-w-[500px] mx-auto overflow-y-auto">
-          <SheetHeader className="text-left p-8 sm:p-12 border-b border-slate-50 shrink-0">
-            <SheetTitle className="text-3xl font-bold text-slate-900">Personalized Practice</SheetTitle>
-            <div className="text-sm font-medium text-slate-500 mt-2">Setup your optimized curriculum focus.</div>
+          <SheetHeader className="text-left p-8 sm:p-12 border-b border-slate-50 dark:border-slate-800 shrink-0">
+            <SheetTitle className="text-3xl font-bold text-slate-900 dark:text-slate-50">Personalized Practice</SheetTitle>
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">Setup your optimized curriculum focus.</div>
           </SheetHeader>
           <div className="px-8 sm:px-12">
             {Content}

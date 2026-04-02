@@ -143,10 +143,10 @@ export function QuizPlayer({
 
   if (!questions || questions.length === 0) return (
     <div className="py-20 text-center space-y-4">
-      <div className="bg-slate-50 h-16 w-16 rounded-full flex items-center justify-center mx-auto">
-        <Send className="h-8 w-8 text-slate-300" />
+      <div className="bg-slate-50 dark:bg-slate-800 h-16 w-16 rounded-full flex items-center justify-center mx-auto">
+        <Send className="h-8 w-8 text-slate-300 dark:text-slate-600" />
       </div>
-      <p className="text-slate-500 font-medium">No questions available for this document.</p>
+      <p className="text-slate-500 dark:text-slate-400 font-medium">No questions available for this document.</p>
     </div>
   );
 
@@ -166,25 +166,25 @@ export function QuizPlayer({
         animate={{ opacity: 1, scale: 1 }}
         className="p-6 sm:p-8 max-w-2xl mx-auto"
       >
-        <Card className="overflow-hidden border-none shadow-xl bg-white">
+        <Card className="overflow-hidden border-none shadow-xl bg-white dark:bg-slate-900">
           <div className="h-2 bg-indigo-600 w-full" />
           <CardContent className="p-8 text-center space-y-8">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-slate-900">Quiz Completed!</h2>
-              <p className="text-slate-500">Here's how you performed on this document.</p>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Quiz Completed!</h2>
+              <p className="text-slate-500 dark:text-slate-400">Here's how you performed on this document.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-4">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center gap-1">
-                <span className="text-3xl font-black text-slate-900">{percentage}%</span>
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center gap-1">
+                <span className="text-3xl font-black text-slate-900 dark:text-slate-50">{percentage}%</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Score</span>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center gap-1">
-                <span className="text-3xl font-black text-slate-900">{results.score}/{results.total}</span>
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center gap-1">
+                <span className="text-3xl font-black text-slate-900 dark:text-slate-50">{results.score}/{results.total}</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Correct</span>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center gap-1">
-                <span className="text-3xl font-black text-slate-900">{Math.floor(results.timeSpent / 60)}m {results.timeSpent % 60}s</span>
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center gap-1">
+                <span className="text-3xl font-black text-slate-900 dark:text-slate-50">{Math.floor(results.timeSpent / 60)}m {results.timeSpent % 60}s</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Time</span>
               </div>
             </div>
@@ -199,7 +199,7 @@ export function QuizPlayer({
               <Button 
                 variant="outline" 
                 onClick={resetQuiz}
-                className="flex-1 h-12 text-base font-bold border-slate-200"
+                className="flex-1 h-12 text-base font-bold border-slate-200 dark:border-slate-700"
               >
                 Retake Quiz
               </Button>
@@ -214,7 +214,7 @@ export function QuizPlayer({
   if (!started && showStartScreen) {
     return (
       <div className="p-6 sm:p-8 max-w-2xl mx-auto">
-        <Card className="shadow-2xl border-none bg-white overflow-hidden">
+        <Card className="shadow-2xl border-none bg-white dark:bg-slate-900 overflow-hidden">
           <div className="h-2 bg-slate-900 w-full" />
           <CardContent className="p-8 space-y-8">
             <div className="space-y-4">
@@ -231,19 +231,19 @@ export function QuizPlayer({
                 )}
               </div>
               <div className="space-y-1">
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">{title || "Quiz Time"}</h1>
-                <p className="text-slate-500 text-sm font-medium leading-relaxed">{description || "Test your knowledge on the document."}</p>
+                <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight leading-none">{title || "Quiz Time"}</h1>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">{description || "Test your knowledge on the document."}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Questions</p>
-                <p className="text-slate-900 font-black text-2xl">{questions.length}</p>
+                <p className="text-slate-900 dark:text-slate-50 font-black text-2xl">{questions.length}</p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Time Limit</p>
-                <p className="text-slate-900 font-black text-2xl">{timeLimitMinutes ? `${timeLimitMinutes}m` : "No limit"}</p>
+                <p className="text-slate-900 dark:text-slate-50 font-black text-2xl">{timeLimitMinutes ? `${timeLimitMinutes}m` : "No limit"}</p>
               </div>
             </div>
 
@@ -266,7 +266,7 @@ export function QuizPlayer({
             <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">
               {reviewMode ? "Reviewing Results" : "Quiz Progress"}
             </p>
-            <p className="text-[10px] uppercase font-black tracking-widest text-slate-900">
+            <p className="text-[10px] uppercase font-black tracking-widest text-slate-900 dark:text-slate-100">
               {reviewMode ? `${currentIndex + 1} / ${questions.length}` : `${answeredCount} / ${questions.length} Answered`}
             </p>
           </div>
@@ -275,14 +275,14 @@ export function QuizPlayer({
         {!reviewMode && timeLimitMinutes && (
           <div className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-xl font-mono text-sm font-black border transition-all shadow-sm", 
-            timerDanger ? "bg-red-50 text-red-600 border-red-100 animate-pulse" : "bg-white text-slate-900 border-slate-100"
+            timerDanger ? "bg-red-50 text-red-600 border-red-100 animate-pulse" : "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-slate-100 dark:border-slate-800"
           )}>
             <Clock className="h-4 w-4" /> 
             {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
           </div>
         )}
         {reviewMode && (
-             <Button variant="outline" size="sm" onClick={() => setReviewMode(false)} className="h-10 px-4 rounded-xl font-bold border-slate-200 hover:bg-slate-50">
+             <Button variant="outline" size="sm" onClick={() => setReviewMode(false)} className="h-10 px-4 rounded-xl font-bold border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
                 Back to Results
              </Button>
         )}
@@ -311,7 +311,7 @@ export function QuizPlayer({
                             : "bg-slate-50 text-slate-400 border-slate-100"
                     : isAnswered 
                         ? "bg-indigo-50 text-indigo-700 border-indigo-100" 
-                        : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
+                        : "bg-white dark:bg-slate-900 text-slate-400 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
               )}
             >
               {i + 1}
@@ -329,7 +329,7 @@ export function QuizPlayer({
           exit={{ opacity: 0, y: -10 }} 
           transition={{ duration: 0.2 }}
         >
-          <Card className="shadow-xl border-none bg-white overflow-hidden">
+          <Card className="shadow-xl border-none bg-white dark:bg-slate-900 overflow-hidden">
             <CardContent className="p-6 sm:p-8 space-y-8">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -347,7 +347,7 @@ export function QuizPlayer({
                         </span>
                     )}
                 </div>
-                <h2 className="text-xl font-bold text-slate-900 leading-tight">{currentQuestion.question}</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 leading-tight">{currentQuestion.question}</h2>
               </div>
 
               {/* Options */}
@@ -371,10 +371,10 @@ export function QuizPlayer({
                                     ? "border-red-500 bg-red-50 text-red-900"
                                     : isSelected 
                                         ? "border-slate-200 bg-slate-50 text-slate-400"
-                                        : "border-slate-100 bg-white text-slate-300"
+                                        : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600"
                             : isSelected 
                                 ? "border-indigo-600 bg-indigo-50 text-indigo-900 shadow-md shadow-indigo-100" 
-                                : "border-slate-100 bg-white text-slate-600 hover:border-indigo-200 hover:bg-slate-50"
+                                : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                       )}
                     > 
                       <span className={cn(
@@ -408,10 +408,10 @@ export function QuizPlayer({
                   <motion.div 
                     initial={{ opacity: 0, height: 0 }} 
                     animate={{ opacity: 1, height: "auto" }}
-                    className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5"
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 space-y-1.5"
                   >
                     <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Explanation</p>
-                    <p className="text-sm text-slate-600 leading-relaxed">{(currentQuestion as any).explanation}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{(currentQuestion as any).explanation}</p>
                   </motion.div>
               )}
             </CardContent>
@@ -426,7 +426,7 @@ export function QuizPlayer({
             size="lg" 
             onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))} 
             disabled={currentIndex === 0} 
-            className="rounded-2xl h-12 px-6 font-bold border-slate-200 gap-2 shadow-sm"
+            className="rounded-2xl h-12 px-6 font-bold border-slate-200 dark:border-slate-700 gap-2 shadow-sm"
         > 
             <ChevronLeft className="h-4 w-4" /> Previous 
         </Button>
@@ -461,10 +461,10 @@ export function QuizPlayer({
 
       {/* Submit confirmation dialog */}
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <AlertDialogContent className="rounded-3xl p-8 border-none shadow-2xl">
+        <AlertDialogContent className="rounded-3xl p-8 border-none shadow-2xl dark:bg-slate-900">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black text-slate-900">Finish and Submit?</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-500 font-medium pb-2">
+            <AlertDialogTitle className="text-2xl font-black text-slate-900 dark:text-slate-50">Finish and Submit?</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 dark:text-slate-400 font-medium pb-2">
               You've answered {answeredCount} out of {questions.length} questions.
               {answeredCount < questions.length && (
                 <span className="block mt-2 p-3 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold border border-amber-100">
@@ -474,7 +474,7 @@ export function QuizPlayer({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="pt-2 gap-3">
-            <AlertDialogCancel disabled={submitting} className="rounded-2xl h-12 px-6 font-bold border-slate-200">Go Back</AlertDialogCancel>
+            <AlertDialogCancel disabled={submitting} className="rounded-2xl h-12 px-6 font-bold border-slate-200 dark:border-slate-700">Go Back</AlertDialogCancel>
             <AlertDialogAction 
                 onClick={(e) => { e.preventDefault(); handleSubmit(); }} 
                 disabled={submitting} 

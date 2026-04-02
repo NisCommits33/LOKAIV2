@@ -168,7 +168,7 @@ export function TaxonomySelector({ onTagsChange, initialTags }: TaxonomySelector
   };
 
   return (
-    <div className="space-y-4 rounded-lg border border-slate-100 bg-slate-50/50 p-4">
+    <div className="space-y-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-4">
       <div className="grid grid-cols-1 gap-4">
         
         {/* POLICY LEVEL */}
@@ -202,7 +202,7 @@ export function TaxonomySelector({ onTagsChange, initialTags }: TaxonomySelector
                 }
               }}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger className="bg-white dark:bg-slate-900">
                 <SelectValue placeholder="Select Category..." />
               </SelectTrigger>
               <SelectContent>
@@ -246,7 +246,7 @@ export function TaxonomySelector({ onTagsChange, initialTags }: TaxonomySelector
               }}
               disabled={!selectedPolicy}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger className="bg-white dark:bg-slate-900">
                 <SelectValue placeholder={selectedPolicy ? "Select Sub-Category..." : "Select a Category first"} />
               </SelectTrigger>
               <SelectContent>
@@ -282,7 +282,7 @@ export function TaxonomySelector({ onTagsChange, initialTags }: TaxonomySelector
               }}
               disabled={!selectedChapter}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger className="bg-white dark:bg-slate-900">
                 <SelectValue placeholder={selectedChapter ? "Select Tag..." : "Select a Sub-Category first"} />
               </SelectTrigger>
               <SelectContent>

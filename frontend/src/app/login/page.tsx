@@ -51,13 +51,13 @@ export default function LoginPage() {
 /** Skeleton placeholder shown while the login form loads */
 function LoginSkeleton() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
       <Container>
         <div className="mx-auto max-w-lg">
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-10">
-              <div className="h-8 w-32 bg-slate-100 rounded mx-auto animate-pulse" />
-              <div className="h-4 w-48 bg-slate-50 rounded mx-auto mt-3 animate-pulse" />
+              <div className="h-8 w-32 bg-slate-100 dark:bg-slate-800 rounded mx-auto animate-pulse" />
+              <div className="h-4 w-48 bg-slate-50 dark:bg-slate-900 rounded mx-auto mt-3 animate-pulse" />
             </CardHeader>
           </Card>
         </div>
@@ -147,7 +147,7 @@ function LoginContent() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center py-8 bg-white dark:bg-slate-950">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -158,18 +158,18 @@ function LoginContent() {
             <BackButton />
           </div>
 
-          <Card className="shadow-none border border-slate-100 overflow-hidden bg-white">
+          <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-6 sm:px-10">
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
                 LokAI
               </h1>
-              <CardDescription className="text-base pt-3 font-medium text-slate-500">
+              <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">
                 Sign in to your preparation portal.
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 sm:px-10 pb-12">
               {error && (
-                <div className="mb-6 rounded-xl bg-red-50 border border-red-100 p-3 text-sm text-red-600 font-medium">
+                <div className="mb-6 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 p-3 text-sm text-red-600 dark:text-red-400 font-medium">
                   {error === "auth_callback_error"
                     ? "Authentication failed. Please try again."
                     : "An error occurred. Please try again."}
@@ -177,22 +177,22 @@ function LoginContent() {
               )}
 
               <Tabs defaultValue="individual" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6 h-11 bg-slate-50 p-1 rounded-xl">
+                <TabsList className="grid w-full grid-cols-3 mb-6 h-11 bg-slate-50 dark:bg-slate-900 p-1 rounded-xl">
                   <TabsTrigger
                     value="individual"
-                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white data-[selected]:text-slate-900 data-[selected]:shadow-sm transition-all"
+                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
                   >
                     Personal
                   </TabsTrigger>
                   <TabsTrigger
                     value="organization"
-                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white data-[selected]:text-slate-900 data-[selected]:shadow-sm transition-all"
+                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
                   >
                     Organization
                   </TabsTrigger>
                   <TabsTrigger
                     value="super-admin"
-                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white data-[selected]:text-slate-900 data-[selected]:shadow-sm transition-all"
+                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
                   >
                     Super Admin
                   </TabsTrigger>
@@ -205,7 +205,7 @@ function LoginContent() {
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="personal-email"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Email
                         </Label>
@@ -214,14 +214,14 @@ function LoginContent() {
                           name="email"
                           type="email"
                           placeholder="you@example.com"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           required
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="personal-password"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Password
                         </Label>
@@ -230,13 +230,13 @@ function LoginContent() {
                             id="personal-password"
                             name="password"
                             type={showPersonalPw ? "text" : "password"}
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowPersonalPw(!showPersonalPw)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             tabIndex={-1}
                           >
                             {showPersonalPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -245,7 +245,7 @@ function LoginContent() {
                         <div className="flex justify-end pt-1">
                           <Link
                             href="/forgot-password"
-                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                           >
                             Forgot your password?
                           </Link>
@@ -253,7 +253,7 @@ function LoginContent() {
                       </div>
                       <Button
                         type="submit"
-                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
                         disabled={loading}
                       >
                         {loading ? "Signing in..." : "Sign In"}
@@ -263,16 +263,16 @@ function LoginContent() {
                     {/* Divider */}
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-slate-100" />
+                        <span className="w-full border-t border-slate-100 dark:border-slate-800" />
                       </div>
                       <div className="relative flex justify-center text-[10px] uppercase tracking-widest">
-                        <span className="bg-white px-3 text-slate-400 font-bold">or</span>
+                        <span className="bg-white dark:bg-slate-950 px-3 text-slate-400 font-bold">or</span>
                       </div>
                     </div>
 
                     <Button
                       variant="outline"
-                      className="w-full h-12 gap-3 text-sm font-bold border-slate-200 rounded-xl hover:bg-slate-50 transition-all active:scale-[0.98] shadow-none"
+                      className="w-full h-12 gap-3 text-sm font-bold border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all active:scale-[0.98] shadow-none"
                       onClick={handleGoogleLogin}
                       disabled={loading}
                     >
@@ -305,7 +305,7 @@ function LoginContent() {
                       Don&apos;t have an account?{" "}
                       <a
                         href="/register"
-                        className="text-slate-900 font-bold hover:underline"
+                        className="text-slate-900 dark:text-slate-100 font-bold hover:underline"
                       >
                         Create one
                       </a>
@@ -319,7 +319,7 @@ function LoginContent() {
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="org-email"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Official Email
                         </Label>
@@ -328,14 +328,14 @@ function LoginContent() {
                           name="email"
                           type="email"
                           placeholder="admin@gov.np"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           required
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="org-password"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Password
                         </Label>
@@ -344,13 +344,13 @@ function LoginContent() {
                             id="org-password"
                             name="password"
                             type={showOrgPw ? "text" : "password"}
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowOrgPw(!showOrgPw)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             tabIndex={-1}
                           >
                             {showOrgPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -359,7 +359,7 @@ function LoginContent() {
                         <div className="flex justify-end pt-1">
                           <Link
                             href="/forgot-password"
-                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                           >
                             Forgot your password?
                           </Link>
@@ -367,7 +367,7 @@ function LoginContent() {
                       </div>
                       <Button
                         type="submit"
-                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
                         disabled={loading}
                       >
                         {loading ? "Verifying..." : "Enter Portal"}
@@ -377,7 +377,7 @@ function LoginContent() {
                       Don&apos;t have an organization?{" "}
                       <a
                         href="/register-organization"
-                        className="text-slate-900 font-bold hover:underline"
+                        className="text-slate-900 dark:text-slate-100 font-bold hover:underline"
                       >
                         Register here
                       </a>
@@ -388,13 +388,13 @@ function LoginContent() {
                 <TabsContent value="super-admin" className="outline-none">
                   <form onSubmit={handleEmailLogin} className="space-y-6">
                     <div className="space-y-4">
-                      <div className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-xs text-slate-500 font-medium">
+                      <div className="rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
                         Platform administrator access. Authorized personnel only.
                       </div>
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="sa-email"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Admin Email
                         </Label>
@@ -403,14 +403,14 @@ function LoginContent() {
                           name="email"
                           type="email"
                           placeholder="superadmin@lokai.gov.np"
-                          className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none"
+                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
                           required
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label
                           htmlFor="sa-password"
-                          className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1"
+                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
                         >
                           Password
                         </Label>
@@ -419,13 +419,13 @@ function LoginContent() {
                             id="sa-password"
                             name="password"
                             type={showSaPw ? "text" : "password"}
-                            className="h-11 rounded-xl border-slate-100 bg-slate-50/30 focus:bg-white transition-all shadow-none pr-11"
+                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowSaPw(!showSaPw)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             tabIndex={-1}
                           >
                             {showSaPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -434,7 +434,7 @@ function LoginContent() {
                         <div className="flex justify-end pt-1">
                           <Link
                             href="/forgot-password"
-                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                           >
                             Forgot your password?
                           </Link>
@@ -442,7 +442,7 @@ function LoginContent() {
                       </div>
                       <Button
                         type="submit"
-                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-none mt-2"
+                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
                         disabled={loading}
                       >
                         {loading ? "Authenticating..." : "Access Platform"}
@@ -452,7 +452,7 @@ function LoginContent() {
                 </TabsContent>
               </Tabs>
             </CardContent>
-            <CardFooter className="flex justify-center border-t border-slate-50 py-6 bg-slate-50/20 text-center px-10">
+            <CardFooter className="flex justify-center border-t border-slate-50 dark:border-slate-800 py-6 bg-slate-50/20 dark:bg-slate-900/20 text-center px-10">
               <p className="text-[10px] text-slate-400 font-medium leading-relaxed max-w-[280px]">
                 Your data is secured with institutional grade encryption
                 protocols. Authorized for Lok Sewa preparation assistance.

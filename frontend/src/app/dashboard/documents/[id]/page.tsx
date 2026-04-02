@@ -87,10 +87,10 @@ import { toast } from "sonner";
 import type { PersonalDocument, DocumentProcessingStatus } from "@/types/database";
 
 const statusColors: Record<DocumentProcessingStatus, string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-100",
-  processing: "bg-blue-50 text-blue-700 border-blue-100",
-  completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  failed: "bg-red-50 text-red-700 border-red-100",
+  pending: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-900/50",
+  processing: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-900/50",
+  completed: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/50",
+  failed: "bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/50",
 };
 
 const statusLabels: Record<DocumentProcessingStatus, string> = {
@@ -441,14 +441,14 @@ export default function DocumentDetailPage({
   return (
     <div className="p-4 sm:p-8 max-w-[1400px] mx-auto space-y-8 pb-12">
       {/* --- GLOBAL HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
         <div className="flex items-start gap-4">
           <div className="mt-1"><BackButton /></div>
           <div>
             <div className="flex flex-wrap items-center gap-3 mb-2">
               {editing ? (
                 <div className="flex flex-col gap-2 w-full max-w-md">
-                  <Input id="title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="font-bold text-lg h-10 border-slate-300" />
+                  <Input id="title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="font-bold text-lg h-10 border-slate-300 dark:border-slate-700 dark:bg-slate-900" />
                   <div className="flex gap-2 mt-1">
                     <Button size="sm" onClick={handleSave} disabled={saving} className="bg-slate-900 text-white hover:bg-slate-800">
                       {saving ? "Saving..." : "Save"}
@@ -458,7 +458,7 @@ export default function DocumentDetailPage({
                 </div>
               ) : (
                 <>
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">{doc.title}</h1>
+                  <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">{doc.title}</h1>
                   <Badge variant="outline" className={`font-mono uppercase text-[10px] tracking-wider px-2 py-0.5 ${statusColors[doc.processing_status]}`}>
                     {isProcessing && <Loader2 className="h-3 w-3 mr-1.5 animate-spin inline-block" />}
                     {isReady && <CheckCircle2 className="h-3 w-3 mr-1.5 inline-block" />}
@@ -468,7 +468,7 @@ export default function DocumentDetailPage({
                 </>
               )}
             </div>
-            {!editing && doc.description && <p className="text-sm text-slate-500 max-w-3xl leading-relaxed">{doc.description}</p>}
+            {!editing && doc.description && <p className="text-sm text-slate-500 dark:text-slate-400 max-w-3xl leading-relaxed">{doc.description}</p>}
             {!editing && (
               <Button variant="ghost" size="sm" onClick={() => setEditing(true)} className="text-[11px] uppercase tracking-widest font-bold text-indigo-500 hover:text-indigo-700 h-6 px-0 mt-2 bg-transparent shadow-none hover:bg-transparent">
                 Edit Details
@@ -480,7 +480,7 @@ export default function DocumentDetailPage({
         <div className="flex flex-shrink-0 gap-2 items-center">
           {doc.download_url && (
             <a href={doc.download_url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="font-mono text-xs text-slate-600 border-slate-200 hover:bg-slate-50">
+              <Button variant="outline" size="sm" className="font-mono text-xs text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <Download className="h-3.5 w-3.5 mr-2" /> Download
               </Button>
             </a>
@@ -488,7 +488,7 @@ export default function DocumentDetailPage({
           <Button
             variant="outline"
             size="sm"
-            className="font-mono text-xs text-red-500 border-red-100 hover:bg-red-50 hover:text-red-700 hover:border-red-200"
+            className="font-mono text-xs text-red-500 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-700 dark:hover:text-red-300 hover:border-red-200 dark:hover:border-red-800"
             onClick={() => setShowDelete(true)}
           >
             <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
@@ -503,42 +503,42 @@ export default function DocumentDetailPage({
         <div className="lg:col-span-4 space-y-6">
 
           {/* Metadata section */}
-          <section className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+          <section className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
             <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
               <FileText className="h-3.5 w-3.5" /> File Metadata
             </h3>
-            <div className="space-y-3 font-mono text-[11px] text-slate-600">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+            <div className="space-y-3 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Name</span>
-                <span className="truncate max-w-[150px] font-medium text-slate-700" title={doc.file_name}>{doc.file_name}</span>
+                <span className="truncate max-w-[150px] font-medium text-slate-700 dark:text-slate-300" title={doc.file_name}>{doc.file_name}</span>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Size</span>
-                <span className="font-medium text-slate-700">{formatFileSize(doc.file_size)}</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">{formatFileSize(doc.file_size)}</span>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Uploaded</span>
-                <span className="font-medium text-slate-700">{formatDate(doc.created_at)}</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">{formatDate(doc.created_at)}</span>
               </div>
               {doc.processed_at && (
                 <div className="flex justify-between items-center pt-0">
                   <span className="text-slate-400">Processed</span>
-                  <span className="font-medium text-slate-700">{formatDate(doc.processed_at)}</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">{formatDate(doc.processed_at)}</span>
                 </div>
               )}
             </div>
           </section>
 
           {/* Engine Setup */}
-          <section className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
+          <section className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-indigo-100 to-white rounded-bl-full opacity-50 z-0" />
             <div className="relative z-10">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
                 <Brain className="h-3.5 w-3.5" /> AI Model
               </h3>
-              <p className="text-xs text-slate-500 mb-3 leading-relaxed">Select the backend model for processing this document. Cloud is faster, Local is private.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">Select the backend model for processing this document. Cloud is faster, Local is private.</p>
               <Select value={modelPreference} onValueChange={(val: any) => setModelPreference(val)} disabled={isProcessing}>
-                <SelectTrigger className="w-full bg-slate-50 border-slate-200 text-sm font-medium h-10">
+                <SelectTrigger className="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-sm font-medium h-10">
                   <SelectValue placeholder="Select Engine" />
                 </SelectTrigger>
                 <SelectContent>
@@ -551,8 +551,8 @@ export default function DocumentDetailPage({
 
           {/* Document Scope / Chapters */}
           {isReady && doc.chapters && doc.chapters.length > 0 && (
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
-              <div className="bg-slate-50 p-4 border-b border-slate-200 shrink-0">
+            <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+              <div className="bg-slate-50 dark:bg-slate-900 p-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
                   <Layout className="h-3.5 w-3.5" /> Chapters
                 </h3>
@@ -563,7 +563,7 @@ export default function DocumentDetailPage({
                   onClick={() => setSelectedChapterIndex(-1)}
                   className={`w-full flex items-center gap-3 text-left px-4 py-3 text-sm transition-all border-b border-slate-100 last:border-0 ${selectedChapterIndex === -1
                       ? "bg-indigo-50/50 text-indigo-700 font-semibold border-l-4 border-l-indigo-500"
-                      : "bg-white text-slate-600 hover:bg-slate-50 border-l-4 border-l-transparent"
+                      : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-l-transparent"
                     }`}
                 >
                   <FileText className={`h-4 w-4 shrink-0 ${selectedChapterIndex === -1 ? 'text-indigo-500' : 'text-slate-400'}`} />
@@ -575,7 +575,7 @@ export default function DocumentDetailPage({
                     onClick={() => setSelectedChapterIndex(idx)}
                     className={`w-full flex items-center gap-3 text-left px-4 py-3 text-sm transition-all border-b border-slate-100 last:border-0 group ${selectedChapterIndex === idx
                         ? "bg-indigo-50/50 text-indigo-700 font-semibold border-l-4 border-l-indigo-500"
-                        : "bg-white text-slate-500 hover:bg-slate-50 border-l-4 border-l-transparent"
+                        : "bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-l-transparent"
                       }`}
                   >
                     <span className={`text-[10px] font-mono shrink-0 ${selectedChapterIndex === idx ? 'text-indigo-400' : 'text-slate-300'}`}>
@@ -613,7 +613,7 @@ export default function DocumentDetailPage({
               <AlertCircle className="h-8 w-8 text-red-400 mx-auto mb-3" />
               <p className="text-sm font-bold text-red-800 mb-1">Extraction Failed</p>
               <p className="text-xs text-red-600 mb-4">{doc.processing_error || "Unknown error occurred"}</p>
-              <Button variant="outline" size="sm" onClick={handleStartOCR} className="bg-white border-red-200 text-red-700 hover:bg-red-50">
+              <Button variant="outline" size="sm" onClick={handleStartOCR} className="bg-white dark:bg-slate-900 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30">
                 <RefreshCw className="h-3.5 w-3.5 mr-2" /> Retry Extraction
               </Button>
             </section>
@@ -641,10 +641,10 @@ export default function DocumentDetailPage({
         <div className="lg:col-span-8 flex flex-col gap-6">
 
           {isReady && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
 
               {/* Toolbar Section */}
-              <div className="bg-slate-50 border-b border-slate-200 p-4 sm:px-6 flex flex-wrap gap-4 items-center justify-between">
+              <div className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 p-4 sm:px-6 flex flex-wrap gap-4 items-center justify-between">
 
                 {/* Summarize Action */}
                 <div className="flex items-center gap-3">
@@ -663,8 +663,8 @@ export default function DocumentDetailPage({
 
                 {/* Quiz Generation Actions */}
                 <div className="flex items-center gap-3 flex-wrap">
-                  <div className="flex items-center border border-slate-200 rounded-lg bg-white overflow-hidden shadow-sm h-10">
-                    <div className="px-3 bg-slate-50 border-r border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center h-full">
+                  <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 overflow-hidden shadow-sm h-10">
+                    <div className="px-3 bg-slate-50 dark:bg-slate-700 border-r border-slate-200 dark:border-slate-600 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 flex items-center h-full">
                       Quiz
                     </div>
                     <Select value={quizDifficulty} onValueChange={setQuizDifficulty} disabled={generatingQuiz}>
@@ -700,7 +700,7 @@ export default function DocumentDetailPage({
               </div>
 
               {/* Workspace Content Canvas */}
-              <div className="p-6 sm:p-8 bg-white min-h-[500px] flex flex-col gap-10">
+              <div className="p-6 sm:p-8 bg-white dark:bg-slate-950 min-h-[500px] flex flex-col gap-10">
 
                 {/* Placeholder if nothing generated */}
                 {!doc.ai_summary && questions.length === 0 && (
@@ -713,10 +713,10 @@ export default function DocumentDetailPage({
 
                 {/* AI Summary Block */}
                 {doc.ai_summary && (
-                  <div className="border border-slate-200 rounded-xl overflow-hidden">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                     <button
                       onClick={() => setShowSummary(!showSummary)}
-                      className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors"
+                      className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                     >
                       <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
                         <Sparkles className="h-3.5 w-3.5 text-indigo-500" /> Summary
@@ -729,9 +729,9 @@ export default function DocumentDetailPage({
                           initial={{ height: 0 }}
                           animate={{ height: "auto" }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white border-t border-slate-200"
+                          className="overflow-hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800"
                         >
-                          <div className="p-4 flex justify-end bg-slate-50/50 border-b border-slate-100">
+                          <div className="p-4 flex justify-end bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                             <Button
                               variant="ghost" size="sm"
                               onClick={() => copyToClipboard(doc.ai_summary!)}
@@ -740,7 +740,7 @@ export default function DocumentDetailPage({
                               <Copy className="h-3 w-3 mr-1.5" /> Copy
                             </Button>
                           </div>
-                          <div className="prose prose-slate prose-sm max-w-none text-slate-700 leading-relaxed bg-slate-50/50 p-6 whitespace-pre-wrap">
+                          <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50/50 dark:bg-slate-900/50 p-6 whitespace-pre-wrap">
                             {doc.ai_summary}
                           </div>
                         </motion.div>
@@ -752,14 +752,14 @@ export default function DocumentDetailPage({
                 {/* AI Quiz Block */}
                 {questions.length > 0 && (
                   <div className="space-y-4">
-                    <div className="flex justify-between items-end border-b border-slate-100 pb-3">
+                    <div className="flex justify-between items-end border-b border-slate-100 dark:border-slate-800 pb-3">
                       <div className="space-y-1">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800 flex items-center gap-2">
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 flex items-center gap-2">
                           <HelpCircle className="h-3.5 w-3.5 text-purple-500" /> Quiz
                         </h3>
                       </div>
                     </div>
-                    <div className="bg-slate-50/30 p-2 rounded-xl border border-slate-100">
+                    <div className="bg-slate-50/30 dark:bg-slate-900/30 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
                       <QuizPlayer
                         questions={questions}
                         onSubmit={async (answers, timeSpent) => {
@@ -775,10 +775,10 @@ export default function DocumentDetailPage({
 
                 {/* Raw Extracted Text Block (Collapsible) */}
                 {doc.extracted_text && (
-                  <div className="border border-slate-200 rounded-xl overflow-hidden mt-8">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden mt-8">
                     <button
                       onClick={() => setShowExtractedText(!showExtractedText)}
-                      className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors"
+                      className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                     >
                       <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
                         <FileText className="h-3.5 w-3.5" /> Extracted Text
@@ -791,9 +791,9 @@ export default function DocumentDetailPage({
                           initial={{ height: 0 }}
                           animate={{ height: "auto" }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white border-t border-slate-200"
+                          className="overflow-hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800"
                         >
-                          <div className="p-4 flex justify-end bg-slate-50/50 border-b border-slate-100">
+                          <div className="p-4 flex justify-end bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                             <Button
                               variant="ghost" size="sm"
                               onClick={() => copyToClipboard(doc.extracted_text!)}
@@ -822,18 +822,18 @@ export default function DocumentDetailPage({
 
       {/* Delete Confirmation Modal */}
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
-        <AlertDialogContent className="border-red-100 bg-white">
+        <AlertDialogContent className="border-red-100 dark:border-red-900/50 bg-white dark:bg-slate-900">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-red-600 flex items-center gap-2">
               <AlertCircle className="h-5 w-5" /> Delete Document
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-600">
+            <AlertDialogDescription className="text-slate-600 dark:text-slate-400">
               This will permanently delete <span className="font-semibold text-slate-900">&quot;{doc.title}&quot;</span> and its
               associated files. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting} className="border-slate-200 text-slate-600 font-semibold">Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting} className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-semibold">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => { e.preventDefault(); handleDelete(); }}
               disabled={deleting}

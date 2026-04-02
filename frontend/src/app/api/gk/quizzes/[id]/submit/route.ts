@@ -76,7 +76,8 @@ export async function POST(
     .single();
 
   if (attemptError) {
-    return NextResponse.json({ error: attemptError.message }, { status: 500 });
+    console.error("Quiz attempt insert error:", attemptError);
+    return NextResponse.json({ error: attemptError.message || "Failed to save quiz attempt" }, { status: 500 });
   }
 
   // Trigger cache revalidation for analytics
