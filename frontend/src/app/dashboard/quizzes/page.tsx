@@ -215,10 +215,7 @@ export default function QuizzesPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
-                    L
-                  </div>
-                  <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LokAI Learning Library</span>
+                  <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LOK.AI Learning Library</span>
                 </div>
 
                 <div className="space-y-1">

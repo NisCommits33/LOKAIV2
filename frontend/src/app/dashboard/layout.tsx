@@ -232,10 +232,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between px-6">
         <Link href={homeHref} className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
-            L
-          </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LokAI</span>
+          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LOK.AI</span>
         </Link>
         <ThemeToggle />
       </div>
@@ -396,10 +393,7 @@ export default function DashboardLayout({
             <Menu className="h-5 w-5 text-slate-500 dark:text-slate-400" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-xs font-bold">
-              L
-            </div>
-            <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LokAI</span>
+            <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">LOK.AI</span>
           </div>
         </header>
 

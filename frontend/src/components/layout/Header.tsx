@@ -52,11 +52,8 @@ export function Header() {
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center gap-10">
                         <Link href="/" className="flex items-center gap-2 group">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
-                                L
-                            </div>
                             <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 transition-colors group-hover:text-primary">
-                                LokAI
+                                LOK.AI
                             </span>
                         </Link>
 

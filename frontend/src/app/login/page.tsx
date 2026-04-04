@@ -72,7 +72,6 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [showPersonalPw, setShowPersonalPw] = useState(false);
   const [showOrgPw, setShowOrgPw] = useState(false);
-  const [showSaPw, setShowSaPw] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
@@ -161,11 +160,8 @@ function LoginContent() {
           <Card className="shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950">
             <CardHeader className="text-center pt-8 px-6 sm:px-10">
               <div className="flex items-center justify-center gap-2 mb-1">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-base font-bold">
-                  L
-                </div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
-                  LokAI
+                  LOK.AI
                 </h1>
               </div>
               <CardDescription className="text-base pt-3 font-medium text-slate-500 dark:text-slate-400">
@@ -182,7 +178,7 @@ function LoginContent() {
               )}
 
               <Tabs defaultValue="individual" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6 h-11 bg-slate-50 dark:bg-slate-900 p-1 rounded-xl">
+                <TabsList className="grid w-full grid-cols-2 mb-6 h-11 bg-slate-50 dark:bg-slate-900 p-1 rounded-xl">
                   <TabsTrigger
                     value="individual"
                     className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
@@ -194,12 +190,6 @@ function LoginContent() {
                     className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
                   >
                     Organization
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="super-admin"
-                    className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
-                  >
-                    Super Admin
                   </TabsTrigger>
                 </TabsList>
 
@@ -390,71 +380,7 @@ function LoginContent() {
                   </form>
                 </TabsContent>
 
-                <TabsContent value="super-admin" className="outline-none">
-                  <form onSubmit={handleEmailLogin} className="space-y-6">
-                    <div className="space-y-4">
-                      <div className="rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                        Platform administrator access. Authorized personnel only.
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label
-                          htmlFor="sa-email"
-                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
-                        >
-                          Admin Email
-                        </Label>
-                        <Input
-                          id="sa-email"
-                          name="email"
-                          type="email"
-                          placeholder="superadmin@lokai.gov.np"
-                          className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label
-                          htmlFor="sa-password"
-                          className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1"
-                        >
-                          Password
-                        </Label>
-                        <div className="relative">
-                          <Input
-                            id="sa-password"
-                            name="password"
-                            type={showSaPw ? "text" : "password"}
-                            className="h-11 rounded-xl border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-none pr-11"
-                            required
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowSaPw(!showSaPw)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-                            tabIndex={-1}
-                          >
-                            {showSaPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                        </div>
-                        <div className="flex justify-end pt-1">
-                          <Link
-                            href="/forgot-password"
-                            className="text-[11px] font-bold text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-                          >
-                            Forgot your password?
-                          </Link>
-                        </div>
-                      </div>
-                      <Button
-                        type="submit"
-                        className="w-full h-11 text-sm font-bold rounded-xl bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-none mt-2"
-                        disabled={loading}
-                      >
-                        {loading ? "Authenticating..." : "Access Platform"}
-                      </Button>
-                    </div>
-                  </form>
-                </TabsContent>
+
               </Tabs>
             </CardContent>
             <CardFooter className="flex justify-center border-t border-slate-50 dark:border-slate-800 py-6 bg-slate-50/20 dark:bg-slate-900/20 text-center px-10">
