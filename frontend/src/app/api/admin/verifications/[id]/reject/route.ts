@@ -5,7 +5,7 @@
  * Sets a user's verification_status to 'rejected' with a reason,
  * and records the rejector and timestamp.
  *
- * Only org_admin users can reject, and only for users in their organization.
+ * Only organization users can reject, and only for users in their organization.
  *
  * @module api/admin/verifications/reject
  */

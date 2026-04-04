@@ -7,7 +7,7 @@
  * 1. Profile incomplete  → /profile-setup
  * 2. Pending verification → /pending-approval
  * 3. super_admin role     → /super-admin
- * 4. org_admin role       → /admin
+ * 4. organization role       → /admin
  * 5. Default              → /dashboard (or ?next= param)
  *
  * @module app/auth/callback

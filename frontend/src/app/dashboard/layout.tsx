@@ -225,11 +225,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     window.location.href = "/login";
   };
 
+  const homeHref = userRole === "super_admin" ? "/super-admin" : userRole === "org_admin" ? "/admin" : "/dashboard";
+
   return (
     <div className="flex h-full flex-col bg-white dark:bg-slate-950">
       {/* Logo */}
       <div className="flex h-16 items-center justify-between px-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href={homeHref} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 text-sm font-bold">
             L
           </div>

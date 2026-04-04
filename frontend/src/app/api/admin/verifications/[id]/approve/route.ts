@@ -5,7 +5,7 @@
  * Sets a user's verification_status to 'verified', role to 'employee',
  * and records the approver and timestamp.
  *
- * Only org_admin users can approve, and only for users in their organization.
+ * Only organization users can approve, and only for users in their organization.
  *
  * @module api/admin/verifications/approve
  */

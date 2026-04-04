@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef, use, useCallback } from "react";
 import { useAuth } from "@/components/providers/auth-provider";

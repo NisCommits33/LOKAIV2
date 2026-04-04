@@ -164,11 +164,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /** Signs out the user and clears all local auth state */
   const signOut = async () => {
     try {
-      // Use 'local' scope to clear the session immediately without waiting
-      // for the Supabase server round-trip (which can hang/fail and block logout)
-      await supabase.auth.signOut({ scope: 'local' });
-    } catch (error) {
-      console.warn("Supabase sign out error:", error);
+      // Try global sign-out first (revokes session server-side + clears cookies)
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        // Token likely expired after inactivity — server rejected it.
+        // Fall back to local sign-out to force-clear cookies anyway.
+        await supabase.auth.signOut({ scope: 'local' });
+      }
+    } catch {
+      // Network / unexpected error — still clear cookies locally
+      try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* ignore */ }
     } finally {
       setDbUser(null);
       setSupabaseUser(null);

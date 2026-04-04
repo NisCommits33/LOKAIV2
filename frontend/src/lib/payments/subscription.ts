@@ -63,6 +63,7 @@ export async function getOrgSubscription(
 
 /**
  * Check if an org has remaining quota for a specific feature.
+ * If the subscription is expired, falls back to free plan limits.
  * Returns { allowed: true, remaining } or { allowed: false, limit, used }.
  */
 export async function checkOrgLimit(
@@ -79,7 +80,18 @@ export async function checkOrgLimit(
     return { allowed: false, remaining: 0, limit: 0, used: 0 };
   }
 
-  const plan = info.subscription.plan;
+  // If subscription is expired, enforce free plan limits instead
+  let plan = info.subscription.plan;
+  if (info.isExpired) {
+    const admin = createAdminClient();
+    const { data: freePlan } = await admin
+      .from("subscription_plans")
+      .select("*")
+      .eq("name", "free")
+      .single();
+    if (freePlan) plan = freePlan as SubscriptionPlan;
+  }
+
   let limit: number;
   let used: number;
 
@@ -119,7 +131,8 @@ export async function checkOrgLimit(
 }
 
 /**
- * Increment usage counter for an org (call after successful feature use)
+ * Increment usage counter for an org (call after successful feature use).
+ * Uses the atomic DB function to avoid race conditions under concurrency.
  */
 export async function incrementUsage(
   orgId: string,
@@ -127,42 +140,11 @@ export async function incrementUsage(
   amount: number = 1
 ): Promise<void> {
   const admin = createAdminClient();
-  const periodStart = new Date();
-  periodStart.setDate(1);
-  periodStart.setHours(0, 0, 0, 0);
-  const periodStr = periodStart.toISOString().split("T")[0];
-
-  // Upsert the usage row
-  await admin
-    .from("subscription_usage")
-    .upsert(
-      { organization_id: orgId, period_start: periodStr },
-      { onConflict: "organization_id,period_start" }
-    );
-
-  const updateField =
-    feature === "documents"
-      ? "documents_used"
-      : feature === "ai_requests"
-        ? "ai_requests_used"
-        : "storage_used_mb";
-
-  // Increment the specific counter
-  const { data: current } = await admin
-    .from("subscription_usage")
-    .select("documents_used, ai_requests_used, storage_used_mb")
-    .eq("organization_id", orgId)
-    .eq("period_start", periodStr)
-    .single();
-
-  const row = current as Record<string, number> | null;
-  const currentValue = row?.[updateField] || 0;
-
-  await admin
-    .from("subscription_usage")
-    .update({ [updateField]: currentValue + amount, updated_at: new Date().toISOString() })
-    .eq("organization_id", orgId)
-    .eq("period_start", periodStr);
+  await admin.rpc("increment_usage", {
+    p_org_id: orgId,
+    p_feature: feature,
+    p_amount: amount,
+  });
 }
 
 /**

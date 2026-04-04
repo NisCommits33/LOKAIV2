@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Only org_admins can CREATE new document tags
+  // Only organizations can CREATE new document tags
   const { data: profile } = await supabase
     .from("users")
     .select("role, organization_id")

@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
 
-  // View filtering. If org_admin, they see all. If employee, they only see documents 
+  // View filtering. If organization, they see all. If employee, they only see documents 
   // that are PUBLISHED and match their targeting (or are org-wide).
   let query = supabase
     .from("org_documents")

@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/super/organizations/[id]/assign-admin
- * Assigns a user as org_admin for the organization created from an approved application.
+ * Assigns a user as organization for the organization created from an approved application.
  * Requires super_admin role.
  */
 export async function POST(
@@ -71,7 +71,7 @@ export async function POST(
     );
   }
 
-  // Assign org_admin role
+  // Assign organization role
   const { error: updateError } = await adminClient
     .from("users")
     .update({

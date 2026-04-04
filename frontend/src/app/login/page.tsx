@@ -3,7 +3,7 @@
  *
  * Provides two login methods via a tabbed interface:
  * - "Personal" tab: Google OAuth for individual users
- * - "Organization" tab: Email/password for organization admins
+ * - "org_admin" tab: Email/password for organization admins
  *
  * After successful authentication, routes users based on their role
  * and verification status. Displays error messages from failed
@@ -190,7 +190,7 @@ function LoginContent() {
                     Personal
                   </TabsTrigger>
                   <TabsTrigger
-                    value="organization"
+                    value="org_admin"
                     className="rounded-lg font-bold text-[10px] uppercase tracking-wider data-[selected]:bg-white dark:data-[selected]:bg-slate-800 data-[selected]:text-slate-900 dark:data-[selected]:text-slate-50 data-[selected]:shadow-sm transition-all"
                   >
                     Organization
@@ -318,7 +318,7 @@ function LoginContent() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="organization" className="outline-none">
+                <TabsContent value="org_admin" className="outline-none">
                   <form onSubmit={handleEmailLogin} className="space-y-6">
                     <div className="space-y-4">
                       <div className="space-y-1.5">

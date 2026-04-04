@@ -64,7 +64,7 @@ export function Header() {
                             {supabaseUser ? (
                                 <>
                                     <Link
-                                        href="/dashboard"
+                                        href={dbUser?.role === "super_admin" ? "/super-admin" : dbUser?.role === "org_admin" ? "/admin" : "/dashboard"}
                                         className="px-4 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all"
                                     >
                                         Dashboard
@@ -82,7 +82,7 @@ export function Header() {
                                             href="/admin"
                                             className="px-4 py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all"
                                         >
-                                            Org Admin
+                                            Organization
                                         </Link>
                                     )}
                                 </>
@@ -115,7 +115,7 @@ export function Header() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56 mt-2 p-1.5 rounded-xl border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-xl" align="end" forceMount>
                                     <DropdownMenuItem className="cursor-pointer py-2 px-3 rounded-lg font-medium text-sm focus:bg-slate-50 dark:focus:bg-slate-900" asChild>
-                                        <Link href="/dashboard" className="flex items-center">
+                                        <Link href={dbUser?.role === "super_admin" ? "/super-admin" : dbUser?.role === "org_admin" ? "/admin" : "/dashboard"} className="flex items-center">
                                             <LayoutDashboard className="mr-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
                                             Dashboard
                                         </Link>

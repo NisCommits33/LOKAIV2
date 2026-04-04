@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       if (insertError) {
         console.error("[apply] Manual public.users insert also failed:", insertError.message);
       } else {
-        console.log("[apply] Manually created public.users row (org_admin, pending) for:", authData.user.id);
+        console.log("[apply] Manually created public.users row (organization, pending) for:", authData.user.id);
       }
     }
   } else {

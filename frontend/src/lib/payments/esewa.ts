@@ -32,6 +32,11 @@ const ESEWA_CONFIG = {
 
 function getConfig() {
   const isProduction = process.env.ESEWA_ENVIRONMENT === "production";
+
+  if (isProduction && (!process.env.ESEWA_MERCHANT_CODE || !process.env.ESEWA_SECRET_KEY)) {
+    throw new Error("eSewa production credentials (ESEWA_MERCHANT_CODE, ESEWA_SECRET_KEY) are not configured");
+  }
+
   return {
     ...ESEWA_CONFIG[isProduction ? "production" : "sandbox"],
     merchantCode: process.env.ESEWA_MERCHANT_CODE || "EPAYTEST",

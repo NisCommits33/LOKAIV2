@@ -47,7 +47,7 @@ export async function verifySuperAdmin(
 }
 
 /**
- * Checks if the authenticated user has the org_admin role.
+ * Checks if the authenticated user has the organization role.
  * Returns the user's organization_id if verified, null otherwise.
  */
 export async function verifyOrgAdmin(

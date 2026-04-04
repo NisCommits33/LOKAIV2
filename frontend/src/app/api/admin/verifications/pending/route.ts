@@ -5,7 +5,7 @@
  * Lists all users with verification_status='pending' in the org admin's organization.
  * Returns user details with joined department and job level info.
  *
- * Requires org_admin role. Scoped to the admin's own organization.
+ * Requires organization role. Scoped to the admin's own organization.
  *
  * @module api/admin/verifications/pending
  */
