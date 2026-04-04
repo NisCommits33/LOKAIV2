@@ -1,7 +1,7 @@
 /**
  * POST /api/admin/billing/check-status — Manually verify a pending transaction
  *
- * Super Admin only. Uses eSewa's Status Check API to verify transactions
+ * Super Admin only. Uses eSewa/Khalti Status APIs to verify transactions
  * that are stuck in "initiated" status (e.g. due to redirect failures).
  *
  * Body: { transactionId: string }
@@ -12,8 +12,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin-client";
 import { NextResponse, type NextRequest } from "next/server";
+import { verifyKhaltiPayment } from "@/lib/payments/khalti";
+import { createPaymentInvoice } from "@/lib/payments/invoice";
 
-const STATUS_URLS = {
+const ESEWA_STATUS_URLS = {
   sandbox: "https://rc.esewa.com.np/api/epay/transaction/status/",
   production: "https://esewa.com.np/api/epay/transaction/status/",
 };
@@ -68,11 +70,135 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Query eSewa Status Check API
+  // ── Route to the correct gateway ──
+  if (txn.gateway === "khalti") {
+    return verifyKhaltiTransaction(txn, admin, customYears);
+  } else {
+    return verifyEsewaTransaction(txn, admin, customYears);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function verifyKhaltiTransaction(txn: any, admin: any, customYears?: number) {
+  const pidx = txn.gateway_transaction_id;
+  if (!pidx) {
+    return NextResponse.json(
+      { error: "No Khalti pidx found for this transaction" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const result = await verifyKhaltiPayment(pidx);
+
+    if (result.success && result.data?.status === "Completed") {
+      const now = new Date();
+      const periodEnd = new Date(now);
+
+      if (customYears && typeof customYears === "number" && customYears > 0) {
+        periodEnd.setFullYear(periodEnd.getFullYear() + customYears);
+      } else if (txn.billing_cycle === "yearly") {
+        periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+      } else {
+        periodEnd.setMonth(periodEnd.getMonth() + 1);
+      }
+
+      await admin
+        .from("payment_transactions")
+        .update({
+          status: "completed",
+          gateway_transaction_id: result.data.transaction_id || pidx,
+          gateway_status: "Completed",
+          raw_response: result.data,
+          completed_at: now.toISOString(),
+          updated_at: now.toISOString(),
+        })
+        .eq("id", txn.id);
+
+      await admin
+        .from("organization_subscriptions")
+        .update({ status: "expired", updated_at: now.toISOString() })
+        .eq("organization_id", txn.organization_id)
+        .eq("status", "active");
+
+      const { data: newSub } = await admin
+        .from("organization_subscriptions")
+        .insert({
+          organization_id: txn.organization_id,
+          plan_id: txn.plan_id,
+          status: "active",
+          billing_cycle: txn.billing_cycle,
+          current_period_start: now.toISOString(),
+          current_period_end: periodEnd.toISOString(),
+        })
+        .select()
+        .single();
+
+      if (newSub) {
+        await admin
+          .from("payment_transactions")
+          .update({ subscription_id: newSub.id })
+          .eq("id", txn.id);
+      }
+
+      // Auto-create a paid invoice
+      await createPaymentInvoice({
+        organizationId: txn.organization_id,
+        subscriptionId: newSub?.id || null,
+        amount: txn.amount,
+        taxAmount: txn.tax_amount,
+        totalAmount: txn.total_amount,
+        gateway: "khalti",
+        gatewayTransactionId: result.data.transaction_id || pidx,
+        transactionId: txn.id,
+        planName: txn.plan?.display_name || txn.plan?.name || "Plan",
+        billingCycle: txn.billing_cycle,
+      });
+
+      return NextResponse.json({
+        status: "completed",
+        message: "Payment verified and subscription activated",
+      });
+    } else if (
+      result.data?.status === "Expired" ||
+      result.data?.status === "User canceled"
+    ) {
+      await admin
+        .from("payment_transactions")
+        .update({
+          status: "failed",
+          gateway_status: result.data.status,
+          failure_reason: `Khalti status: ${result.data.status}`,
+          raw_response: result.data,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", txn.id);
+
+      return NextResponse.json({
+        status: "failed",
+        message: `Payment ${result.data.status.toLowerCase()}`,
+      });
+    } else {
+      return NextResponse.json({
+        status: "pending",
+        message: `Payment status: ${result.data?.status || "unknown"}. Please try again later.`,
+        khaltiStatus: result.data?.status,
+      });
+    }
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to verify with Khalti" },
+      { status: 500 }
+    );
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function verifyEsewaTransaction(txn: any, admin: any, customYears?: number) {
   const isProduction = process.env.ESEWA_ENVIRONMENT === "production";
   const statusBaseUrl = isProduction
-    ? STATUS_URLS.production
-    : STATUS_URLS.sandbox;
+    ? ESEWA_STATUS_URLS.production
+    : ESEWA_STATUS_URLS.sandbox;
   const productCode = process.env.ESEWA_MERCHANT_CODE || "EPAYTEST";
 
   const statusUrl = new URL(statusBaseUrl);
@@ -150,6 +276,20 @@ export async function POST(request: NextRequest) {
           .update({ subscription_id: newSub.id })
           .eq("id", txn.id);
       }
+
+      // Auto-create a paid invoice
+      await createPaymentInvoice({
+        organizationId: txn.organization_id,
+        subscriptionId: newSub?.id || null,
+        amount: txn.amount,
+        taxAmount: txn.tax_amount,
+        totalAmount: txn.total_amount,
+        gateway: "esewa",
+        gatewayTransactionId: statusData.ref_id || null,
+        transactionId: txn.id,
+        planName: txn.plan?.display_name || txn.plan?.name || "Plan",
+        billingCycle: txn.billing_cycle,
+      });
 
       return NextResponse.json({
         status: "completed",

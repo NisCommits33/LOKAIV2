@@ -287,6 +287,69 @@ export interface SubscriptionUsage {
   updated_at: string;
 }
 
+/** Invoice status */
+export type InvoiceStatus = "draft" | "sent" | "paid" | "overdue" | "cancelled";
+
+/** Manual payment method */
+export type PaymentMethod = "bank_transfer" | "cheque" | "cash" | "online" | "other";
+
+/** Invoice record for B2G billing */
+export interface Invoice {
+  id: string;
+  organization_id: string;
+  subscription_id: string | null;
+  invoice_number: string;
+  amount: number;
+  tax_amount: number;
+  total_amount: number;
+  currency: string;
+  issue_date: string;
+  due_date: string;
+  status: InvoiceStatus;
+  purchase_order_number: string | null;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Manual payment recording */
+export interface ManualPayment {
+  id: string;
+  invoice_id: string | null;
+  organization_id: string;
+  amount: number;
+  payment_date: string;
+  payment_method: PaymentMethod;
+  reference_number: string | null;
+  notes: string | null;
+  recorded_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Usage event types */
+export type UsageEventType =
+  | "document_upload"
+  | "ai_process"
+  | "ai_summarize"
+  | "ai_questions"
+  | "user_added"
+  | "user_removed"
+  | "storage_added"
+  | "storage_removed";
+
+/** Individual usage event audit log */
+export interface UsageEvent {
+  id: string;
+  organization_id: string;
+  user_id: string | null;
+  event_type: UsageEventType;
+  quantity: number;
+  metadata: Record<string, unknown> | null;
+  occurred_at: string;
+}
+
 /** Self-service organization registration application */
 export interface OrganizationApplication {
   id: string;

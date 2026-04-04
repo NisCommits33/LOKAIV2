@@ -30,7 +30,29 @@ import {
   XCircle,
   ChevronRight,
   RotateCcw,
+  Building2,
+  Zap,
+  Crown,
+  BarChart3,
+  Download,
+  Users,
+  FileText,
+  Bot,
+  HardDrive,
+  Check,
 } from "lucide-react";
+import type { SubscriptionPlan } from "@/types/database";
+
+function formatNPR(amount: number) {
+  return `Rs. ${amount.toLocaleString("en-NP")}`;
+}
+
+const planIcons: Record<string, React.ElementType> = {
+  free: Building2,
+  basic: Zap,
+  pro: Crown,
+  enterprise: Crown,
+};
 
 /** Sample GK questions for the interactive landing page quiz demo */
 const quizQuestions = [
@@ -82,6 +104,16 @@ export default function Home() {
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+
+  // Fetch plans for pricing section
+  useEffect(() => {
+    fetch("/api/plans")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data?.plans) setPlans(data.plans); })
+      .catch(() => {});
+  }, []);
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
@@ -406,6 +438,165 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </div>
+        </Container>
+      </div>
+
+      {/* Pricing Section */}
+      <div id="pricing" className="py-20 bg-white dark:bg-slate-950">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              <Sparkles className="h-3 w-3 text-indigo-500" />
+              Simple Pricing
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+              Choose the Right Plan for Your Organization
+            </h2>
+            <p className="mt-4 text-base text-slate-500 dark:text-slate-400 font-medium max-w-xl mx-auto">
+              Start free and scale as your team grows. All plans include core features
+              with no hidden charges.
+            </p>
+
+            {/* Billing cycle toggle */}
+            <div className="mt-8 inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+              <button
+                onClick={() => setBillingCycle("monthly")}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                  billingCycle === "monthly"
+                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingCycle("yearly")}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                  billingCycle === "yearly"
+                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                }`}
+              >
+                Yearly
+                <span className="ml-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-bold">Save 17%</span>
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Plan cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {plans.map((plan, index) => {
+              const PlanIcon = planIcons[plan.name] || Building2;
+              const price = billingCycle === "yearly" ? plan.price_yearly : plan.price_monthly;
+              const isPopular = plan.name === "pro";
+
+              return (
+                <motion.div
+                  key={plan.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className={`relative bg-white dark:bg-slate-900 rounded-2xl border-2 p-6 flex flex-col transition-all ${
+                    isPopular
+                      ? "border-indigo-500 shadow-xl shadow-indigo-100 dark:shadow-indigo-950/30 scale-[1.02]"
+                      : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                  }`}
+                >
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      POPULAR
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3 mb-4">
+                    <div
+                      className={`h-10 w-10 rounded-lg flex items-center justify-center ${
+                        isPopular
+                          ? "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                      }`}
+                    >
+                      <PlanIcon className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                      {plan.display_name}
+                    </h3>
+                  </div>
+
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 min-h-[40px]">
+                    {plan.description}
+                  </p>
+
+                  <div className="mb-6">
+                    <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+                      {price === 0 ? "Free" : formatNPR(price)}
+                    </span>
+                    {price > 0 && (
+                      <span className="text-slate-500 dark:text-slate-400 text-sm">
+                        /{billingCycle === "yearly" ? "yr" : "mo"}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Feature list */}
+                  <ul className="space-y-3 mb-6 flex-1">
+                    <li className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                      <Users className="h-4 w-4 text-indigo-500 shrink-0" />
+                      {plan.max_users === -1 ? "Unlimited" : plan.max_users} users
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                      <FileText className="h-4 w-4 text-indigo-500 shrink-0" />
+                      {plan.max_documents_per_month === -1 ? "Unlimited" : plan.max_documents_per_month} docs/month
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                      <Bot className="h-4 w-4 text-indigo-500 shrink-0" />
+                      {plan.max_ai_requests_per_month === -1 ? "Unlimited" : plan.max_ai_requests_per_month} AI requests/month
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                      <HardDrive className="h-4 w-4 text-indigo-500 shrink-0" />
+                      {plan.max_storage_mb === -1
+                        ? "Unlimited"
+                        : plan.max_storage_mb >= 1024
+                          ? `${(plan.max_storage_mb / 1024).toFixed(0)} GB`
+                          : `${plan.max_storage_mb} MB`} storage
+                    </li>
+                    {plan.has_advanced_analytics && (
+                      <li className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                        <BarChart3 className="h-4 w-4 text-indigo-500 shrink-0" />
+                        Advanced analytics
+                      </li>
+                    )}
+                    {plan.has_export && (
+                      <li className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                        <Download className="h-4 w-4 text-indigo-500 shrink-0" />
+                        Data export
+                      </li>
+                    )}
+                  </ul>
+
+                  <Link href={plan.name === "free" ? "/register-organization" : "/login"}>
+                    <Button
+                      className={`w-full h-11 rounded-xl font-semibold text-sm transition-all ${
+                        isPopular
+                          ? "bg-indigo-600 hover:bg-indigo-500 text-white"
+                          : "bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900"
+                      }`}
+                    >
+                      {plan.name === "free" ? "Get Started Free" : "Get Started"}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </Container>
       </div>

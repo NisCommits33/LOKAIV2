@@ -37,7 +37,6 @@ import {
   BarChart3,
   Settings,
   Shield,
-  ShieldCheck,
   UserCircle,
   LogOut,
   Menu,

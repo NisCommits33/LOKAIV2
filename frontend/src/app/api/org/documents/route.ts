@@ -122,6 +122,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Check storage limit
+  const storageLimit = await checkOrgLimit(profile.organization_id, "storage");
+  if (!storageLimit.allowed) {
+    return NextResponse.json(
+      { error: `Storage limit reached (${storageLimit.used}MB/${storageLimit.limit}MB). Please upgrade your plan.` },
+      { status: 403 }
+    );
+  }
+
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
   const title = (formData.get("title") as string) || "";
@@ -145,8 +154,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "File size exceeds 50 MB limit" }, { status: 400 });
   }
 
-  // Increment document usage counter
-  await incrementUsage(profile.organization_id, "documents");
+  // Track storage usage (in MB, rounded up)
+  const fileSizeMb = Math.ceil(file.size / (1024 * 1024)) || 1;
+  await incrementUsage(profile.organization_id, "storage", fileSizeMb);
 
   // Save to Storage: orgs/{org_id}/{timestamp}_{safeName}
   const timestamp = Date.now();

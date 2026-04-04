@@ -1,28 +1,40 @@
 /**
- * GET /api/admin/billing/verify — eSewa payment verification callback
+ * GET /api/admin/billing/khalti-verify — Khalti payment verification callback
  *
- * eSewa redirects here after successful payment with base64-encoded data.
- * Verifies the payment, updates the transaction, and activates the subscription.
+ * Khalti redirects here after payment with query params (pidx, status, etc.).
+ * Verifies payment via Lookup API, updates the transaction, and activates the subscription.
  *
- * @module api/admin/billing/verify
+ * @module api/admin/billing/khalti-verify
  */
 
 import { createAdminClient } from "@/lib/supabase/admin-client";
 import { NextResponse, type NextRequest } from "next/server";
-import { verifyEsewaPayment } from "@/lib/payments/esewa";
+import { verifyKhaltiPayment } from "@/lib/payments/khalti";
 import { createPaymentInvoice } from "@/lib/payments/invoice";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const encodedData = searchParams.get("data");
+  const pidx = searchParams.get("pidx");
+  const status = searchParams.get("status");
+  const purchaseOrderId = searchParams.get("purchase_order_id");
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  if (!encodedData) {
-    return NextResponse.redirect(`${appUrl}/admin/billing?payment=failed&reason=no_data`);
+  if (!pidx) {
+    return NextResponse.redirect(
+      `${appUrl}/admin/billing?payment=failed&reason=no_pidx`
+    );
   }
 
-  const result = await verifyEsewaPayment(encodedData);
+  // If user canceled, redirect immediately
+  if (status === "User canceled") {
+    return NextResponse.redirect(
+      `${appUrl}/admin/billing?payment=failed&reason=user_canceled`
+    );
+  }
+
+  // Verify payment via Khalti Lookup API
+  const result = await verifyKhaltiPayment(pidx);
 
   if (!result.success || !result.data) {
     return NextResponse.redirect(
@@ -31,35 +43,45 @@ export async function GET(request: NextRequest) {
   }
 
   const admin = createAdminClient();
-  const { transaction_uuid, transaction_code, status, total_amount } = result.data;
-  // ref_id comes from the status check API cross-verification
-  const refId = result.statusData?.ref_id || transaction_code;
 
-  // Find the pending transaction
-  const { data: txn, error: txnErr } = await admin
+  // Find the pending transaction by purchase_order_id (our transaction_uuid)
+  // or by gateway_transaction_id (pidx stored during initiation)
+  let txnQuery = admin
     .from("payment_transactions")
     .select("*, plan:subscription_plans(*)")
-    .eq("transaction_uuid", transaction_uuid)
-    .eq("status", "initiated")
-    .single();
+    .eq("gateway", "khalti")
+    .eq("status", "initiated");
 
-  if (txnErr || !txn) {
-    return NextResponse.redirect(`${appUrl}/admin/billing?payment=failed&reason=transaction_not_found`);
+  if (purchaseOrderId) {
+    txnQuery = txnQuery.eq("transaction_uuid", purchaseOrderId);
+  } else {
+    txnQuery = txnQuery.eq("gateway_transaction_id", pidx);
   }
 
-  // Verify amount matches
-  if (Number(total_amount) !== txn.total_amount) {
+  const { data: txn, error: txnErr } = await txnQuery.single();
+
+  if (txnErr || !txn) {
+    return NextResponse.redirect(
+      `${appUrl}/admin/billing?payment=failed&reason=transaction_not_found`
+    );
+  }
+
+  // Verify amount matches (Khalti returns amount in paisa)
+  const expectedAmountPaisa = txn.total_amount * 100;
+  if (result.data.total_amount !== expectedAmountPaisa) {
     await admin
       .from("payment_transactions")
       .update({
         status: "failed",
-        failure_reason: `Amount mismatch: expected ${txn.total_amount}, got ${total_amount}`,
+        failure_reason: `Amount mismatch: expected ${expectedAmountPaisa} paisa, got ${result.data.total_amount} paisa`,
         raw_response: result.data as unknown as Record<string, unknown>,
         updated_at: new Date().toISOString(),
       })
       .eq("id", txn.id);
 
-    return NextResponse.redirect(`${appUrl}/admin/billing?payment=failed&reason=amount_mismatch`);
+    return NextResponse.redirect(
+      `${appUrl}/admin/billing?payment=failed&reason=amount_mismatch`
+    );
   }
 
   // Mark transaction as completed
@@ -67,8 +89,8 @@ export async function GET(request: NextRequest) {
     .from("payment_transactions")
     .update({
       status: "completed",
-      gateway_transaction_id: refId,
-      gateway_status: status,
+      gateway_transaction_id: result.data.transaction_id || pidx,
+      gateway_status: result.data.status,
       raw_response: result.data as unknown as Record<string, unknown>,
       completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -120,8 +142,8 @@ export async function GET(request: NextRequest) {
     amount: txn.amount,
     taxAmount: txn.tax_amount,
     totalAmount: txn.total_amount,
-    gateway: "esewa",
-    gatewayTransactionId: refId,
+    gateway: "khalti",
+    gatewayTransactionId: result.data.transaction_id || pidx,
     transactionId: txn.id,
     planName: txn.plan?.display_name || txn.plan?.name || "Plan",
     billingCycle: txn.billing_cycle,

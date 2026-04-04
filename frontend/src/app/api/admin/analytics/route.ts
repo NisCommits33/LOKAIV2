@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
+import { checkFeatureFlag } from "@/lib/payments/subscription";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -67,6 +68,10 @@ export async function GET(request: NextRequest) {
       totalDocuments = docsCount || 0;
     }
 
+    // Check feature flags for the org's plan
+    const hasAdvancedAnalytics = await checkFeatureFlag(orgId, "has_advanced_analytics");
+    const hasExport = await checkFeatureFlag(orgId, "has_export");
+
     return NextResponse.json({
       users: {
         total: totalUsers || 0,
@@ -79,7 +84,11 @@ export async function GET(request: NextRequest) {
       },
       content: {
         documents: totalDocuments || 0,
-      }
+      },
+      features: {
+        hasAdvancedAnalytics,
+        hasExport,
+      },
     });
 
   } catch (err: any) {

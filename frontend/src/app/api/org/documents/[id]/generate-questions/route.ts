@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { checkOrgLimit, incrementUsage } from "@/lib/payments/subscription";
 
 const AI_BACKEND_URL = process.env.AI_BACKEND_URL || "http://localhost:8000";
 
@@ -45,6 +46,15 @@ export async function POST(
     );
   }
 
+  // Check AI request limit
+  const aiLimit = await checkOrgLimit(profile.organization_id, "ai_requests");
+  if (!aiLimit.allowed) {
+    return NextResponse.json(
+      { error: `AI request limit reached (${aiLimit.used}/${aiLimit.limit}). Please upgrade your plan.` },
+      { status: 403 }
+    );
+  }
+
   let count = 5;
   let difficulty = "medium";
   let engine = "local";
@@ -82,6 +92,9 @@ export async function POST(
     }
 
     const result = (await aiRes.json()) as { questions: unknown[] };
+
+    // Increment AI usage counter after successful processing
+    await incrementUsage(profile.organization_id, "ai_requests");
 
     if (!overrideText) {
       await supabase

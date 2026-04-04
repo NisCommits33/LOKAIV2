@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { FullPageSpinner } from "@/components/loading";
+import { UsageWarningBanner } from "@/components/usage-warning-banner";
 
 type AnalyticsData = {
   users: { total: number; active: number; verified: number; };
@@ -35,7 +36,9 @@ export default function AdminDashboardPage() {
   if (isLoading || !data) return <FullPageSpinner />;
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 pb-12">
+    <div className="max-w-7xl mx-auto pb-12">
+      <UsageWarningBanner />
+      <div className="p-4 sm:p-8 space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Organization Dashboard</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -147,6 +150,7 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
+    </div>
     </div>
   );
 }

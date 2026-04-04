@@ -41,15 +41,15 @@ export async function getOrgSubscription(
   if (!sub) return null;
 
   // Get current month usage
-  const periodStart = new Date();
-  periodStart.setDate(1);
-  periodStart.setHours(0, 0, 0, 0);
+  // Use UTC to match DB's date_trunc('month', now())::date
+  const now = new Date();
+  const periodStartStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
 
   const { data: usage } = await admin
     .from("subscription_usage")
     .select("*")
     .eq("organization_id", orgId)
-    .eq("period_start", periodStart.toISOString().split("T")[0])
+    .eq("period_start", periodStartStr)
     .single();
 
   const isExpired = new Date(sub.current_period_end) < new Date();
@@ -107,10 +107,17 @@ export async function checkOrgLimit(
       used = count || 0;
       break;
     }
-    case "documents":
+    case "documents": {
       limit = plan.max_documents_per_month;
-      used = info.usage?.documents_used || 0;
+      // Count actual documents in DB (not cumulative counter) so deletions are reflected
+      const adminDocs = createAdminClient();
+      const { count: docCount } = await adminDocs
+        .from("org_documents")
+        .select("*", { count: "exact", head: true })
+        .eq("organization_id", orgId);
+      used = docCount || 0;
       break;
+    }
     case "ai_requests":
       limit = plan.max_ai_requests_per_month;
       used = info.usage?.ai_requests_used || 0;
@@ -145,6 +152,33 @@ export async function incrementUsage(
     p_feature: feature,
     p_amount: amount,
   });
+}
+
+export type FeatureFlag = "has_advanced_analytics" | "has_export";
+
+/**
+ * Check if an org's current plan includes a specific feature flag.
+ * Falls back to free plan if subscription is expired.
+ */
+export async function checkFeatureFlag(
+  orgId: string,
+  flag: FeatureFlag
+): Promise<boolean> {
+  const info = await getOrgSubscription(orgId);
+  if (!info) return false;
+
+  let plan = info.subscription.plan;
+  if (info.isExpired) {
+    const admin = createAdminClient();
+    const { data: freePlan } = await admin
+      .from("subscription_plans")
+      .select("*")
+      .eq("name", "free")
+      .single();
+    if (freePlan) plan = freePlan as SubscriptionPlan;
+  }
+
+  return plan[flag] === true;
 }
 
 /**

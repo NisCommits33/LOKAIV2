@@ -1,7 +1,6 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Button } from "./button"
 import { ArrowLeft } from "lucide-react"
 
 export function BackButton({ className, onClick }: { className?: string; onClick?: () => void }) {
@@ -16,16 +15,12 @@ export function BackButton({ className, onClick }: { className?: string; onClick
     }
 
     return (
-        <Button
-            variant="ghost"
-            size="sm"
+        <button
             onClick={handleClick}
-            className={`flex items-center gap-2 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all group font-bold px-0 ${className}`}
+            className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors group ${className}`}
         >
-            <div className="h-8 w-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-            </div>
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
             Back
-        </Button>
+        </button>
     )
 }

@@ -86,6 +86,7 @@ export function Header() {
                             ) : (
                                 <>
                                     <Link href="/#features" className="px-4 py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all">Features</Link>
+                                    <Link href="/#pricing" className="px-4 py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all">Pricing</Link>
                                 </>
                             )}
                         </nav>
@@ -167,6 +168,9 @@ export function Header() {
                                             <nav className="flex flex-col gap-4 mt-8">
                                                 <Link href="/#features" className="text-lg font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 px-2 transition-colors">
                                                     Features
+                                                </Link>
+                                                <Link href="/#pricing" className="text-lg font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 px-2 transition-colors">
+                                                    Pricing
                                                 </Link>
                                                 <Separator className="bg-slate-100 dark:bg-slate-800" />
                                                 <Link href="/login" className="text-lg font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-slate-50 px-2 transition-colors">

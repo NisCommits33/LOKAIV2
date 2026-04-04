@@ -1,6 +1,6 @@
 /**
  * GET  /api/admin/billing — Current subscription, usage stats, payment history
- * POST /api/admin/billing — Initiate a plan upgrade via eSewa
+ * POST /api/admin/billing — Initiate a plan upgrade via eSewa or Khalti
  *
  * @module api/admin/billing
  */
@@ -10,6 +10,7 @@ import { createAdminClient } from "@/lib/supabase/admin-client";
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrgSubscription } from "@/lib/payments/subscription";
 import { createEsewaPaymentForm } from "@/lib/payments/esewa";
+import { initiateKhaltiPayment } from "@/lib/payments/khalti";
 import crypto from "crypto";
 
 /**
@@ -56,10 +57,17 @@ export async function GET() {
       .eq("organization_id", orgId)
       .eq("is_active", true);
 
+    // Count actual documents (not stale subscription_usage counter)
+    const { count: docCount } = await admin
+      .from("org_documents")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", orgId);
+
     return NextResponse.json({
       subscription: subInfo?.subscription || null,
       usage: {
         ...subInfo?.usage,
+        documents_used: docCount || 0,
         users_count: userCount || 0,
       },
       isExpired: subInfo?.isExpired || false,
@@ -74,8 +82,8 @@ export async function GET() {
 }
 
 /**
- * POST — Initiate an eSewa payment for plan upgrade/renewal
- * Body: { planId: string, billingCycle: 'monthly' | 'yearly' }
+ * POST — Initiate a payment for plan upgrade/renewal
+ * Body: { planId: string, billingCycle: 'monthly' | 'yearly', gateway?: 'esewa' | 'khalti' }
  */
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -98,7 +106,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { planId, billingCycle = "monthly" } = body;
+  const { planId, billingCycle = "monthly", gateway = "esewa" } = body;
 
   if (!planId) {
     return NextResponse.json({ error: "planId is required" }, { status: 400 });
@@ -107,6 +115,13 @@ export async function POST(request: NextRequest) {
   if (!["monthly", "yearly"].includes(billingCycle)) {
     return NextResponse.json(
       { error: "billingCycle must be 'monthly' or 'yearly'" },
+      { status: 400 }
+    );
+  }
+
+  if (!["esewa", "khalti"].includes(gateway)) {
+    return NextResponse.json(
+      { error: "gateway must be 'esewa' or 'khalti'" },
       { status: 400 }
     );
   }
@@ -135,49 +150,118 @@ export async function POST(request: NextRequest) {
   const amount =
     billingCycle === "yearly" ? plan.price_yearly : plan.price_monthly;
   const transactionUuid = crypto.randomUUID();
-  const productCode =
-    process.env.ESEWA_MERCHANT_CODE || "EPAYTEST";
-
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const successUrl = `${appUrl}/api/admin/billing/verify`;
-  const failureUrl = `${appUrl}/admin/billing?payment=failed`;
 
-  // Create a pending transaction record
-  const { error: txnError } = await admin
-    .from("payment_transactions")
-    .insert({
-      organization_id: profile.organization_id,
-      gateway: "esewa",
+  if (gateway === "khalti") {
+    // ── Khalti Payment Flow ──
+    const returnUrl = `${appUrl}/api/admin/billing/khalti-verify`;
+
+    // Create a pending transaction record
+    const { error: txnError } = await admin
+      .from("payment_transactions")
+      .insert({
+        organization_id: profile.organization_id,
+        gateway: "khalti",
+        amount,
+        tax_amount: 0,
+        total_amount: amount,
+        product_code: "KHALTI",
+        transaction_uuid: transactionUuid,
+        status: "initiated",
+        plan_id: planId,
+        billing_cycle: billingCycle,
+        initiated_by: user.id,
+      });
+
+    if (txnError) {
+      return NextResponse.json(
+        { error: "Failed to create transaction" },
+        { status: 500 }
+      );
+    }
+
+    const result = await initiateKhaltiPayment({
       amount,
-      tax_amount: 0,
-      total_amount: amount,
-      product_code: productCode,
-      transaction_uuid: transactionUuid,
-      status: "initiated",
-      plan_id: planId,
-      billing_cycle: billingCycle,
-      initiated_by: user.id,
+      purchaseOrderId: transactionUuid,
+      purchaseOrderName: `${plan.display_name} (${billingCycle})`,
+      returnUrl,
+      websiteUrl: appUrl,
     });
 
-  if (txnError) {
-    return NextResponse.json(
-      { error: "Failed to create transaction" },
-      { status: 500 }
-    );
+    if (!result.success || !result.data) {
+      // Mark transaction as failed
+      await admin
+        .from("payment_transactions")
+        .update({
+          status: "failed",
+          failure_reason: result.error || "Khalti initiation failed",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("transaction_uuid", transactionUuid);
+
+      return NextResponse.json(
+        { error: result.error || "Failed to initiate Khalti payment" },
+        { status: 502 }
+      );
+    }
+
+    // Store pidx for later verification
+    await admin
+      .from("payment_transactions")
+      .update({
+        gateway_transaction_id: result.data.pidx,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("transaction_uuid", transactionUuid);
+
+    return NextResponse.json({
+      gateway: "khalti",
+      paymentUrl: result.data.payment_url,
+    });
+  } else {
+    // ── eSewa Payment Flow ──
+    const productCode = process.env.ESEWA_MERCHANT_CODE || "EPAYTEST";
+    const successUrl = `${appUrl}/api/admin/billing/verify`;
+    const failureUrl = `${appUrl}/admin/billing?payment=failed`;
+
+    // Create a pending transaction record
+    const { error: txnError } = await admin
+      .from("payment_transactions")
+      .insert({
+        organization_id: profile.organization_id,
+        gateway: "esewa",
+        amount,
+        tax_amount: 0,
+        total_amount: amount,
+        product_code: productCode,
+        transaction_uuid: transactionUuid,
+        status: "initiated",
+        plan_id: planId,
+        billing_cycle: billingCycle,
+        initiated_by: user.id,
+      });
+
+    if (txnError) {
+      return NextResponse.json(
+        { error: "Failed to create transaction" },
+        { status: 500 }
+      );
+    }
+
+    // Generate eSewa payment form
+    const paymentForm = createEsewaPaymentForm({
+      amount,
+      taxAmount: 0,
+      transactionUuid,
+      productCode,
+      successUrl,
+      failureUrl,
+    });
+
+    return NextResponse.json({
+      gateway: "esewa",
+      paymentUrl: paymentForm.url,
+      formData: paymentForm.formData,
+    });
   }
-
-  // Generate eSewa payment form
-  const paymentForm = createEsewaPaymentForm({
-    amount,
-    taxAmount: 0,
-    transactionUuid,
-    productCode,
-    successUrl,
-    failureUrl,
-  });
-
-  return NextResponse.json({
-    paymentUrl: paymentForm.url,
-    formData: paymentForm.formData,
-  });
 }

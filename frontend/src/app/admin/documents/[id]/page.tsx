@@ -117,9 +117,9 @@ interface OrgDocumentDetailData extends PersonalDocument {
   published_at: string | null;
   target_department_id: string | null;
   target_job_level_id: string | null;
-  ai_summary?: string | null;
-  chapters?: Array<{ title: string, content: string }>;
-  questions?: GeneratedQuestion[];
+  ai_summary: string | null;
+  chapters: Array<{ title: string, content: string }> | null;
+  questions: GeneratedQuestion[];
 }
 
 interface GeneratedQuestion {
