@@ -30,6 +30,7 @@ import {
   Globe,
   MapPin,
   User,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { OrganizationApplication, ApplicationStatus } from "@/types/database";
@@ -58,6 +59,10 @@ export default function SuperAdminOrganizationsPage() {
 
   // Detail view
   const [detailTarget, setDetailTarget] = useState<OrganizationApplication | null>(null);
+
+  // Delete dialog
+  const [deleteTarget, setDeleteTarget] = useState<OrganizationApplication | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchApplications = useCallback(async () => {
     try {
@@ -121,6 +126,27 @@ export default function SuperAdminOrganizationsPage() {
       toast.error(error instanceof Error ? error.message : "Rejection failed");
     } finally {
       setIsRejecting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/super/organizations/${deleteTarget.id}/delete`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete");
+      }
+      toast.success(`${deleteTarget.name} deleted permanently`);
+      setDeleteTarget(null);
+      fetchApplications();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Deletion failed");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -272,6 +298,16 @@ export default function SuperAdminOrganizationsPage() {
                           </Button>
                         </>
                       )}
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setDeleteTarget(app)}
+                        className="h-8 rounded-lg border-red-200 text-red-500 hover:bg-red-50 hover:text-red-700 text-xs font-bold"
+                      >
+                        <Trash2 className="mr-1 h-3 w-3" />
+                        Delete
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -524,6 +560,61 @@ export default function SuperAdminOrganizationsPage() {
                 <>
                   <XCircle className="mr-2 h-4 w-4" />
                   Reject Application
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-slate-900">
+              Delete Organization
+            </DialogTitle>
+            <DialogDescription className="text-slate-500">
+              This action is <strong>permanent and cannot be undone</strong>.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-sm text-red-700 font-medium space-y-2">
+              <p>Deleting <strong>{deleteTarget?.name}</strong> will permanently remove:</p>
+              <ul className="list-disc pl-5 space-y-1 text-xs">
+                <li>The organization and its application</li>
+                <li>All departments and job levels</li>
+                <li>All organization documents</li>
+                <li>All audit logs and subscription data</li>
+              </ul>
+              <p className="text-xs">Users in this organization will be unlinked but not deleted.</p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-3 sm:gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteTarget(null)}
+              disabled={isDeleting}
+              className="h-11 rounded-xl border-slate-100 text-xs font-bold"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-widest shadow-none"
+            >
+              {isDeleting ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Permanently
                 </>
               )}
             </Button>
