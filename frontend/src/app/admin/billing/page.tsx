@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
@@ -99,6 +99,14 @@ const invoiceStatusStyles: Record<string, string> = {
 type Tab = "billing" | "invoices";
 
 export default function BillingPage() {
+  return (
+    <Suspense fallback={<FullPageSpinner />}>
+      <BillingContent />
+    </Suspense>
+  );
+}
+
+function BillingContent() {
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>("billing");
   const [billing, setBilling] = useState<BillingData | null>(null);
