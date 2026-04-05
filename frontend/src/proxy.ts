@@ -1,5 +1,5 @@
 /**
- * proxy.ts — Route Protection Proxy (Formerly middleware.ts)
+ * proxy.ts — Route Protection Proxy 
  *
  * Next.js proxy that runs before every matching request to enforce:
  * 1. Public route access (login, callback, landing page)
@@ -15,7 +15,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** Routes accessible without authentication */
-const publicRoutes = ["/login", "/auth/callback", "/", "/register", "/forgot-password", "/reset-password"];
+const publicRoutes = ["/login", "/auth/callback", "/", "/register", "/forgot-password", "/reset-password", "/api/plans"];
 
 /** Route prefixes accessible without authentication (prefix match) */
 const publicPrefixes = ["/register-organization", "/api/organizations/apply"];

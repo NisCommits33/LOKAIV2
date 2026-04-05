@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
-import { checkOrgLimit, incrementUsage } from "@/lib/payments/subscription";
+  import { checkOrgLimit, incrementUsage } from "@/lib/payments/subscription";
 
 const AI_BACKEND_URL = process.env.AI_BACKEND_URL || "http://localhost:8000";
 

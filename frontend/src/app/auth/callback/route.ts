@@ -30,19 +30,15 @@ export async function GET(request: Request) {
     }
     return NextResponse.redirect(`${origin}/reset-password`);
   }
-
   if (code) {
     const supabase = await createClient();
-
     // Exchange the temporary OAuth code for a persistent session
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
     if (!error) {
       // Check if user has completed profile
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
       if (user) {
         // Fetch profile status to determine routing
         const { data: dbUser } = await supabase
@@ -50,18 +46,15 @@ export async function GET(request: Request) {
           .select("profile_completed, verification_status, role")
           .eq("id", user.id)
           .single<{ profile_completed: boolean; verification_status: string; role: string }>();
-
         if (dbUser) {
           // New user — needs profile setup
           if (!dbUser.profile_completed) {
             return NextResponse.redirect(`${origin}/profile-setup`);
           }
-
           // Pending verification — show pending page
           if (dbUser.verification_status === "pending") {
             return NextResponse.redirect(`${origin}/pending-approval`);
           }
-
           // Route based on role
           if (dbUser.role === "super_admin") {
             return NextResponse.redirect(`${origin}/super-admin`);
