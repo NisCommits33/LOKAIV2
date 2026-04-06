@@ -1,9 +1,0 @@
-
-C:\Users\nees2\OneDrive\Desktop\Final Year Project\Development\frontend\src\app\api\super\users\route.ts
-  2:29  warning  'NextRequest' is defined but never used  @typescript-eslint/no-unused-vars
-
-C:\Users\nees2\OneDrive\Desktop\Final Year Project\Development\frontend\src\app\super-admin\quizzes\page.tsx
-  82:15  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
-
-??? 2 problems (0 errors, 2 warnings)
-
