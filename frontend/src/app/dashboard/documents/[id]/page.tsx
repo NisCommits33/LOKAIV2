@@ -557,32 +557,107 @@ export default function DocumentDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column */}
           <div className="lg:col-span-4 space-y-6">
-            {/* Document Profile */}
-            <section className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 flex items-center gap-2">
-                <FileText className="h-3.5 w-3.5" /> Document Profile
-              </h3>
+            {/* AI Actions */}
+            <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+              <button
+                onClick={() => setShowAI(!showAI)}
+                className="w-full flex items-center justify-between p-5 text-left"
+              >
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                  <Brain className="h-3.5 w-3.5" /> AI Actions
+                </h3>
+                {showAI ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+              </button>
 
-              <div className="space-y-3 font-mono text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-4">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-400 dark:text-slate-500">File</span>
-                  <span className="truncate max-w-[150px] font-medium text-slate-600 dark:text-slate-300" title={doc.file_name}>{doc.file_name}</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-400 dark:text-slate-500">Size</span>
-                  <span className="font-medium text-slate-600 dark:text-slate-300">{formatFileSize(doc.file_size)}</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-400 dark:text-slate-500">Uploaded</span>
-                  <span className="font-medium text-slate-600 dark:text-slate-300">{formatDate(doc.created_at)}</span>
-                </div>
-                {doc.processed_at && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400 dark:text-slate-500">Processed</span>
-                    <span className="font-medium text-slate-600 dark:text-slate-300">{formatDate(doc.processed_at)}</span>
+              {showAI && (
+                <div className="px-5 pb-5 space-y-4">
+                  {selectedChapterIndex !== -1 && (
+                    <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800 rounded-lg p-2.5">
+                      <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">
+                        Targeting: <span className="font-bold">{doc.chapters?.[selectedChapterIndex]?.title}</span>
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {/* Engine */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Engine</label>
+                      <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        {(["groq", "local"] as const).map((mode) => (
+                          <button
+                            key={mode}
+                            onClick={() => setModelPreference(mode)}
+                            className={cn(
+                              "flex-1 py-1.5 rounded-md text-[10px] font-semibold transition-all",
+                              modelPreference === mode
+                                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            )}
+                          >
+                            {mode === "groq" ? "Groq (Fast)" : "Local"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Difficulty */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Difficulty</label>
+                      <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        {(["easy", "medium", "hard"] as const).map((level) => (
+                          <button
+                            key={level}
+                            onClick={() => setQuizDifficulty(level)}
+                            className={cn(
+                              "py-1.5 rounded text-[10px] font-semibold transition-all capitalize",
+                              quizDifficulty === level
+                                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            )}
+                          >
+                            {level}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Question Count */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Questions: {quizCount}</label>
+                      <Input
+                        type="range"
+                        min="3"
+                        max="20"
+                        step="1"
+                        value={quizCount}
+                        onChange={(e) => setQuizCount(parseInt(e.target.value))}
+                        className="h-6"
+                      />
+                    </div>
                   </div>
-                )}
-              </div>
+
+                  <div className="flex flex-col gap-2 pt-2">
+                    <Button
+                      onClick={handleGenerateQuiz}
+                      disabled={generatingQuiz || summarizing}
+                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-9 text-xs font-bold"
+                    >
+                      {generatingQuiz ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Brain className="h-3.5 w-3.5 mr-2" />}
+                      Generate Quiz
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleSummarize}
+                      disabled={summarizing || generatingQuiz}
+                      className="w-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 h-9 text-xs font-bold shadow-none"
+                    >
+                      {summarizing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-2" />}
+                      AI Summary
+                    </Button>
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* Topic / Chapter Selection */}
@@ -649,116 +724,32 @@ export default function DocumentDetailPage({
               </section>
             )}
 
-            {/* AI Actions */}
-            <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-              <button
-                onClick={() => setShowAI(!showAI)}
-                className="w-full flex items-center justify-between p-5 text-left"
-              >
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                  <Brain className="h-3.5 w-3.5" /> AI Actions
-                </h3>
-                {showAI ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
-              </button>
+            {/* Document Profile */}
+            <section className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 flex items-center gap-2">
+                <FileText className="h-3.5 w-3.5" /> Document Profile
+              </h3>
 
-              {showAI && (
-                <div className="px-5 pb-5 space-y-4">
-                  {selectedChapterIndex !== -1 && (
-                    <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800 rounded-lg p-2.5">
-                      <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">
-                        Targeting: <span className="font-bold">{doc.chapters?.[selectedChapterIndex]?.title}</span>
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="space-y-3">
-                    {/* Engine */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Engine</label>
-                      <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        {(["groq", "local"] as const).map((mode) => (
-                          <button
-                            key={mode}
-                            onClick={() => setModelPreference(mode)}
-                            className={cn(
-                              "flex-1 py-1.5 rounded-md text-[10px] font-semibold transition-all",
-                              modelPreference === mode
-                                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                            )}
-                          >
-                            {mode === "groq" ? "Groq (Fast)" : "Local"}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Difficulty */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Difficulty</label>
-                      <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        {(["easy", "medium", "hard"] as const).map((level) => (
-                          <button
-                            key={level}
-                            onClick={() => setQuizDifficulty(level)}
-                            className={cn(
-                              "py-1.5 rounded-md text-[10px] font-semibold capitalize transition-all",
-                              quizDifficulty === level
-                                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                            )}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Question Count */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                        Questions: <span className="text-indigo-600 dark:text-indigo-400">{quizCount}</span>
-                      </label>
-                      <input
-                        type="range"
-                        min="1"
-                        max="20"
-                        value={quizCount}
-                        onChange={(e) => setQuizCount(parseInt(e.target.value))}
-                        className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                      />
-                      <div className="flex justify-between text-[9px] text-slate-300 dark:text-slate-600">
-                        <span>1</span>
-                        <span>20</span>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-2 pt-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-9 text-xs font-semibold gap-1.5"
-                        disabled={summarizing}
-                        onClick={handleSummarize}
-                      >
-                        {summarizing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                        Summary
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-9 text-xs font-semibold gap-1.5"
-                        disabled={generatingQuiz}
-                        onClick={handleGenerateQuiz}
-                      >
-                        {generatingQuiz ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Brain className="h-3.5 w-3.5" />}
-                        Quiz
-                      </Button>
-                    </div>
-                  </div>
+              <div className="space-y-3 font-mono text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-4">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-slate-400 dark:text-slate-500">File</span>
+                  <span className="truncate max-w-[150px] font-medium text-slate-600 dark:text-slate-300" title={doc.file_name}>{doc.file_name}</span>
                 </div>
-              )}
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-slate-400 dark:text-slate-500">Size</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{formatFileSize(doc.file_size)}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-slate-400 dark:text-slate-500">Uploaded</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{formatDate(doc.created_at)}</span>
+                </div>
+                {doc.processed_at && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 dark:text-slate-500">Processed</span>
+                    <span className="font-medium text-slate-600 dark:text-slate-300">{formatDate(doc.processed_at)}</span>
+                  </div>
+                )}
+              </div>
             </section>
           </div>
 

@@ -213,6 +213,39 @@ export default function EmployeeOrgDocumentDetailPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-4 space-y-6">
+          {hasQuiz && (
+            <section className="bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl p-5 border border-indigo-100 dark:border-indigo-800 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-indigo-200 dark:from-indigo-800 to-transparent rounded-bl-full opacity-30 z-0" />
+                <div className="relative z-10 flex flex-col items-center text-center space-y-4">
+                    <div className="bg-white dark:bg-slate-800 p-3 rounded-full shadow-sm">
+                        <Brain className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-50">Knowledge Check</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed px-2">Take a quick AI-generated quiz to test your understanding of this document.</p>
+                    </div>
+                    {(dbUser?.role === "org_admin" || dbUser?.role === "super_admin") ? (
+                        <div className="w-full bg-white/60 dark:bg-slate-800/60 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800 italic text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
+                           Admins can review quizzes in the Admin Panel Document Management section.
+                        </div>
+                    ) : (
+                        <Button 
+                            onClick={() => setQuizMode(true)}
+                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 rounded-xl shadow-none"
+                        >
+                            <HelpCircle className="h-4 w-4 mr-2" /> Take Quiz
+                        </Button>
+                    )}
+                </div>
+            </section>
+          )}
+
+          {!hasQuiz && doc.processing_status === "completed" && (
+             <div className="bg-slate-50/50 dark:bg-slate-800/50 rounded-xl p-5 border border-slate-100 dark:border-slate-700 text-center">
+                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">No quiz active for this document.</p>
+             </div>
+          )}
+
           <section className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
             <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 flex items-center gap-2">
               <FileText className="h-3.5 w-3.5" /> Document Profile
@@ -255,40 +288,6 @@ export default function EmployeeOrgDocumentDetailPage({
               </div>
             </div>
           </section>
-
-          {hasQuiz && (
-            <section className="bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl p-5 border border-indigo-100 dark:border-indigo-800 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-indigo-200 dark:from-indigo-800 to-transparent rounded-bl-full opacity-30 z-0" />
-                <div className="relative z-10 flex flex-col items-center text-center space-y-4">
-                    <div className="bg-white dark:bg-slate-800 p-3 rounded-full shadow-sm">
-                        <Brain className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-50">Knowledge Check</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed px-2">Take a quick AI-generated quiz to test your understanding of this document.</p>
-                    </div>
-                    {(dbUser?.role === "org_admin" || dbUser?.role === "super_admin") ? (
-                        <div className="w-full bg-white/60 dark:bg-slate-800/60 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800 italic text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
-                           Admins can review quizzes in the Admin Panel Document Management section.
-                        </div>
-                    ) : (
-                        <Button 
-                            onClick={() => setQuizMode(true)}
-                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 rounded-xl shadow-none"
-                        >
-                            <HelpCircle className="h-4 w-4 mr-2" /> Take Quiz
-                        </Button>
-                    )}
-                </div>
-            </section>
-          )}
-
-          {!hasQuiz && doc.processing_status === "completed" && (
-             <div className="bg-slate-50/50 dark:bg-slate-800/50 rounded-xl p-5 border border-slate-100 dark:border-slate-700 text-center">
-                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">No quiz active for this document.</p>
-             </div>
-          )}
-
         </div>
 
         <div className="lg:col-span-8 flex flex-col gap-6">
