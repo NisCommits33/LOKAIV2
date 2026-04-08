@@ -64,13 +64,14 @@ export async function GET() {
       .eq("organization_id", orgId);
 
     return NextResponse.json({
-      subscription: subInfo?.subscription || null,
+      subscription: subInfo.subscription,
+      effectivePlan: subInfo.effectivePlan,
       usage: {
-        ...subInfo?.usage,
+        ...subInfo.usage,
         documents_used: docCount || 0,
         users_count: userCount || 0,
       },
-      isExpired: subInfo?.isExpired || false,
+      isExpired: subInfo.isExpired,
       transactions: transactions || [],
     });
   } catch {

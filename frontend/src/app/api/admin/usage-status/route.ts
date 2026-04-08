@@ -53,7 +53,7 @@ export async function GET() {
   }> = [];
 
   for (const feature of features) {
-    const result = await checkOrgLimit(orgId, feature);
+    const result = await checkOrgLimit(orgId, feature, subInfo);
 
     // Skip unlimited features
     if (result.limit === -1) continue;

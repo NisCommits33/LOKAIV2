@@ -19,16 +19,19 @@ export interface OrgSubscriptionInfo {
   subscription: OrganizationSubscription & { plan: SubscriptionPlan };
   usage: SubscriptionUsage | null;
   isExpired: boolean;
+  effectivePlan: SubscriptionPlan; // The plan actually being enforced
 }
 
 /**
- * Get the current active subscription for an organization
+ * Get the current active subscription for an organization.
+ * If no active subscription is found, it returns a "Free Plan" version.
  */
 export async function getOrgSubscription(
   orgId: string
-): Promise<OrgSubscriptionInfo | null> {
+): Promise<OrgSubscriptionInfo> {
   const admin = createAdminClient();
 
+  // Try to get active subscription
   const { data: sub } = await admin
     .from("organization_subscriptions")
     .select("*, plan:subscription_plans(*)")
@@ -38,12 +41,11 @@ export async function getOrgSubscription(
     .limit(1)
     .single();
 
-  if (!sub) return null;
-
   // Get current month usage
-  // Use UTC to match DB's date_trunc('month', now())::date
   const now = new Date();
-  const periodStartStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
+  const periodStartStr = `${now.getUTCFullYear()}-${String(
+    now.getUTCMonth() + 1
+  ).padStart(2, "0")}-01`;
 
   const { data: usage } = await admin
     .from("subscription_usage")
@@ -52,13 +54,64 @@ export async function getOrgSubscription(
     .eq("period_start", periodStartStr)
     .single();
 
+  // 1. If no subscription found, default to Free Plan
+  if (!sub) {
+    const { data: freePlan } = await admin
+      .from("subscription_plans")
+      .select("*")
+      .eq("name", "free")
+      .single();
+
+    return {
+      subscription: {
+        id: "implicit-free",
+        organization_id: orgId,
+        plan_id: freePlan?.id || "free",
+        status: "active",
+        billing_cycle: "monthly",
+        current_period_start: periodStartStr,
+        current_period_end: "2099-12-31T23:59:59Z", // Permanent free
+        cancelled_at: null,
+        created_at: now.toISOString(),
+        updated_at: now.toISOString(),
+        plan: freePlan as SubscriptionPlan,
+      },
+      usage: usage as SubscriptionUsage | null,
+      isExpired: false,
+      effectivePlan: freePlan as SubscriptionPlan,
+    };
+  }
+
   const isExpired = new Date(sub.current_period_end) < new Date();
+
+  // Determine effective plan (enforced limits)
+  let effectivePlan = (sub as any).plan as SubscriptionPlan;
+  if (isExpired) {
+    const free = await fetchPlanByName("free");
+    if (free) effectivePlan = free;
+  }
 
   return {
     subscription: sub as OrganizationSubscription & { plan: SubscriptionPlan },
     usage: usage as SubscriptionUsage | null,
     isExpired,
+    effectivePlan,
   };
+}
+
+/**
+ * Fetch a plan by its internal name (slug)
+ */
+export async function fetchPlanByName(
+  name: string
+): Promise<SubscriptionPlan | null> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("subscription_plans")
+    .select("*")
+    .eq("name", name)
+    .single();
+  return data as SubscriptionPlan | null;
 }
 
 /**
@@ -68,29 +121,18 @@ export async function getOrgSubscription(
  */
 export async function checkOrgLimit(
   orgId: string,
-  feature: FeatureType
+  feature: FeatureType,
+  existingInfo?: OrgSubscriptionInfo
 ): Promise<{
   allowed: boolean;
   remaining: number;
   limit: number;
   used: number;
 }> {
-  const info = await getOrgSubscription(orgId);
-  if (!info) {
-    return { allowed: false, remaining: 0, limit: 0, used: 0 };
-  }
+  const info = existingInfo || (await getOrgSubscription(orgId));
 
   // If subscription is expired, enforce free plan limits instead
-  let plan = info.subscription.plan;
-  if (info.isExpired) {
-    const admin = createAdminClient();
-    const { data: freePlan } = await admin
-      .from("subscription_plans")
-      .select("*")
-      .eq("name", "free")
-      .single();
-    if (freePlan) plan = freePlan as SubscriptionPlan;
-  }
+  let plan = info.effectivePlan;
 
   let limit: number;
   let used: number;
@@ -167,16 +209,7 @@ export async function checkFeatureFlag(
   const info = await getOrgSubscription(orgId);
   if (!info) return false;
 
-  let plan = info.subscription.plan;
-  if (info.isExpired) {
-    const admin = createAdminClient();
-    const { data: freePlan } = await admin
-      .from("subscription_plans")
-      .select("*")
-      .eq("name", "free")
-      .single();
-    if (freePlan) plan = freePlan as SubscriptionPlan;
-  }
+  let plan = info.effectivePlan;
 
   return plan[flag] === true;
 }

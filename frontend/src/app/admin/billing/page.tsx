@@ -42,6 +42,7 @@ import type {
 
 interface BillingData {
   subscription: (OrganizationSubscription & { plan: SubscriptionPlan }) | null;
+  effectivePlan: SubscriptionPlan | null;
   usage: (Partial<SubscriptionUsage> & { users_count: number }) | null;
   isExpired: boolean;
   transactions: PaymentTransaction[];
@@ -273,8 +274,15 @@ function BillingContent() {
                   <div>
                     <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                       Current Plan:{" "}
-                      <span className="text-indigo-600 dark:text-indigo-400">
+                      <span
+                        className={
+                          billing.isExpired
+                            ? "text-red-600 dark:text-red-400 font-bold"
+                            : "text-indigo-600 dark:text-indigo-400"
+                        }
+                      >
                         {currentPlan.display_name}
+                        {billing.isExpired && " — Expired"}
                       </span>
                     </h2>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -311,27 +319,36 @@ function BillingContent() {
                 icon={Users}
                 label="Users"
                 used={billing.usage.users_count || 0}
-                limit={currentPlan.max_users}
+                limit={billing.effectivePlan?.max_users || currentPlan.max_users}
               />
               <UsageMeter
                 icon={FileText}
                 label="Documents"
                 used={billing.usage.documents_used || 0}
-                limit={currentPlan.max_documents_per_month}
+                limit={
+                  billing.effectivePlan?.max_documents_per_month ||
+                  currentPlan.max_documents_per_month
+                }
                 period="this month"
               />
               <UsageMeter
                 icon={Brain}
                 label="AI Requests"
                 used={billing.usage.ai_requests_used || 0}
-                limit={currentPlan.max_ai_requests_per_month}
+                limit={
+                  billing.effectivePlan?.max_ai_requests_per_month ||
+                  currentPlan.max_ai_requests_per_month
+                }
                 period="this month"
               />
               <UsageMeter
                 icon={HardDrive}
                 label="Storage"
                 used={billing.usage.storage_used_mb || 0}
-                limit={currentPlan.max_storage_mb}
+                limit={
+                  billing.effectivePlan?.max_storage_mb ||
+                  currentPlan.max_storage_mb
+                }
                 unit="MB"
               />
             </div>

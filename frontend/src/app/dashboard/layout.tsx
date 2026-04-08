@@ -103,21 +103,9 @@ const adminNavItems: NavItem[] = [
     roles: ["org_admin"],
   },
   {
-    label: "Users",
-    href: "/admin/users",
+    label: "Manage Team",
+    href: "/admin/manage",
     icon: Users,
-    roles: ["org_admin"],
-  },
-  {
-    label: "Departments",
-    href: "/admin/departments",
-    icon: Building2,
-    roles: ["org_admin"],
-  },
-  {
-    label: "Job Levels",
-    href: "/admin/job-levels",
-    icon: Layers,
     roles: ["org_admin"],
   },
   {
