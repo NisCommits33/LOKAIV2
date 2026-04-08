@@ -41,22 +41,73 @@ export async function DELETE(
 
   // Delete the actual organization if it was approved and linked
   if (application.organization_id) {
-    // Reset org users to employee role before deleting the org
-    const { error: usersError } = await adminClient
-      .from("users")
-      .update({ role: "employee", organization_id: null })
-      .eq("organization_id", application.organization_id);
+    const orgId = application.organization_id;
 
-    if (usersError) {
-      console.error("[delete-org] Failed to reset users:", usersError);
-      return NextResponse.json({ error: "Failed to reset organization users" }, { status: 500 });
+    console.log(`[delete-org] Starting deep cleanup for organization: ${orgId}`);
+
+    // 1. FIRST: Catch and reset all users while they are still linked
+    // We do this first because deleting depts/levels might trigger cascades that nullify these links.
+    const { data: members } = await adminClient
+      .from("users")
+      .select("id")
+      .eq("organization_id", orgId);
+    
+    if (members && members.length > 0) {
+      const uids = members.map(m => m.id);
+      const { error: resetError } = await adminClient
+        .from("users")
+        .update({ 
+          role: "public", 
+          organization_id: null,
+          department_id: null,
+          job_level_id: null,
+          employee_id: null,
+          verification_status: "none",
+          profile_completed: false 
+        })
+        .in("id", uids);
+      
+      if (resetError) {
+        console.error("[delete-org] Failed to reset users:", resetError);
+        return NextResponse.json({ error: "Failed to reset organization users" }, { status: 500 });
+      }
+      console.log(`[delete-org] Reset ${uids.length} users to public state`);
     }
 
-    // Delete the organization (cascades to departments, job_levels, audit_logs, etc.)
+    // 2. Progress & Analytics Cleanup
+    await adminClient.from("user_progress").delete().eq("organization_id", orgId);
+    await adminClient.from("usage_events").delete().eq("organization_id", orgId);
+    await adminClient.from("audit_logs").delete().eq("organization_id", orgId);
+
+    // 3. Billing & Payments Cleanup
+    await adminClient.from("subscription_usage").delete().eq("organization_id", orgId);
+    await adminClient.from("manual_payments").delete().eq("organization_id", orgId);
+    await adminClient.from("payment_transactions").delete().eq("organization_id", orgId);
+    await adminClient.from("invoices").delete().eq("organization_id", orgId);
+
+    // 4. Documents & Storage Purge
+    const { data: docs } = await adminClient
+      .from("org_documents")
+      .select("file_path")
+      .eq("organization_id", orgId);
+    
+    if (docs && docs.length > 0) {
+      const paths = docs.map(d => d.file_path);
+      await adminClient.storage.from("documents").remove(paths);
+      console.log(`[delete-org] Purged ${paths.length} files from storage`);
+    }
+    await adminClient.from("org_documents").delete().eq("organization_id", orgId);
+
+    // 5. Structure & Subscription Cleanup
+    await adminClient.from("departments").delete().eq("organization_id", orgId);
+    await adminClient.from("job_levels").delete().eq("organization_id", orgId);
+    await adminClient.from("organization_subscriptions").delete().eq("organization_id", orgId);
+
+    // 6. Delete the Actual Organization record
     const { error: orgError } = await adminClient
       .from("organizations")
       .delete()
-      .eq("id", application.organization_id);
+      .eq("id", orgId);
 
     if (orgError) {
       console.error("[delete-org] Failed to delete organization:", orgError);

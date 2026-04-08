@@ -111,6 +111,7 @@ export async function proxy(request: NextRequest) {
   const needsProfileCheck =
     pathname !== "/profile-setup" &&
     pathname !== "/pending-approval" &&
+    pathname !== "/pending-org-approval" &&
     !pathname.startsWith("/api/");
 
   if (needsProfileCheck || needsRoleCheck) {
@@ -124,6 +125,20 @@ export async function proxy(request: NextRequest) {
     if (dbUser) {
       // Deactivated users are treated as public — they can only access public features
       userRole = dbUser.is_active ? dbUser.role : "public";
+
+      // If they are a public user, check if they have a pending organization application
+      if (userRole === "public" && pathname !== "/pending-org-approval") {
+        const { data: pendingApp } = await supabase
+          .from("organization_applications")
+          .select("id")
+          .eq("status", "pending")
+          .eq("applicant_email", user.email)
+          .maybeSingle();
+        
+        if (pendingApp) {
+          return NextResponse.redirect(new URL("/pending-org-approval", request.url));
+        }
+      }
     } else {
       // Fallback: use SECURITY DEFINER function to bypass RLS
       const { data: rpcRole } = await supabase.rpc("get_user_role", { user_id: user.id });
