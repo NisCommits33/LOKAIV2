@@ -123,7 +123,7 @@ async function runFullPipelineInBackground(
         engine_preference,
         question_count,
         difficulty,
-        tasks: ["extract"] // Only perform text extraction initially
+        tasks: ["extract", "summarize", "questions"] // Run the full suite for a complete experience
       }),
     });
 

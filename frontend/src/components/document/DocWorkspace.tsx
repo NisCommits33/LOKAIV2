@@ -194,8 +194,6 @@ export function DocWorkspace({
       {/* Header Toolbar */}
       <div className="h-14 sm:h-16 border-b border-white/20 dark:border-slate-800/30 px-3 sm:px-6 flex items-center justify-between bg-white/70 dark:bg-slate-900/80 backdrop-blur-2xl z-50 sticky top-0">
         <div className="flex items-center gap-3 sm:gap-4 shrink-0 overflow-hidden">
-          <BackButton className="text-slate-500 hover:text-indigo-600 transition-all shrink-0" />
-          <div className="hidden sm:block h-6 w-[1px] bg-slate-200 dark:bg-slate-800" />
           <div className="flex flex-col min-w-0">
             <h1 className="text-[11px] sm:text-sm font-black text-slate-900 dark:text-slate-100 truncate max-w-[140px] sm:max-w-[320px] tracking-tight">
               {doc.title}

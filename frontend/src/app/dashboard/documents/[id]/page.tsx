@@ -15,9 +15,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { FullPageSpinner } from "@/components/loading";
 import { BackButton } from "@/components/ui/back-button";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,7 +53,11 @@ import {
   ChevronDown,
   ChevronUp,
   Bookmark,
-  Play
+  Play,
+  Cpu,
+  Zap,
+  Settings,
+  List,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -61,17 +73,10 @@ function formatFileSize(bytes: number): string {
   return `${((bytes / (1024 * 1024))).toFixed(1)} MB`;
 }
 
-const statusColors: Record<DocumentProcessingStatus, string> = {
-  pending: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-800",
-  processing: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-800",
-  completed: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
-  failed: "bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800",
-};
-
 const statusLabels: Record<DocumentProcessingStatus, string> = {
-  pending: "Pending",
-  processing: "Processing",
-  completed: "Ready",
+  pending: "Ready to Extract",
+  processing: "Extracting...",
+  completed: "Analyzed",
   failed: "Failed",
 };
 
@@ -250,6 +255,9 @@ export default function DocumentDetailPage({
           if (pollingRef.current) clearInterval(pollingRef.current);
           pollingRef.current = null;
           setDoc(data);
+          if (data.questions && Array.isArray(data.questions)) {
+            setQuestions(data.questions);
+          }
           toast.success("Processing complete!");
         } else if (data.processing_status === "failed") {
           if (pollingRef.current) clearInterval(pollingRef.current);
@@ -363,8 +371,8 @@ export default function DocumentDetailPage({
     }
   }
 
-  const isReady = doc?.processing_status === "completed";
-  const isProcessing = doc?.processing_status === "processing" || doc?.processing_status === "pending";
+  const isReady = !!doc?.extracted_text;
+  const isProcessing = doc?.processing_status === "processing";
 
   if (authLoading || loading) return <FullPageSpinner />;
 
@@ -373,7 +381,17 @@ export default function DocumentDetailPage({
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
         <h2 className="text-xl font-black mb-4">Document Not Found</h2>
-        <BackButton />
+        <div className="flex gap-4">
+          <BackButton />
+          <Button 
+            variant="outline" 
+            onClick={() => window.location.reload()}
+            className="rounded-xl border-slate-200 dark:border-slate-800 font-bold"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
       </div>
     );
   }
@@ -382,38 +400,74 @@ export default function DocumentDetailPage({
   const quizPlayer = (
     <div className="space-y-6">
       <div className="bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
-              <Brain size={16} />
+        <div className="flex flex-col gap-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+                <Brain size={16} />
+              </div>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-400">
+                  Quiz
+              </h3>
             </div>
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-400">
-                Quiz
-            </h3>
-          </div>
-          <div className="flex items-center gap-2">
-            {questions.length > 0 && !quizResults && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleSaveQuizToLibrary}
-                className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-orange-600"
+            <div className="flex items-center gap-2">
+              {questions.length > 0 && !quizResults && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSaveQuizToLibrary}
+                  className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-orange-600"
+                >
+                  <Bookmark className="h-3 w-3 mr-2" />
+                  Save To Library
+                </Button>
+              )}
+              <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleGenerateQuiz}
+                  disabled={generatingQuiz}
+                  className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-indigo-600"
               >
-                <Bookmark className="h-3 w-3 mr-2" />
-                Save To Library
+                  {generatingQuiz ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <RefreshCw className="h-3 w-3 mr-2" />}
+                  {questions.length > 0 ? "Re-Generate" : "Generate Quiz"}
               </Button>
-            )}
-            <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleGenerateQuiz} 
-                disabled={generatingQuiz}
-                className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-indigo-600"
-            >
-                {generatingQuiz ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <RefreshCw className="h-3 w-3 mr-2" />}
-                Re-Generate
-            </Button>
+            </div>
           </div>
+
+          {!quizResults && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                  <List size={12} /> Questions: {quizCount}
+                </label>
+                <Slider
+                  value={[quizCount]}
+                  min={5}
+                  max={20}
+                  step={1}
+                  onValueChange={([val]) => setQuizCount(val)}
+                  className="py-2"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                  <Settings size={12} /> Difficulty
+                </label>
+                <Select value={quizDifficulty} onValueChange={setQuizDifficulty}>
+                  <SelectTrigger className="h-8 text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="easy" className="text-[10px] font-bold uppercase tracking-widest">Easy</SelectItem>
+                    <SelectItem value="medium" className="text-[10px] font-bold uppercase tracking-widest">Medium</SelectItem>
+                    <SelectItem value="hard" className="text-[10px] font-bold uppercase tracking-widest">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
         </div>
 
         {quizResults ? (
@@ -425,10 +479,7 @@ export default function DocumentDetailPage({
               questions={questions}
               userAnswers={quizResults.userAnswers}
               title={doc.title}
-              onRetake={() => {
-                saveToHistory(quizResults.score, quizResults.total);
-                setQuizResults(null);
-              }}
+              onRetake={() => setQuizResults(null)}
             />
           </div>
         ) : questions.length > 0 ? (
@@ -488,20 +539,108 @@ export default function DocumentDetailPage({
   );
 
   return (
-    <div className="p-4 sm:p-8 max-w-[1600px] mx-auto min-h-screen">
-      {!isReady ? (
+    <TooltipProvider>
+      <div className="p-4 sm:p-8 max-w-[1600px] mx-auto min-h-screen bg-white dark:bg-slate-950">
+        {/* Header Title Section */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block" />
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight flex items-center gap-3">
+                <FileText className="h-6 w-6 text-indigo-500" />
+                {doc.title}
+              </h1>
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary" className="capitalize bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-none font-bold text-[10px] uppercase tracking-widest px-2.5 py-0.5">
+                  {statusLabels[doc.processing_status]}
+                </Badge>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <Clock className="h-3 w-3" />
+                  Added {new Date(doc.created_at).toLocaleDateString()}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => window.location.reload()}
+                  className="h-7 px-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg ml-2"
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                  Refresh
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger
+                onClick={() => setShowDelete(true)}
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all focus:outline-none"
+              >
+                <Trash2 className="h-4 w-4" />
+              </TooltipTrigger>
+              <TooltipContent>Delete Document</TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+
+        {!isReady ? (
           <div className="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl p-20 text-center space-y-8">
              <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-               {isProcessing ? <Loader2 className="h-10 w-10 animate-spin" /> : <Sparkles className="h-10 w-10" />}
+               {isProcessing ? <Loader2 className="h-10 w-10 animate-spin" /> : <FileText className="h-10 w-10" />}
              </div>
              <div>
-               <h2 className="text-2xl font-black mb-2">{isProcessing ? "Analyzing..." : "Ready"}</h2>
-               <p className="text-slate-500 max-w-sm mx-auto">Click below to unlock the full potential of this document.</p>
-             </div>
-             {!isProcessing && (
-                 <Button onClick={handleStartOCR} className="bg-indigo-600 h-12 px-8 rounded-xl font-bold shadow-lg shadow-indigo-500/20">
+                <h2 className="text-2xl font-black mb-2">{isProcessing ? "Extracting Text..." : "Document Uploaded"}</h2>
+                <p className="text-slate-500 max-w-sm mx-auto">
+                  {isProcessing 
+                    ? "Our AI is currently reading your document. This might take a moment..." 
+                    : "Your document is ready. Choose your AI engine and start your analysis."}
+                </p>
+              </div>
+
+              {!isProcessing && (
+                <div className="flex flex-col items-center gap-6">
+                  <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-inner">
+                    <button
+                      onClick={() => setModelPreference("local")}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 font-bold text-xs uppercase tracking-widest",
+                        modelPreference === "local"
+                          ? "bg-white dark:bg-slate-700 text-indigo-600 shadow-md scale-[1.02]"
+                          : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                      )}
+                    >
+                      <Cpu className="h-4 w-4" />
+                      Local Transformer
+                    </button>
+                    <button
+                      onClick={() => setModelPreference("groq")}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 font-bold text-xs uppercase tracking-widest",
+                        modelPreference === "groq"
+                          ? "bg-white dark:bg-slate-700 text-orange-600 shadow-md scale-[1.02]"
+                          : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                      )}
+                    >
+                      <Zap className="h-4 w-4" />
+                      Groq AI (Fast)
+                    </button>
+                  </div>
+
+                  <Button 
+                    onClick={handleStartOCR} 
+                    className="bg-indigo-600 hover:bg-indigo-700 h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-500/20 active:scale-95 transition-all w-full max-w-md"
+                  >
                     Start Analysis
-                 </Button>
+                  </Button>
+                  
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                    {modelPreference === "local" 
+                      ? "Privacy First: Processing stays on your local server" 
+                      : "Speed First: High-performance cloud intelligence"}
+                  </p>
+                </div>
              )}
           </div>
       ) : (
@@ -538,5 +677,8 @@ export default function DocumentDetailPage({
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    </TooltipProvider>
   );
 }
+
+

@@ -47,6 +47,7 @@ import {
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import type { PersonalDocument, DocumentProcessingStatus } from "@/types/database";
 
 const container = {
@@ -58,17 +59,10 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-const statusColors: Record<DocumentProcessingStatus, string> = {
-  pending: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-800",
-  processing: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-800",
-  completed: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
-  failed: "bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800",
-};
-
 const statusLabels: Record<DocumentProcessingStatus, string> = {
-  pending: "Pending",
-  processing: "Processing",
-  completed: "Ready",
+  pending: "Uploaded",
+  processing: "Extracting...",
+  completed: "Analyzed",
   failed: "Failed",
 };
 
@@ -242,15 +236,15 @@ export default function DocumentsPage() {
   if (authLoading) return <FullPageSpinner />;
 
   return (
-    <div className="p-6 sm:p-8 space-y-6">
+    <div className="p-6 sm:p-8 space-y-6 max-w-[1600px] mx-auto bg-white dark:bg-slate-950 min-h-full">
       {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-          My Documents
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-          Upload study materials and let AI generate practice questions
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">My Documents</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Upload personal study materials and generate practice questions with AI.
+          </p>
+        </div>
       </div>
 
       {/* Upload Zone */}
@@ -299,25 +293,32 @@ export default function DocumentsPage() {
         />
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <Input
-            placeholder="Search documents..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-white dark:bg-slate-900"
-          />
+      <div className="flex flex-col sm:flex-row gap-4 items-end bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="w-full md:flex-1 space-y-1.5">
+          <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Search Title</label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Search documents..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+            />
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
           {(["", "pending", "completed", "failed"] as const).map((s) => (
             <Button
               key={s}
-              variant={statusFilter === s ? "default" : "outline"}
+              variant={statusFilter === s ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setStatusFilter(s)}
-              className="text-xs"
+              className={cn(
+                "h-8 px-3 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all",
+                statusFilter === s 
+                  ? "bg-white dark:bg-slate-700 shadow-sm text-indigo-600 dark:text-indigo-400" 
+                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+              )}
             >
               {s === "" ? "All" : statusLabels[s]}
             </Button>
@@ -353,66 +354,64 @@ export default function DocumentsPage() {
             variants={container}
             initial="hidden"
             animate="show"
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           >
             {documents.map((doc) => (
               <motion.div key={doc.id} variants={item}>
-                <Card className="group hover:shadow-md transition-all border-slate-100 dark:border-slate-700">
-                  <CardContent className="p-5 space-y-3">
+                <Card className="group hover:shadow-md transition-all border-slate-200 dark:border-slate-800 h-full flex flex-col justify-between cursor-pointer bg-white dark:bg-slate-900">
+                  <CardContent className="p-5 space-y-4 flex-1 flex flex-col">
                     {/* Status + actions row */}
                     <div className="flex items-start justify-between">
                       <Badge
-                        variant="outline"
-                        className={statusColors[doc.processing_status]}
+                        variant="secondary"
+                        className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-100 dark:border-slate-700 font-bold text-[10px] uppercase tracking-widest px-2 py-0.5"
                       >
                         {doc.processing_status === "processing" && (
-                          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                          <Loader2 className="h-3 w-3 mr-1 animate-spin text-blue-500" />
                         )}
                         {doc.processing_status === "completed" && (
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          <CheckCircle2 className="h-3 w-3 mr-1 text-emerald-500" />
                         )}
                         {doc.processing_status === "failed" && (
-                          <AlertCircle className="h-3 w-3 mr-1" />
+                          <AlertCircle className="h-3 w-3 mr-1 text-red-500" />
                         )}
                         {doc.processing_status === "pending" && (
-                          <Clock className="h-3 w-3 mr-1" />
+                          <Clock className="h-3 w-3 mr-1 text-amber-500" />
                         )}
                         {statusLabels[doc.processing_status]}
                       </Badge>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link href={`/dashboard/documents/${doc.id}`}>
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
-                            <Eye className="h-3.5 w-3.5" />
-                          </Button>
+                          <div className="h-7 w-7 rounded-sm flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                            <Eye className="h-3.5 w-3.5 text-slate-400" />
+                          </div>
                         </Link>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                        <button
+                          className="h-7 w-7 rounded-sm flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-500 transition-colors"
                           onClick={() => setDeleteId(doc.id)}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        </button>
                       </div>
                     </div>
 
                     {/* Title + filename */}
-                    <Link href={`/dashboard/documents/${doc.id}`} className="block">
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                    <Link href={`/dashboard/documents/${doc.id}`} className="block flex-1">
+                      <h3 className="font-bold text-slate-900 dark:text-slate-100 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-tight">
                         {doc.title}
                       </h3>
-                      <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
+                      <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-1 mt-2 font-mono">
                         {doc.file_name}
                       </p>
                     </Link>
 
                     {/* Meta row */}
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
-                      <span className="flex items-center gap-1">
+                    <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-2">
+                      <span className="flex items-center gap-1.5">
                         <Upload className="h-3 w-3" />
                         {formatFileSize(doc.file_size)}
                       </span>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-800 pl-3">
                         <Clock className="h-3 w-3" />
                         {formatDate(doc.created_at)}
                       </span>
@@ -420,7 +419,7 @@ export default function DocumentsPage() {
 
                     {/* Processing error */}
                     {doc.processing_status === "failed" && doc.processing_error && (
-                      <p className="text-xs text-red-500 flex items-start gap-1">
+                      <p className="text-[10px] font-bold text-red-500 flex items-start gap-1 bg-red-50 dark:bg-red-950/20 p-2 rounded-lg border border-red-100 dark:border-red-900/30">
                         <X className="h-3 w-3 mt-0.5 shrink-0" />
                         {doc.processing_error}
                       </p>
