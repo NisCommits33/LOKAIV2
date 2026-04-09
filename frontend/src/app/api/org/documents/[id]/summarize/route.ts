@@ -20,23 +20,39 @@ export async function POST(
 
   const { data: profile } = await supabase
     .from("users")
-    .select("role, organization_id")
+    .select("role, organization_id, department_id, job_level_id")
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "org_admin") {
-    return NextResponse.json({ error: "Forbidden: Org Admin required" }, { status: 403 });
+  if (!profile || !profile.organization_id) {
+    return NextResponse.json({ error: "Forbidden: Not part of an organization" }, { status: 403 });
   }
 
   const { data: doc, error } = await supabase
     .from("org_documents")
-    .select("extracted_text, processing_status")
+    .select("extracted_text, processing_status, is_published, target_department_id, target_job_level_id")
     .eq("id", id)
     .eq("organization_id", profile.organization_id)
     .single();
 
   if (error || !doc) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  // Authorization Check
+  if (profile.role !== "org_admin" && profile.role !== "super_admin") {
+     // MUST be published
+     if (!doc.is_published) {
+        return NextResponse.json({ error: "Forbidden: This document is not yet available for study." }, { status: 403 });
+     }
+
+     // Targeting Enforcement
+     if (doc.target_department_id && doc.target_department_id !== profile.department_id) {
+        return NextResponse.json({ error: "Forbidden: This document is not assigned to your department." }, { status: 403 });
+     }
+     if (doc.target_job_level_id && doc.target_job_level_id !== profile.job_level_id) {
+        return NextResponse.json({ error: "Forbidden: This document is not assigned to your job level." }, { status: 403 });
+     }
   }
 
   if (!doc.extracted_text) {

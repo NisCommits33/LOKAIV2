@@ -965,16 +965,21 @@ export default function OrgDocumentDetailPage({
               </button>
 
               {showDist && <div className="px-5 pb-5 space-y-4">
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed italic">
+                    Publishing shares the <strong>Full Intelligence Workspace</strong> (Extracted Text, Chapters, and Summary) along with the practice quiz.
+                  </p>
+                </div>
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Topic / Label</label>
+                  <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Library Label (Topic)</label>
                   <Input
                     value={distTopic}
                     onChange={(e) => setDistTopic(e.target.value)}
-                    placeholder="e.g. Fire Safety, Q1 Policy Refresher..."
+                    placeholder="e.g. Fire Safety Policy, Chapter 1 Overview..."
                     className="h-9 text-xs"
                   />
-                  <p className="text-[10px] text-slate-400 dark:text-slate-500">Appears as the card label in the employee library</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">This will be the main title seen by employees.</p>
                 </div>
 
                 <div className="space-y-1.5">

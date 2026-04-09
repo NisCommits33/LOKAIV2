@@ -29,7 +29,15 @@ export async function POST(
 
   // 2. Parse request body
   try {
-    const { is_published, target_department_id, target_job_level_id, create_new_version, difficulty_level, num_questions } = await request.json();
+    const { 
+      is_published, 
+      target_department_id, 
+      target_job_level_id, 
+      create_new_version, 
+      difficulty_level, 
+      num_questions,
+      topic 
+    } = await request.json();
 
     // 3. Fetch original document to duplicate if creating a new version
     const { data: original, error: fetchError } = await supabase
@@ -50,14 +58,14 @@ export async function POST(
         .from("org_documents")
         .insert({
           ...payload,
-          title: `${original.title} (Quiz Version ${new Date().toLocaleDateString()})`,
+          title: topic || original.title,
           is_published: !!is_published,
           published_at: is_published ? new Date().toISOString() : null,
           target_department_id: target_department_id || null,
           target_job_level_id: target_job_level_id || null,
           difficulty_level: difficulty_level || "medium",
           num_questions: num_questions || 5,
-          processing_status: "completed", // Keep it as completed since we're just copying content to a new card
+          processing_status: "completed",
         })
         .select()
         .single();
@@ -74,6 +82,7 @@ export async function POST(
     const { data: updated, error } = await supabase
       .from("org_documents")
       .update({
+        title: topic || original.title,
         is_published: !!is_published,
         published_at: is_published ? new Date().toISOString() : null,
         target_department_id: target_department_id || null,
