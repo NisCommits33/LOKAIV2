@@ -371,8 +371,8 @@ export default function DocumentDetailPage({
     }
   }
 
-  const isReady = !!doc?.extracted_text;
   const isProcessing = doc?.processing_status === "processing";
+  const isAnalysisActive = isProcessing || doc?.processing_status === "completed";
 
   if (authLoading || loading) return <FullPageSpinner />;
 
@@ -585,7 +585,7 @@ export default function DocumentDetailPage({
           </div>
         </div>
 
-        {!isReady ? (
+        {!isAnalysisActive ? (
           <div className="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl p-20 text-center space-y-8">
              <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
                {isProcessing ? <Loader2 className="h-10 w-10 animate-spin" /> : <FileText className="h-10 w-10" />}
@@ -652,6 +652,7 @@ export default function DocumentDetailPage({
             onSummarize={handleSummarize}
             isMinimized={isMinimized}
             onMinimizeToggle={() => setIsMinimized(!isMinimized)}
+            processingStatus={doc.processing_status}
           />
       )}
 

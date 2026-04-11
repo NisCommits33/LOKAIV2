@@ -37,7 +37,7 @@ The platform supports multiple organizations (ministries, commissions), role-bas
 - **Personal Document Intelligence** — Upload PDFs → OCR text extraction → AI summarization → automatic MCQ generation
 - **Organization Documents** — Shared study materials at the institutional level
 - **Analytics Dashboard** — Quiz performance tracking, study streaks, category breakdowns, and exportable PDF reports
-- **Subscription & Billing** — Tiered plans with eSewa/Khalti payment gateway integration
+- **Subscription & Billing** — Tiered plans with Khalti payment gateway integration
 - **Dark Mode** — Full theme support via `next-themes`
 - **Nepali Language Support** — OCR with Tesseract supporting both English and Nepali scripts
 
@@ -239,7 +239,7 @@ Development/
 │   │   ├── hooks/                  # Custom React hooks
 │   │   ├── lib/
 │   │   │   ├── supabase/           # Client, server, admin Supabase instances
-│   │   │   ├── payments/           # eSewa/Khalti integration
+│   │   │   ├── payments/           # Khalti integration
 │   │   │   └── utils.ts            # Shared utilities
 │   │   ├── types/
 │   │   │   └── database.ts         # Database type definitions
@@ -283,7 +283,7 @@ Development/
 | `quiz_attempts` | User quiz scores and answer history |
 | `subscription_plans` | Available billing tiers |
 | `organization_subscriptions` | Active org subscriptions |
-| `payment_transactions` | eSewa/Khalti payment records |
+| `payment_transactions` | Khalti payment records |
 
 ### Row-Level Security
 

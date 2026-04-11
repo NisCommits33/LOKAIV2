@@ -113,7 +113,10 @@ async function runFullPipelineInBackground(
   try {
     const aiResponse = await fetch(`${AI_BACKEND_URL}/api/ai/process`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "X-Internal-Secret": process.env.AI_INTERNAL_SECRET || ""
+      },
       body: JSON.stringify({
         doc_id: docId,
         doc_type: "org_documents", // <--- THIS is what tells FastAPI to update the right table

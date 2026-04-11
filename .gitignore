@@ -1,3 +1,18 @@
 # Folders to exclude from GitHub
 migrations/
 sprint_review/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db

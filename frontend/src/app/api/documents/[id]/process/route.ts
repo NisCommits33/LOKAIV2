@@ -115,7 +115,10 @@ async function runFullPipelineInBackground(
     // Call the NEW /api/ai/process endpoint (Full Pipeline)
     const aiResponse = await fetch(`${AI_BACKEND_URL}/api/ai/process`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "X-Internal-Secret": process.env.AI_INTERNAL_SECRET || ""
+      },
       body: JSON.stringify({
         doc_id: docId,
         file_base64: base64,

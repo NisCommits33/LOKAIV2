@@ -1,6 +1,6 @@
 /**
  * GET  /api/admin/billing — Current subscription, usage stats, payment history
- * POST /api/admin/billing — Initiate a plan upgrade via eSewa or Khalti
+ * POST /api/admin/billing — Initiate a plan upgrade via Khalti
  *
  * @module api/admin/billing
  */
@@ -9,7 +9,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin-client";
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrgSubscription } from "@/lib/payments/subscription";
-import { createEsewaPaymentForm } from "@/lib/payments/esewa";
 import { initiateKhaltiPayment } from "@/lib/payments/khalti";
 import crypto from "crypto";
 
@@ -84,7 +83,7 @@ export async function GET() {
 
 /**
  * POST — Initiate a payment for plan upgrade/renewal
- * Body: { planId: string, billingCycle: 'monthly' | 'yearly', gateway?: 'esewa' | 'khalti' }
+ * Body: { planId: string, billingCycle: 'monthly' | 'yearly', gateway?: 'khalti' }
  */
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -107,7 +106,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { planId, billingCycle = "monthly", gateway = "esewa" } = body;
+  const { planId, billingCycle = "monthly", gateway = "khalti" } = body;
 
   if (!planId) {
     return NextResponse.json({ error: "planId is required" }, { status: 400 });
@@ -120,9 +119,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!["esewa", "khalti"].includes(gateway)) {
+  if (gateway !== "khalti") {
     return NextResponse.json(
-      { error: "gateway must be 'esewa' or 'khalti'" },
+      { error: "Only Khalti gateway is supported" },
       { status: 400 }
     );
   }
@@ -153,116 +152,69 @@ export async function POST(request: NextRequest) {
   const transactionUuid = crypto.randomUUID();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  if (gateway === "khalti") {
-    // ── Khalti Payment Flow ──
-    const returnUrl = `${appUrl}/api/admin/billing/khalti-verify`;
+  // ── Khalti Payment Flow ──
+  const returnUrl = `${appUrl}/api/admin/billing/khalti-verify`;
 
-    // Create a pending transaction record
-    const { error: txnError } = await admin
-      .from("payment_transactions")
-      .insert({
-        organization_id: profile.organization_id,
-        gateway: "khalti",
-        amount,
-        tax_amount: 0,
-        total_amount: amount,
-        product_code: "KHALTI",
-        transaction_uuid: transactionUuid,
-        status: "initiated",
-        plan_id: planId,
-        billing_cycle: billingCycle,
-        initiated_by: user.id,
-      });
-
-    if (txnError) {
-      return NextResponse.json(
-        { error: "Failed to create transaction" },
-        { status: 500 }
-      );
-    }
-
-    const result = await initiateKhaltiPayment({
+  // Create a pending transaction record
+  const { error: txnError } = await admin
+    .from("payment_transactions")
+    .insert({
+      organization_id: profile.organization_id,
+      gateway: "khalti",
       amount,
-      purchaseOrderId: transactionUuid,
-      purchaseOrderName: `${plan.display_name} (${billingCycle})`,
-      returnUrl,
-      websiteUrl: appUrl,
+      tax_amount: 0,
+      total_amount: amount,
+      product_code: "KHALTI",
+      transaction_uuid: transactionUuid,
+      status: "initiated",
+      plan_id: planId,
+      billing_cycle: billingCycle,
+      initiated_by: user.id,
     });
 
-    if (!result.success || !result.data) {
-      // Mark transaction as failed
-      await admin
-        .from("payment_transactions")
-        .update({
-          status: "failed",
-          failure_reason: result.error || "Khalti initiation failed",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("transaction_uuid", transactionUuid);
+  if (txnError) {
+    return NextResponse.json(
+      { error: "Failed to create transaction" },
+      { status: 500 }
+    );
+  }
 
-      return NextResponse.json(
-        { error: result.error || "Failed to initiate Khalti payment" },
-        { status: 502 }
-      );
-    }
+  const result = await initiateKhaltiPayment({
+    amount,
+    purchaseOrderId: transactionUuid,
+    purchaseOrderName: `${plan.display_name} (${billingCycle})`,
+    returnUrl,
+    websiteUrl: appUrl,
+  });
 
-    // Store pidx for later verification
+  if (!result.success || !result.data) {
+    // Mark transaction as failed
     await admin
       .from("payment_transactions")
       .update({
-        gateway_transaction_id: result.data.pidx,
+        status: "failed",
+        failure_reason: result.error || "Khalti initiation failed",
         updated_at: new Date().toISOString(),
       })
       .eq("transaction_uuid", transactionUuid);
 
-    return NextResponse.json({
-      gateway: "khalti",
-      paymentUrl: result.data.payment_url,
-    });
-  } else {
-    // ── eSewa Payment Flow ──
-    const productCode = process.env.ESEWA_MERCHANT_CODE || "EPAYTEST";
-    const successUrl = `${appUrl}/api/admin/billing/verify`;
-    const failureUrl = `${appUrl}/admin/billing?payment=failed`;
-
-    // Create a pending transaction record
-    const { error: txnError } = await admin
-      .from("payment_transactions")
-      .insert({
-        organization_id: profile.organization_id,
-        gateway: "esewa",
-        amount,
-        tax_amount: 0,
-        total_amount: amount,
-        product_code: productCode,
-        transaction_uuid: transactionUuid,
-        status: "initiated",
-        plan_id: planId,
-        billing_cycle: billingCycle,
-        initiated_by: user.id,
-      });
-
-    if (txnError) {
-      return NextResponse.json(
-        { error: "Failed to create transaction" },
-        { status: 500 }
-      );
-    }
-
-    // Generate eSewa payment form
-    const paymentForm = createEsewaPaymentForm({
-      amount,
-      taxAmount: 0,
-      transactionUuid,
-      productCode,
-      successUrl,
-      failureUrl,
-    });
-
-    return NextResponse.json({
-      gateway: "esewa",
-      paymentUrl: paymentForm.url,
-      formData: paymentForm.formData,
-    });
+    return NextResponse.json(
+      { error: result.error || "Failed to initiate Khalti payment" },
+      { status: 502 }
+    );
   }
+
+  // Store pidx for later verification
+  await admin
+    .from("payment_transactions")
+    .update({
+      gateway_transaction_id: result.data.pidx,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("transaction_uuid", transactionUuid);
+
+  return NextResponse.json({
+    gateway: "khalti",
+    paymentUrl: result.data.payment_url,
+  });
 }

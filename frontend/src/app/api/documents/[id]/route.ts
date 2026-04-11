@@ -27,7 +27,7 @@ export async function GET(
 
   const { data: doc, error } = await supabase
     .from("personal_documents")
-    .select("*")
+    .select("id, title, description, file_path, file_name, file_size, mime_type, processing_status, processing_error, ai_summary, questions, created_at, updated_at, processed_at")
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
@@ -84,7 +84,8 @@ export async function PUT(
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[API Error] Document update failed:", error.message);
+    return NextResponse.json({ error: "Failed to update document due to an internal error." }, { status: 500 });
   }
 
   if (!doc) {
@@ -131,7 +132,8 @@ export async function DELETE(
     .eq("user_id", user.id);
 
   if (deleteError) {
-    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+    console.error("[API Error] Document deletion failed:", deleteError.message);
+    return NextResponse.json({ error: "Failed to delete document due to an internal error." }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

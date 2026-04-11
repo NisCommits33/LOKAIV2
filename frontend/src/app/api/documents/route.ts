@@ -23,11 +23,14 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const search = searchParams.get("search");
+  const ALLOWED_SORT = ["created_at", "title"] as const;
+  const sortParam = searchParams.get("sort") || "created_at";
+  const sort = ALLOWED_SORT.includes(sortParam as any) ? sortParam : "created_at";
+  
+  const search = (searchParams.get("search") || "").trim().slice(0, 200);
   const status = searchParams.get("status");
   const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
-  const sort = searchParams.get("sort") || "created_at";
 
   let query = supabase
     .from("personal_documents")
@@ -47,7 +50,8 @@ export async function GET(request: Request) {
   const { data, error, count } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[API Error] Document fetching failed:", error.message);
+    return NextResponse.json({ error: "Failed to fetch documents due to an internal error." }, { status: 500 });
   }
 
   return NextResponse.json({ documents: data, total: count ?? 0 });

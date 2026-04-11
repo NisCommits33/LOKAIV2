@@ -14,7 +14,7 @@ interface CreateInvoiceParams {
   amount: number;
   taxAmount: number;
   totalAmount: number;
-  gateway: "esewa" | "khalti";
+  gateway: "khalti";
   gatewayTransactionId: string | null;
   transactionId: string;
   planName: string;

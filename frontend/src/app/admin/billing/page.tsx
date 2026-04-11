@@ -117,7 +117,7 @@ function BillingContent() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly"
   );
-  const [gateway, setGateway] = useState<"esewa" | "khalti">("esewa");
+  const [gateway] = useState<"khalti">("khalti");
   const formRef = useRef<HTMLFormElement>(null);
 
   // Invoice state
@@ -222,8 +222,7 @@ function BillingContent() {
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 pb-12">
-      {/* Hidden form for eSewa redirect */}
-      <form ref={formRef} className="hidden" />
+
 
       {/* Header */}
       <div className="flex items-center gap-3">
@@ -386,31 +385,15 @@ function BillingContent() {
               </span>
             </div>
 
-            {/* Payment Gateway Selection */}
+            {/* Payment Gateway Info */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500 dark:text-slate-400 mr-1">Pay with:</span>
-              <button
-                onClick={() => setGateway("esewa")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
-                  gateway === "esewa"
-                    ? "border-green-500 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400"
-                    : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
-                }`}
-              >
-                <Wallet className="h-4 w-4" />
-                eSewa
-              </button>
-              <button
-                onClick={() => setGateway("khalti")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
-                  gateway === "khalti"
-                    ? "border-purple-500 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400"
-                    : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
-                }`}
+              <span className="text-sm text-slate-500 dark:text-slate-400 mr-1">Secured by:</span>
+              <div
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-purple-500 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 text-sm font-medium"
               >
                 <CreditCard className="h-4 w-4" />
                 Khalti
-              </button>
+              </div>
             </div>
           </div>
 
@@ -517,7 +500,7 @@ function BillingContent() {
                       } disabled:opacity-50`}
                     >
                       {processingPlanId === plan.id
-                        ? `Redirecting to ${gateway === "khalti" ? "Khalti" : "eSewa"}...`
+                        ? `Redirecting to Khalti...`
                         : `Upgrade to ${plan.display_name}`}
                     </button>
                   )}

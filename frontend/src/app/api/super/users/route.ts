@@ -15,7 +15,8 @@ export async function GET() {
   const { data, error } = await supabase
     .from("users")
     .select(`
-       *,
+       id, email, full_name, avatar_url, role, verification_status, 
+       is_active, profile_completed, created_at, updated_at,
        organization:organizations(name),
        department:departments(name),
        job_level:job_levels(name)
@@ -23,7 +24,8 @@ export async function GET() {
     .order('created_at', { ascending: false });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[API Error] User listing failed:", error.message);
+    return NextResponse.json({ error: "Failed to fetch users due to an internal error." }, { status: 500 });
   }
 
   return NextResponse.json(data);

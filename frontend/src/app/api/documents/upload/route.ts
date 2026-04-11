@@ -39,6 +39,17 @@ export async function POST(request: Request) {
     );
   }
 
+  // Security Hardening: Validate magic bytes (signature)
+  // PDF files must start with '%PDF-' (hex: 25 50 44 46 2d)
+  const headerBuffer = await file.slice(0, 5).arrayBuffer();
+  const header = Buffer.from(headerBuffer).toString("utf-8");
+  if (header !== "%PDF-") {
+    return NextResponse.json(
+      { error: "Invalid file content: The file is not a valid PDF." },
+      { status: 400 }
+    );
+  }
+
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json(
       { error: "File size exceeds 50 MB limit" },

@@ -126,16 +126,16 @@ export async function proxy(request: NextRequest) {
       // Deactivated users are treated as public — they can only access public features
       userRole = dbUser.is_active ? dbUser.role : "public";
 
-      // If they are a public user, check if they have a pending organization application
+      // If they are a public user, check if they have a pending or rejected organization application
       if (userRole === "public" && pathname !== "/pending-org-approval") {
-        const { data: pendingApp } = await supabase
+        const { data: orgApp } = await supabase
           .from("organization_applications")
-          .select("id")
-          .eq("status", "pending")
+          .select("id, status")
+          .in("status", ["pending", "rejected"])
           .eq("applicant_email", user.email)
           .maybeSingle();
         
-        if (pendingApp) {
+        if (orgApp) {
           return NextResponse.redirect(new URL("/pending-org-approval", request.url));
         }
       }

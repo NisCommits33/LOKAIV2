@@ -51,6 +51,7 @@ interface DocWorkspaceProps {
   onSummarize?: () => void;
   isMinimized?: boolean;
   onMinimizeToggle?: () => void;
+  processingStatus?: string;
 }
 
 export function DocWorkspace({ 
@@ -60,7 +61,8 @@ export function DocWorkspace({
   onChapterSelect, 
   onSummarize,
   isMinimized = false,
-  onMinimizeToggle
+  onMinimizeToggle,
+  processingStatus
 }: DocWorkspaceProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewerOpen, setViewerOpen] = useState(true);
@@ -431,10 +433,26 @@ export function DocWorkspace({
                                         <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-slate-700 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-wrap">
                                             {displaySummary || (
                                                 <div className="text-center py-8">
-                                                    <p className="text-slate-400 text-xs italic mb-4">No summary generated for this section yet.</p>
-                                                    <Button variant="outline" size="sm" onClick={onSummarize} className="rounded-full border-indigo-500/20 text-indigo-500 hover:bg-indigo-500 hover:text-white transition-all">
-                                                       Generate Chapter Summary
-                                                    </Button>
+                                                    {processingStatus === "processing" ? (
+                                                        <div className="space-y-4">
+                                                            <div className="flex items-center justify-center mb-4">
+                                                                <ListRestart className="h-8 w-8 text-indigo-500 animate-spin opacity-50" />
+                                                            </div>
+                                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">AI is reading document...</p>
+                                                            <div className="space-y-2 mt-4">
+                                                                <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full animate-pulse" />
+                                                                <div className="h-2 w-3/4 bg-slate-100 dark:bg-slate-800 rounded-full animate-pulse" />
+                                                                <div className="h-2 w-5/6 bg-slate-100 dark:bg-slate-800 rounded-full animate-pulse" />
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <p className="text-slate-400 text-xs italic mb-4">No summary generated for this section yet.</p>
+                                                            <Button variant="outline" size="sm" onClick={onSummarize} className="rounded-full border-indigo-500/20 text-indigo-500 hover:bg-indigo-500 hover:text-white transition-all">
+                                                            Generate Chapter Summary
+                                                            </Button>
+                                                        </>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -506,6 +524,13 @@ export function DocWorkspace({
                                           </div>
                                         </button>
                                       ))
+                                    ) : processingStatus === "processing" ? (
+                                      <div className="space-y-3 px-2">
+                                          {[1, 2, 3].map((i) => (
+                                              <div key={i} className="h-20 w-full rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 animate-pulse" />
+                                          ))}
+                                          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-center text-slate-400/60 mt-4">Generating structure...</p>
+                                      </div>
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-20 opacity-20">
                                             <Search size={40} className="mb-4" />
