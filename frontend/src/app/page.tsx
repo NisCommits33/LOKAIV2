@@ -409,35 +409,71 @@ export default function Home() {
         </Container>
       </div>
 
-      {/* Project Summary Section */}
-      <div className="py-16 bg-slate-50/30 dark:bg-slate-900/30">
+      {/* Features Section */}
+      <div id="features" className="py-24 bg-slate-50/50 dark:bg-slate-900/30">
         <Container>
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              Innovative Approach to Lok Sewa.
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+              Platform built for Public Service Excellence.
             </h2>
-            <p className="text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto">
-              LokAI represents a paradigm shift in how government exam
-              materials are processed. Our architecture focuses on performance,
-              accessibility, and AI integration.
+            <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+              Advanced AI tools and secure workflows tailored specifically for Nepal&apos;s civil service aspirants.
             </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 max-w-lg mx-auto text-left">
-              {[
-                "AI-Powered Document Intelligence",
-                "Institutional RBAC for Ministries",
-                "Nepal Constitution Specialized GK",
-                "High Performance Architecture",
-              ].map((point, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 font-semibold"
-                >
-                  <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />
-                  {point}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "AI Document Intelligence",
+                desc: "Upload official materials and let our AI generate accurate summaries, key pointers, and practice questions in seconds.",
+                icon: BrainCircuit,
+              },
+              {
+                title: "Institutional RBAC",
+                desc: "Enterprise-grade access controls for ministries and departments. Manage users and official documents with hierarchical precision.",
+                icon: Building2,
+              },
+              {
+                title: "Specialized GK Bank",
+                desc: "Access a curated database of thousands of questions focusing on Nepal&apos;s Constitution, History, and current affairs.",
+                icon: FileText,
+              },
+              {
+                title: "Advanced Analytics",
+                desc: "Track your preparation progress with detailed metrics, XP rewards, and performance reports exportable as PDF.",
+                icon: BarChart3,
+              },
+              {
+                title: "Multilingual Support",
+                desc: "Full OCR and processing support for both English and Nepali scripts, ensuring no material is left behind.",
+                icon: Globe2,
+              },
+              {
+                title: "High Performance",
+                desc: "Experience lightning-fast processing with our optimized architecture, built to handle massive document datasets securely.",
+                icon: Zap,
+              }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="group relative p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:border-indigo-500/20"
+              >
+                <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-6 group-hover:scale-110 transition-transform">
+                  <feature.icon className="h-6 w-6" />
                 </div>
-              ))}
-            </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-3 font-sans">
+                  {feature.title}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed text-sm">
+                  {feature.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </Container>
       </div>
@@ -601,19 +637,7 @@ export default function Home() {
         </Container>
       </div>
 
-      {/* Footer */}
-      <footer className="py-10 border-t border-slate-50 dark:border-slate-800">
-        <Container>
-          <div className="flex flex-col items-center gap-6">
-            <span className="text-sm font-bold tracking-tight text-slate-400">
-              LokAI Project Team &copy; 2081
-            </span>
-            <div className="flex items-center gap-8">
-              <Globe2 className="h-4 w-4 text-slate-300 dark:text-slate-600 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer transition-colors" />
-            </div>
-          </div>
-        </Container>
-      </footer>
+
     </div>
   );
 }
