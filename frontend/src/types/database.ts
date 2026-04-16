@@ -172,6 +172,7 @@ export interface QuizAttempt {
   id: string;
   user_id: string;
   quiz_id: string;
+  mock_test_id: string | null;
   source_type: string;
   score: number;
   total_questions: number;
@@ -183,6 +184,24 @@ export interface QuizAttempt {
 /** Quiz attempt joined with quiz metadata for listings */
 export interface QuizAttemptWithQuiz extends QuizAttempt {
   gk_quizzes?: Pick<GKQuiz, "title" | "category" | "difficulty"> | null;
+}
+
+/** A scheduled mock test event for an organization */
+export interface MockTest {
+  id: string;
+  organization_id: string;
+  quiz_id: string | null;
+  document_id: string | null;
+  title: string;
+  description: string | null;
+  questions: QuizQuestion[] | null;
+  time_limit: number;
+  question_limit: number | null;
+  start_time: string;
+  end_time: string | null;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 /** Processing status for user-uploaded documents */

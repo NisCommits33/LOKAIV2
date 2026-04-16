@@ -231,6 +231,14 @@ export default function OrgDocumentDetailPage({
   const [targetLevel, setTargetLevel] = useState<string>("all");
   const [isPublishing, setIsPublishing] = useState(false);
 
+  const [showMockTestModal, setShowMockTestModal] = useState(false);
+  const [mtTitle, setMtTitle] = useState("");
+  const [mtQuestions, setMtQuestions] = useState(10);
+  const [mtTimer, setMtTimer] = useState(15);
+  const [mtStart, setMtStart] = useState("");
+  const [mtEnd, setMtEnd] = useState("");
+  const [isScheduling, setIsScheduling] = useState(false);
+
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -287,6 +295,13 @@ export default function OrgDocumentDetailPage({
 
     fetchMetadata();
   }, [dbUser?.organization_id]);
+
+  useEffect(() => {
+    if (doc) {
+      setMtTitle(`Mock Test: ${doc.title}`);
+      setMtQuestions(questions.length > 0 ? questions.length : 10);
+    }
+  }, [doc, questions]);
 
   useEffect(() => {
     return () => {
@@ -464,6 +479,50 @@ export default function OrgDocumentDetailPage({
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard");
+  }
+
+  async function handleScheduleMockTest() {
+    if (!mtTitle.trim()) {
+      toast.error("Test title is required");
+      return;
+    }
+    
+    setIsScheduling(true);
+    try {
+      if (questions.length === 0) {
+        toast.error("Please generate/review questions first to snapshot them for the test.");
+        setIsScheduling(false);
+        return;
+      }
+
+      const res = await fetch("/api/admin/mock-tests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: mtTitle,
+          description: `Standardized assessment based on: ${doc?.title}`,
+          document_id: id,
+          questions: questions.slice(0, mtQuestions),
+          time_limit: mtTimer,
+          question_limit: mtQuestions,
+          start_time: mtStart || new Date().toISOString(),
+          end_time: mtEnd || null,
+          is_published: true
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("Mock Test scheduled and published!");
+        setShowMockTestModal(false);
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "Failed to schedule test");
+      }
+    } catch {
+      toast.error("Connection error");
+    } finally {
+      setIsScheduling(false);
+    }
   }
 
   async function handlePublish() {
@@ -1044,6 +1103,15 @@ export default function OrgDocumentDetailPage({
                     <Plus className="h-4 w-4 mr-2" /> Push as New Card
                   </Button>
                 )}
+
+                <Button
+                  variant="outline"
+                  className="w-full border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-semibold"
+                  onClick={() => setShowMockTestModal(true)}
+                  disabled={!isReady || questions.length === 0}
+                >
+                   <Clock className="h-4 w-4 mr-2" /> Schedule Mock Test
+                </Button>
               </div>
 
               {doc.is_published && (
@@ -1211,6 +1279,63 @@ export default function OrgDocumentDetailPage({
             >
               {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Mock Test Scheduling Modal */}
+      <AlertDialog open={showMockTestModal} onOpenChange={setShowMockTestModal}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-orange-500" /> Schedule Mock Test
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Create a time-limited official exam for your organization using this document&apos;s AI questions.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Test Title</label>
+              <Input value={mtTitle} onChange={e => setMtTitle(e.target.value)} placeholder="Enter test title..." />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Questions ({mtQuestions})</label>
+                <Input type="number" min={1} max={questions.length} value={mtQuestions || 0} onChange={e => setMtQuestions(parseInt(e.target.value) || 0)} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Timer (Mins)</label>
+                <Input type="number" min={1} value={mtTimer || 0} onChange={e => setMtTimer(parseInt(e.target.value) || 0)} />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Start Time (Optional)</label>
+              <Input type="datetime-local" value={mtStart} onChange={e => setMtStart(e.target.value)} />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">End Time (Link Expiry)</label>
+              <Input type="datetime-local" value={mtEnd} onChange={e => setMtEnd(e.target.value)} />
+            </div>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isScheduling}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                handleScheduleMockTest();
+              }}
+              disabled={isScheduling}
+            >
+              {isScheduling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Schedule Now
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

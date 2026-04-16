@@ -43,6 +43,7 @@ import {
   ChevronDown,
   Layers,
   CreditCard,
+  ClipboardCheck,
 } from "lucide-react";
 import type { UserRole } from "@/types/database";
 
@@ -81,6 +82,12 @@ const navItems: NavItem[] = [
     roles: ["employee"],
   },
   {
+    label: "Mock Tests",
+    href: "/dashboard/mock-tests",
+    icon: ClipboardCheck,
+    roles: ["employee"],
+  },
+  {
     label: "My Progress",
     href: "/dashboard/progress",
     icon: BarChart3,
@@ -112,6 +119,12 @@ const adminNavItems: NavItem[] = [
     label: "Document Library",
     href: "/admin/documents",
     icon: FileText,
+    roles: ["org_admin"],
+  },
+  {
+    label: "Mock Tests",
+    href: "/admin/mock-tests",
+    icon: ClipboardCheck,
     roles: ["org_admin"],
   },
   {

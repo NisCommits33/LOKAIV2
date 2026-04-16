@@ -179,6 +179,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  console.log(`[Khalti] Initiating payment for org ${profile.organization_id}, amount: ${amount}`);
   const result = await initiateKhaltiPayment({
     amount,
     purchaseOrderId: transactionUuid,
@@ -188,6 +189,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (!result.success || !result.data) {
+    console.error(`[Khalti] Initiation failed: ${result.error}`);
     // Mark transaction as failed
     await admin
       .from("payment_transactions")
@@ -213,6 +215,7 @@ export async function POST(request: NextRequest) {
     })
     .eq("transaction_uuid", transactionUuid);
 
+  console.log(`[Khalti] Payment initiated successfully, pidx: ${result.data.pidx}`);
   return NextResponse.json({
     gateway: "khalti",
     paymentUrl: result.data.payment_url,

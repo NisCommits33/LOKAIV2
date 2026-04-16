@@ -13,10 +13,46 @@
 import { Container } from "./Container"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Globe, Mail, MapPin, ExternalLink } from "lucide-react"
+import { Globe, Mail, MapPin, ExternalLink, HelpCircle, User, Users, ShieldCheck } from "lucide-react"
+import { UserGuideModal } from "../shared/UserGuideModal"
+import { useState } from "react"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+const GUIDES = [
+    {
+        id: "candidate",
+        title: "Candidate Guide",
+        description: "Learn how to prepare for exams using LokAI.",
+        icon: User,
+        url: "https://embed.app.guidde.com/playbooks/paYQ2qm6g412bY7LFp5Czt?mode=videoOnly"
+    },
+    {
+        id: "employee",
+        title: "Employee Guide",
+        description: "Learn how to access organization documents.",
+        icon: Users,
+        url: "https://embed.app.guidde.com/playbooks/ru5pVUi3wy8JmQQtcnCpvi?mode=videoOnly"
+    },
+    {
+        id: "organization",
+        title: "Organization Guide",
+        description: "Learn how to manage your organization.",
+        icon: ShieldCheck,
+        url: "https://embed.app.guidde.com/playbooks/1NQxnuTM42sakawmh4B3Dr?mode=videoAndDoc"
+    }
+]
 
 export function Footer() {
     const pathname = usePathname()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [activeGuide, setActiveGuide] = useState(GUIDES[0])
 
     // Hide footer on layouts that have their own navigation
     if (
@@ -30,8 +66,17 @@ export function Footer() {
     return (
         <footer className="border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 py-16">
             <Container>
+                {/* User Guide Controlled Modal */}
+                <UserGuideModal 
+                    isOpen={isModalOpen}
+                    onOpenChange={setIsModalOpen}
+                    guideUrl={activeGuide.url}
+                    title={activeGuide.title}
+                    description={activeGuide.description}
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-                    {/* Brand Column */}
+                    {/* ... Brand Column unchanged ... */}
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-2">
                              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
@@ -60,8 +105,33 @@ export function Footer() {
                         <ul className="space-y-4">
                             <li><Link href="/#features" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Key Features</Link></li>
                             <li><Link href="/#pricing" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Pricing Plans</Link></li>
-                            <li><Link href="/register-organization" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">For Organizations</Link></li>
-                            <li><Link href="/login" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Start Prep</Link></li>
+                             <li><Link href="/register-organization" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">For Organizations</Link></li>
+                             <li>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors flex items-center gap-2 outline-none">
+                                        <HelpCircle className="h-4 w-4" />
+                                        User Guide
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent side="top" align="start" className="w-56 mb-2">
+                                        <DropdownMenuLabel>Choose a Guide</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {GUIDES.map((guide) => (
+                                            <DropdownMenuItem 
+                                                key={guide.id}
+                                                onClick={() => {
+                                                    setActiveGuide(guide);
+                                                    setIsModalOpen(true);
+                                                }}
+                                                className="flex items-center gap-2 cursor-pointer py-2"
+                                            >
+                                                <guide.icon className="h-4 w-4 text-indigo-500" />
+                                                <span>{guide.title}</span>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                             </li>
+                             <li><Link href="/login" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Start Prep</Link></li>
                         </ul>
                     </div>
 

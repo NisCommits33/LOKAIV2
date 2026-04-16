@@ -18,7 +18,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const publicRoutes = ["/login", "/auth/callback", "/", "/register", "/forgot-password", "/reset-password", "/api/plans"];
 
 /** Route prefixes accessible without authentication (prefix match) */
-const publicPrefixes = ["/register-organization", "/api/organizations/apply"];
+const publicPrefixes = ["/register-organization", "/api/organizations/apply", "/api/admin/billing/khalti-verify"];
 
 /** Route prefixes mapped to the roles that may access them */
 const roleRoutes: Record<string, string[]> = {
@@ -61,6 +61,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  console.log(`[Proxy] Request path: ${pathname}`);
 
   // --- Public Routes ---
   if (
@@ -134,7 +135,7 @@ export async function proxy(request: NextRequest) {
           .in("status", ["pending", "rejected"])
           .eq("applicant_email", user.email)
           .maybeSingle();
-        
+
         if (orgApp) {
           return NextResponse.redirect(new URL("/pending-org-approval", request.url));
         }

@@ -21,10 +21,13 @@ export async function GET(request: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   if (!pidx) {
+    console.error(`[Khalti Verify] No pidx found in callback params`);
     return NextResponse.redirect(
       `${appUrl}/admin/billing?payment=failed&reason=no_pidx`
     );
   }
+
+  console.log(`[Khalti Verify] Verifying payment for pidx: ${pidx}, status: ${status}, purchase_order_id: ${purchaseOrderId}`);
 
   // If user canceled, redirect immediately
   if (status === "User canceled") {
@@ -37,10 +40,13 @@ export async function GET(request: NextRequest) {
   const result = await verifyKhaltiPayment(pidx);
 
   if (!result.success || !result.data) {
+    console.error(`[Khalti Verify] Verification failed for pidx ${pidx}: ${result.error}`);
     return NextResponse.redirect(
       `${appUrl}/admin/billing?payment=failed&reason=${encodeURIComponent(result.error || "verification_failed")}`
     );
   }
+
+  console.log(`[Khalti Verify] Verification successful for pidx ${pidx}, gateway status: ${result.data.status}`);
 
   const admin = createAdminClient();
 

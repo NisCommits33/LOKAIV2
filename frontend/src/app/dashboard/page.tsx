@@ -14,9 +14,10 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FullPageSpinner } from "@/components/loading";
-import { BookOpen, FileText, TrendingUp, Target, AlertTriangle, ArrowRight, Layers } from "lucide-react";
+import { BookOpen, FileText, TrendingUp, Target, AlertTriangle, ArrowRight, Layers, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -42,6 +43,7 @@ interface AnalyticsData {
 export default function DashboardPage() {
   const { dbUser, isLoading: authLoading } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [mockTests, setMockTests] = useState<any[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
@@ -49,10 +51,29 @@ export default function DashboardPage() {
       fetch("/api/users/analytics")
         .then(res => res.json())
         .then(data => setAnalytics(data))
-        .catch(() => {})
-        .finally(() => setLoadingStats(false));
+        .catch(() => {});
+
+      if (dbUser.role === "employee" || dbUser.role === "org_admin") {
+        fetch("/api/users/mock-tests")
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              setMockTests(data);
+            } else {
+              setMockTests([]);
+            }
+          })
+          .catch(() => setMockTests([]))
+          .finally(() => setLoadingStats(false));
+      } else {
+        setLoadingStats(false);
+      }
     }
   }, [dbUser]);
+
+  const pendingMockTests = Array.isArray(mockTests) 
+    ? mockTests.filter(t => !t.quiz_attempts || t.quiz_attempts.length === 0)
+    : [];
 
   if (authLoading) return <FullPageSpinner />;
 
@@ -121,6 +142,37 @@ export default function DashboardPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* Mock Test Alert */}
+      {pendingMockTests.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }} 
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-gradient-to-r from-orange-500 to-rose-600 rounded-2xl p-6 text-white shadow-xl shadow-orange-200 dark:shadow-none relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+            <ClipboardCheck className="w-32 h-32" />
+          </div>
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <Badge className="bg-white/20 text-white border-none text-[10px] font-black uppercase tracking-widest">Priority</Badge>
+                <div className="flex h-2 w-2 rounded-full bg-white animate-pulse" />
+              </div>
+              <h2 className="text-2xl font-black tracking-tight leading-none">Mandatory Mock Test Assigned</h2>
+              <p className="text-orange-50/80 font-medium text-sm max-w-md">
+                Your organization has pushed an official assessment: <span className="text-white font-bold">{pendingMockTests[0].title}</span>. Please complete it before the deadline.
+              </p>
+            </div>
+            <Link href="/dashboard/mock-tests" className="w-full md:w-auto">
+              <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 w-full font-bold h-14 rounded-xl shadow-lg">
+                View & Take Test
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+      )}
 
       {/* Snapshot Analytics Bar */}
       {loadingStats ? (
