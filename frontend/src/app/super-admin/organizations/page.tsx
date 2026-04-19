@@ -33,6 +33,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Pagination } from "@/components/ui/pagination";
 import type { OrganizationApplication, ApplicationStatus } from "@/types/database";
 
 const statusStyles: Record<ApplicationStatus, { bg: string; text: string; dot: string }> = {
@@ -46,6 +47,10 @@ export default function SuperAdminOrganizationsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | ApplicationStatus>("all");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [counts, setCounts] = useState({ all: 0, pending: 0, approved: 0, rejected: 0 });
+  const limit = 20;
 
   // Approve dialog
   const [approveTarget, setApproveTarget] = useState<OrganizationApplication | null>(null);
@@ -65,21 +70,39 @@ export default function SuperAdminOrganizationsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchApplications = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const res = await fetch("/api/super/organizations/pending");
+      const offset = (page - 1) * limit;
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+        status: filterStatus,
+      });
+      if (search.trim()) params.set("search", search.trim());
+
+      const res = await fetch(`/api/super/organizations/pending?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to load");
-      const data = await res.json();
-      setApplications(data);
+      const result = await res.json();
+      
+      setApplications(result.data);
+      setTotal(result.total);
+      setCounts(result.counts);
     } catch {
       toast.error("Failed to load applications");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [page, filterStatus, search]);
 
   useEffect(() => {
-    fetchApplications();
+    const timer = setTimeout(fetchApplications, search ? 300 : 0);
+    return () => clearTimeout(timer);
   }, [fetchApplications]);
+
+  // Reset page when search or filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [search, filterStatus]);
 
   const handleApprove = async () => {
     if (!approveTarget) return;
@@ -150,22 +173,8 @@ export default function SuperAdminOrganizationsPage() {
     }
   };
 
-  const filtered = applications.filter((app) => {
-    const matchesSearch =
-      !search ||
-      app.name.toLowerCase().includes(search.toLowerCase()) ||
-      app.code.toLowerCase().includes(search.toLowerCase()) ||
-      app.applicant_name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = filterStatus === "all" || app.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
-
-  const statusCounts = {
-    all: applications.length,
-    pending: applications.filter((a) => a.status === "pending").length,
-    approved: applications.filter((a) => a.status === "approved").length,
-    rejected: applications.filter((a) => a.status === "rejected").length,
-  };
+  const filtered = applications;
+  const statusCounts = counts;
 
   return (
     <div className="p-6 sm:p-8 space-y-6">
@@ -316,6 +325,15 @@ export default function SuperAdminOrganizationsPage() {
           })}
         </div>
       )}
+
+      <Pagination
+        currentPage={page}
+        totalPages={Math.ceil(total / limit)}
+        totalItems={total}
+        itemsPerPage={limit}
+        onPageChange={setPage}
+        isLoading={isLoading}
+      />
 
       {/* Detail Dialog */}
       <Dialog open={!!detailTarget} onOpenChange={(open) => !open && setDetailTarget(null)}>

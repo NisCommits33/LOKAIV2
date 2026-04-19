@@ -41,6 +41,14 @@ export default function MockTestExamPage() {
             return;
           }
 
+          // Check for expiry
+          const isExpired = found.end_time && new Date() > new Date(found.end_time);
+          if (isExpired) {
+            toast.error("This mock test has already ended and is no longer accessible.");
+            router.push("/dashboard/mock-tests");
+            return;
+          }
+
           setTest(found);
         }
       } catch (err) {

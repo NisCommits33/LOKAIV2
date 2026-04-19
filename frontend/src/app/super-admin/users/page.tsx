@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Users, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { toast } from "sonner";
+import { Pagination } from "@/components/ui/pagination";
 
 interface GlobalUser {
   id: string;
@@ -34,13 +35,25 @@ export default function CrossOrgUsersPage() {
   const [users, setUsers] = useState<GlobalUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
 
   async function fetchUsers() {
+    setLoading(true);
     try {
-      const res = await fetch("/api/super/users");
+      const offset = (page - 1) * limit;
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+      });
+      if (search.trim()) params.set("search", search.trim());
+
+      const res = await fetch(`/api/super/users?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        setUsers(data);
+        setUsers(data.users);
+        setTotal(data.total);
       }
     } catch (err) {
       console.error("Failed to fetch users", err);
@@ -50,8 +63,14 @@ export default function CrossOrgUsersPage() {
   }
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    const timer = setTimeout(fetchUsers, search ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [page, search]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   const handleRoleToggle = async (userId: string, currentRole: string) => {
      try {
@@ -68,12 +87,7 @@ export default function CrossOrgUsersPage() {
      }
   };
 
-  const filteredUsers = users.filter(
-    (u) =>
-      u.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      u.email?.toLowerCase().includes(search.toLowerCase()) ||
-      u.organization?.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users;
 
   return (
     <div className="p-6 sm:p-8 space-y-6">
@@ -188,6 +202,16 @@ export default function CrossOrgUsersPage() {
             </Table>
           </div>
         </CardContent>
+        <div className="px-6 pb-6 border-t pt-4">
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(total / limit)}
+            totalItems={total}
+            itemsPerPage={limit}
+            onPageChange={setPage}
+            isLoading={loading}
+          />
+        </div>
       </Card>
     </div>
   );

@@ -73,14 +73,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
-        <ErrorBoundary>
-          <QueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ErrorBoundary>
+            <QueryProvider>
               <AuthProvider>
                 <TooltipProvider>
                   <Header />
@@ -88,10 +88,10 @@ export default function RootLayout({
                   <Footer />
                 </TooltipProvider>
               </AuthProvider>
-            </ThemeProvider>
-          </QueryProvider>
-        </ErrorBoundary>
-        <Toaster position="top-right" richColors closeButton />
+            </QueryProvider>
+          </ErrorBoundary>
+          <Toaster position="top-right" richColors closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

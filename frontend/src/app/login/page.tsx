@@ -31,12 +31,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Spinner } from "@/components/loading";
 import { Container } from "@/components/layout/Container";
 import { BackButton } from "@/components/ui/back-button";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { Spinner } from "@/components/loading";
 import { Eye, EyeOff } from "lucide-react";
 
 /** Wraps LoginContent in Suspense for useSearchParams compatibility */
@@ -173,7 +173,9 @@ function LoginContent() {
                 <div className="mb-6 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 p-3 text-sm text-red-600 dark:text-red-400 font-medium">
                   {error === "auth_callback_error"
                     ? "Authentication failed. Please try again."
-                    : "An error occurred. Please try again."}
+                    : error === "account_deactivated"
+                      ? "Your account has been deactivated. Please contact support."
+                      : "An error occurred. Please try again."}
                 </div>
               )}
 

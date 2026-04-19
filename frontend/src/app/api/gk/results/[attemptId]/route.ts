@@ -30,14 +30,28 @@ export async function GET(
     .from("quiz_attempts")
     .select("*")
     .eq("id", attemptId)
-    .eq("user_id", user.id)
     .single();
 
   if (attemptError || !attempt) {
     return NextResponse.json({ error: "Attempt not found" }, { status: 404 });
   }
 
-  // Fetch quiz questions for review
+  // Handle case where it's a dynamic/AI-generated drill (quiz_id is NULL)
+  if (!attempt.quiz_id) {
+    return NextResponse.json({
+      attempt,
+      quiz: {
+        title: attempt.metadata?.title || "Personalized Drill",
+        category: "AI Practice",
+        difficulty: attempt.metadata?.difficulty || "medium",
+        questions: attempt.metadata?.questions || [],
+        total_questions: attempt.total_questions || 0,
+        time_limit_minutes: attempt.metadata?.time_limit || 15
+      },
+    });
+  }
+
+  // Fetch standard GK quiz questions
   const { data: quiz, error: quizError } = await supabase
     .from("gk_quizzes")
     .select("title, category, difficulty, questions, total_questions, time_limit_minutes")
@@ -45,7 +59,16 @@ export async function GET(
     .single();
 
   if (quizError || !quiz) {
-    return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+    // Fallback if quiz was deleted but attempt remains
+    return NextResponse.json({
+      attempt,
+      quiz: {
+        title: "Deleted Quiz",
+        category: "Unknown",
+        questions: [],
+        total_questions: attempt.total_questions || 0,
+      }
+    });
   }
 
   return NextResponse.json({

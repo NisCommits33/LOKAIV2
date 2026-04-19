@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { FullPageSpinner } from "@/components/loading";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const container = {
   hidden: { opacity: 0 },
@@ -34,7 +35,7 @@ export default function MockTestsPage() {
   useEffect(() => {
     async function fetchTests() {
       try {
-        const res = await fetch("/api/users/mock-tests");
+        const res = await fetch("/api/users/mock-tests", { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           setTests(data);
@@ -77,13 +78,15 @@ export default function MockTestsPage() {
           {tests.map((test) => {
             const hasAttempt = test.quiz_attempts && test.quiz_attempts.length > 0;
             const attempt = hasAttempt ? test.quiz_attempts[0] : null;
+            const isExpired = test.end_time && new Date() > new Date(test.end_time);
 
             return (
               <motion.div key={test.id} variants={item}>
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden group hover:shadow-xl transition-all h-full flex flex-col relative">
-                  {hasAttempt && (
-                     <div className="absolute top-4 right-4 z-10">
-                        <Badge className="bg-emerald-500 text-white border-0 shadow-lg">Completed</Badge>
+                  {(hasAttempt || isExpired) && (
+                     <div className="absolute top-4 right-4 z-10 flex gap-2">
+                        {hasAttempt && <Badge className="bg-emerald-500 text-white border-0 shadow-lg">Completed</Badge>}
+                        {isExpired && !hasAttempt && <Badge className="bg-slate-500 text-white border-0 shadow-lg">Ended</Badge>}
                      </div>
                   )}
 
@@ -126,32 +129,37 @@ export default function MockTestsPage() {
                           </div>
                        </div>
                     ) : (
-                       <div className="flex items-center gap-2 text-[11px] text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/30 p-2.5 rounded-lg border border-amber-100 dark:border-amber-900/30">
-                          <AlertCircle className="h-3.5 w-3.5" />
-                          Mandatory Assessment
+                       <div className={`flex items-center gap-2 text-[11px] font-bold p-2.5 rounded-lg border ${
+                          isExpired 
+                            ? "text-slate-500 bg-slate-50 border-slate-100 dark:bg-slate-900 dark:border-slate-800" 
+                            : "text-amber-600 bg-amber-50 border-amber-100 dark:bg-amber-950/30 dark:border-amber-900/30"
+                       }`}>
+                          {isExpired ? <Clock className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                          {isExpired ? "Deadline Reached" : "Mandatory Assessment"}
                        </div>
                     )}
 
                     <div className="pt-2 flex items-center justify-between text-[11px] font-medium text-slate-400 border-t border-slate-100 dark:border-slate-800">
-                       <span className="flex items-center gap-1.5 capitalize py-2">
+                       <span className={`flex items-center gap-1.5 capitalize py-2 ${isExpired && !hasAttempt ? 'text-rose-500' : ''}`}>
                           <Calendar className="h-3.5 w-3.5" />
-                          Valid until {test.end_time ? new Date(test.end_time).toLocaleDateString() : "further notice"}
+                          {isExpired && !hasAttempt ? "Expired" : "Valid until"} {test.end_time ? new Date(test.end_time).toLocaleDateString() : "further notice"}
                        </span>
                     </div>
                   </div>
 
                   <div className="p-4 pt-0">
-                    <Link href={hasAttempt ? "#" : `/dashboard/quizzes/exam?id=${test.quiz_id || "mt-"+test.id}&mt=${test.id}`}>
+                    <Link href={(hasAttempt || isExpired) ? "#" : `/dashboard/quizzes/exam?id=${test.quiz_id || "mt-"+test.id}&mt=${test.id}`}>
                       <Button 
-                        disabled={hasAttempt}
-                        className={`w-full h-11 transition-all rounded-xl font-bold text-sm ${
-                          hasAttempt 
+                        disabled={hasAttempt || isExpired}
+                        className={cn(
+                          "w-full h-11 transition-all rounded-xl font-bold text-sm",
+                          (hasAttempt || isExpired)
                             ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed" 
-                            : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 active:scale-[0.98]"
-                        }`}
+                            : "bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-700 text-white shadow-none active:scale-[0.98]"
+                        )}
                       >
-                        {hasAttempt ? "Attempt Completed" : "Start Mock Test"}
-                        {!hasAttempt && <ChevronRight className="h-4 w-4 ml-2" />}
+                        {hasAttempt ? "Attempt Completed" : isExpired ? "Test Closed" : "Start Mock Test"}
+                        {!hasAttempt && !isExpired && <ChevronRight className="h-4 w-4 ml-2" />}
                       </Button>
                     </Link>
                   </div>

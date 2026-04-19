@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Reorder } from "framer-motion";
 import {
   Plus, Edit2, Trash2, GripVertical, Loader2, Save, Layout, Layers,
@@ -8,6 +8,7 @@ import {
   ArrowDownUp, Building2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Pagination } from "@/components/ui/pagination";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -81,18 +90,19 @@ export default function ManageTeamPage() {
   const [users, setUsers] = useState<UserRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [page, setPage] = useState(1);
+
   async function fetchAll() {
     setIsLoading(true);
     try {
-      const [usersRes, deptsRes, levelsRes] = await Promise.all([
-        fetch("/api/admin/users"),
+      const [deptsRes, levelsRes] = await Promise.all([
         fetch("/api/admin/departments"),
         fetch("/api/admin/job-levels"),
       ]);
-      if (!usersRes.ok || !deptsRes.ok || !levelsRes.ok)
+      if (!deptsRes.ok || !levelsRes.ok)
         throw new Error("Failed to load data");
 
-      setUsers(await usersRes.json());
       setDepartments(await deptsRes.json());
       setJobLevels(await levelsRes.json());
     } catch {
@@ -123,7 +133,7 @@ export default function ManageTeamPage() {
         <TabsList className="w-full sm:w-auto bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
           <TabsTrigger value="users" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm rounded-lg px-5 py-2 text-sm font-bold">
             <Users className="h-4 w-4" /> Users
-            <Badge variant="secondary" className="ml-1 text-[10px] h-5 px-1.5">{users.length}</Badge>
+            <Badge variant="secondary" className="ml-1 text-[10px] h-5 px-1.5">{totalUsers}</Badge>
           </TabsTrigger>
           <TabsTrigger value="departments" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm rounded-lg px-5 py-2 text-sm font-bold">
             <Building2 className="h-4 w-4" /> Departments
@@ -138,10 +148,9 @@ export default function ManageTeamPage() {
         {/* ── Users Tab ────────────────────────────────────── */}
         <TabsContent value="users" className="mt-6">
           <UsersTab
-            users={users}
             departments={departments}
             jobLevels={jobLevels}
-            onRefresh={fetchAll}
+            onTotalUpdate={setTotalUsers}
           />
         </TabsContent>
 
@@ -171,16 +180,20 @@ export default function ManageTeamPage() {
 // USERS TAB
 // ═════════════════════════════════════════════════════════════
 function UsersTab({
-  users,
   departments,
   jobLevels,
-  onRefresh,
+  onTotalUpdate,
 }: {
-  users: UserRecord[];
   departments: Department[];
   jobLevels: JobLevel[];
-  onRefresh: () => void;
+  onTotalUpdate: (total: number) => void;
 }) {
+  const [users, setUsers] = useState<UserRecord[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const limit = 20;
+
   const [searchTerm, setSearchTerm] = useState("");
   const [deptFilter, setDeptFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -193,20 +206,42 @@ function UsersTab({
   const [rejectionReason, setRejectionReason] = useState("");
   const [formData, setFormData] = useState({ department_id: "", job_level_id: "", employee_id: "" });
 
-  const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
-      const matchesSearch =
-        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.employee_id?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesDept = deptFilter === "all" || user.department?.id === deptFilter;
-      const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "active" && user.is_active) ||
-        (statusFilter === "inactive" && !user.is_active);
-      return matchesSearch && matchesDept && matchesStatus;
-    });
-  }, [users, searchTerm, deptFilter, statusFilter]);
+  const fetchUsers = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const offset = (page - 1) * limit;
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+        search: searchTerm,
+        dept: deptFilter,
+        status: statusFilter,
+      });
+
+      const res = await fetch(`/api/admin/users?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to load users");
+      const data = await res.json();
+      
+      setUsers(data.users);
+      setTotal(data.total);
+      onTotalUpdate(data.total);
+    } catch {
+      toast.error("Failed to load users.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, searchTerm, deptFilter, statusFilter, onTotalUpdate]);
+
+  useEffect(() => {
+    // Debounce search
+    const timer = setTimeout(fetchUsers, searchTerm ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [fetchUsers]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, deptFilter, statusFilter]);
 
   function openEditModal(user: UserRecord) {
     setSelectedUser(user);
@@ -230,7 +265,7 @@ function UsersTab({
       if (!res.ok) throw new Error(data.error || "Failed to approve");
       toast.success(`${selectedUser.full_name} has been verified.`);
       setIsVerifyOpen(false);
-      onRefresh();
+      fetchUsers();
     } catch (err: any) { toast.error(err.message); }
     finally { setIsSubmitting(false); }
   }
@@ -247,7 +282,7 @@ function UsersTab({
       if (!res.ok) throw new Error(data.error || "Failed to reject");
       toast.success(`Verification for ${selectedUser.full_name} rejected.`);
       setIsVerifyOpen(false);
-      onRefresh();
+      fetchUsers();
     } catch (err: any) { toast.error(err.message); }
     finally { setIsSubmitting(false); }
   }
@@ -268,7 +303,7 @@ function UsersTab({
       if (!res.ok) throw new Error(data.error || "Failed to update user");
       toast.success("User updated");
       setIsEditOpen(false);
-      onRefresh();
+      fetchUsers();
     } catch (err: any) { toast.error(err.message); }
     finally { setIsSubmitting(false); }
   }
@@ -283,7 +318,7 @@ function UsersTab({
       if (!res.ok) throw new Error(data.error || `Failed to ${action} user`);
       toast.success(`User ${action}d successfully`);
       setIsStatusOpen(false);
-      onRefresh();
+      fetchUsers();
     } catch (err: any) { toast.error(err.message); }
     finally { setIsSubmitting(false); }
   }
@@ -319,79 +354,95 @@ function UsersTab({
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto shadow-sm">
-        {filteredUsers.length === 0 ? (
-          <div className="text-center py-16 px-4">
-            <Users className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">No users found</h3>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">Check your filters or clear them to see all users.</p>
-            {(searchTerm || deptFilter !== "all" || statusFilter !== "all") && (
-              <Button variant="outline" className="mt-6" onClick={() => { setSearchTerm(""); setDeptFilter("all"); setStatusFilter("all"); }}>
-                <X className="h-4 w-4 mr-2" /> Clear Filters
-              </Button>
-            )}
+        {isLoading && users.length === 0 ? (
+          <div className="p-12 text-center">
+            <Loader2 className="h-10 w-10 animate-spin mx-auto text-slate-300 mb-4" />
+            <p className="text-slate-500 font-medium">Loading user directory...</p>
           </div>
         ) : (
-          <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-xs uppercase font-bold tracking-wider text-slate-500 dark:text-slate-400">
-              <tr>
-                <th className="px-6 py-4">User Details</th>
-                <th className="px-6 py-4">Role / Verification</th>
-                <th className="px-6 py-4">Organizational Info</th>
-                <th className="px-6 py-4 text-center">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 font-bold flex items-center justify-center shrink-0 border border-indigo-200 dark:border-indigo-800 overflow-hidden">
-                        {user.avatar_url ? (<img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />) : (user.full_name?.charAt(0).toUpperCase() || "?")}
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-50/50 dark:bg-slate-800/50">
+                <TableHead className="w-[300px]">User</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Job Level</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-32 text-center text-slate-500">
+                    No users found matching your criteria.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user) => (
+                  <TableRow key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-500">
+                          {user.full_name?.charAt(0) || "U"}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{user.full_name || "Unknown User"}</span>
+                          <span className="text-xs text-slate-500">{user.email}</span>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-semibold text-slate-900 dark:text-slate-100">{user.full_name || "Unknown"}</div>
-                        <div className="text-slate-500 dark:text-slate-400 text-xs">{user.email}</div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                        {user.department?.name || "Unassigned"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                        {user.job_level?.name || "—"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <Badge variant="outline" className={user.is_active ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-200 text-slate-500 bg-slate-50"}>
+                          {user.is_active ? "Active" : "Inactive"}
+                        </Badge>
+                        {user.verification_status === "pending" && (
+                          <Badge variant="outline" className="border-amber-200 text-amber-700 bg-amber-50 text-[10px] h-4">Pending Verification</Badge>
+                        )}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1.5">
-                      <Badge variant="outline" className="font-mono text-[10px] tracking-wider uppercase bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700">{user.role}</Badge>
-                      {user.verification_status === "verified" ? (
-                        <div className="flex items-center text-[10px] uppercase font-bold text-emerald-600 tracking-wider"><ShieldCheck className="h-3 w-3 mr-1" /> Verified</div>
-                      ) : (
-                        <div className="flex items-center text-[10px] uppercase font-bold text-amber-600 tracking-wider"><ShieldAlert className="h-3 w-3 mr-1" /> {user.verification_status}</div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-0.5">
-                      <div className="font-medium text-slate-700 dark:text-slate-300">{user.department?.name || <span className="text-slate-400 italic">No Dept</span>}</div>
-                      <div className="text-xs text-slate-500">{user.job_level?.name || "No Level"}{user.employee_id && <span className="opacity-60 ml-1">· ID: {user.employee_id}</span>}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`inline-flex items-center justify-center h-6 px-2.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${user.is_active ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400" : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"}`}>
-                      {user.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {user.verification_status === "pending" && (
-                      <Button variant="ghost" size="icon" onClick={() => openVerifyModal(user)} className="h-8 w-8 text-amber-500 hover:text-emerald-600" title="Review Verification"><ShieldCheck className="h-4 w-4" /></Button>
-                    )}
-                    <Button variant="ghost" size="icon" onClick={() => openEditModal(user)} className="h-8 w-8 text-slate-400 hover:text-indigo-600"><Edit2 className="h-4 w-4" /></Button>
-                    {user.is_active ? (
-                      <Button variant="ghost" size="icon" onClick={() => openStatusModal(user)} className="h-8 w-8 text-slate-400 hover:text-red-600" title="Deactivate"><Trash2 className="h-4 w-4" /></Button>
-                    ) : (
-                      <Button variant="ghost" size="icon" onClick={() => openStatusModal(user)} className="h-8 w-8 text-slate-400 hover:text-emerald-600" title="Reactivate"><ShieldCheck className="h-4 w-4" /></Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        {user.verification_status === "pending" && (
+                          <Button variant="ghost" size="icon" onClick={() => openVerifyModal(user)} className="h-8 w-8 text-amber-500 hover:text-amber-600 hover:bg-amber-50">
+                            <ShieldAlert className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon" onClick={() => openEditModal(user)} className="h-8 w-8 text-slate-400 hover:text-indigo-600">
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => openStatusModal(user)} className={`h-8 w-8 ${user.is_active ? "text-slate-400 hover:text-red-500" : "text-emerald-500 hover:text-emerald-600"}`}>
+                          {user.is_active ? <ShieldCheck className="h-4 w-4" /> : <ShieldAlert className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         )}
+
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800">
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(total / limit)}
+            totalItems={total}
+            itemsPerPage={limit}
+            onPageChange={setPage}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
 
       {/* Edit Modal */}

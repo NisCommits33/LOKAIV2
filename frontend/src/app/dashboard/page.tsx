@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { FullPageSpinner } from "@/components/loading";
 import { BookOpen, FileText, TrendingUp, Target, AlertTriangle, ArrowRight, Layers, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 const container = {
@@ -42,19 +43,30 @@ interface AnalyticsData {
 
 export default function DashboardPage() {
   const { dbUser, isLoading: authLoading } = useAuth();
+  const router = useRouter();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [mockTests, setMockTests] = useState<any[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     if (dbUser) {
-      fetch("/api/users/analytics")
+      // Redirect admins away from the student dashboard
+      if (dbUser.role === "super_admin") {
+        router.replace("/super-admin");
+        return;
+      }
+      if (dbUser.role === "org_admin") {
+        router.replace("/admin");
+        return;
+      }
+
+      fetch("/api/users/analytics", { cache: 'no-store' })
         .then(res => res.json())
         .then(data => setAnalytics(data))
         .catch(() => {});
 
-      if (dbUser.role === "employee" || dbUser.role === "org_admin") {
-        fetch("/api/users/mock-tests")
+      if (dbUser.role === "employee") {
+        fetch("/api/users/mock-tests", { cache: 'no-store' })
           .then(res => res.json())
           .then(data => {
             if (Array.isArray(data)) {
@@ -69,7 +81,7 @@ export default function DashboardPage() {
         setLoadingStats(false);
       }
     }
-  }, [dbUser]);
+  }, [dbUser, router]);
 
   const pendingMockTests = Array.isArray(mockTests) 
     ? mockTests.filter(t => !t.quiz_attempts || t.quiz_attempts.length === 0)
@@ -84,7 +96,7 @@ export default function DashboardPage() {
       icon: Layers,
       href: "/dashboard/org-documents",
       color: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400",
-      show: dbUser?.role === "employee" || dbUser?.role === "org_admin",
+      show: dbUser?.role === "employee",
     },
     {
       title: "Detailed Progress",
@@ -92,7 +104,7 @@ export default function DashboardPage() {
       icon: TrendingUp,
       href: "/dashboard/progress",
       color: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400",
-      show: dbUser?.role === "employee" || dbUser?.role === "org_admin",
+      show: dbUser?.role === "employee",
     },
     {
       title: "GK Quizzes",

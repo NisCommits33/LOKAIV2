@@ -19,20 +19,42 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden: Org Admin required" }, { status: 403 });
   }
 
-  // Fetch all users in the organization
-  const { data, error } = await supabase
+  const { searchParams } = new URL(request.url);
+  const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100);
+  const offset = parseInt(searchParams.get("offset") || "0", 10);
+  const search = searchParams.get("search") || "";
+  const deptId = searchParams.get("dept") || "all";
+  const status = searchParams.get("status") || "all";
+
+  // Build query
+  let query = supabase
     .from("users")
     .select(`
       id, full_name, email, avatar_url, role, employee_id, is_active, verification_status, created_at,
       department:departments(id, name, code),
       job_level:job_levels(id, name)
-    `)
-    .eq("organization_id", profile.organization_id)
-    .order("created_at", { ascending: false });
+    `, { count: "exact" })
+    .eq("organization_id", profile.organization_id);
+
+  if (search) {
+    query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,employee_id.ilike.%${search}%`);
+  }
+  if (deptId !== "all") {
+    query = query.eq("department_id", deptId);
+  }
+  if (status === "active") {
+    query = query.eq("is_active", true);
+  } else if (status === "inactive") {
+    query = query.eq("is_active", false);
+  }
+
+  const { data, error, count } = await query
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json({ users: data, total: count ?? 0 });
 }

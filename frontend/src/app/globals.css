@@ -125,21 +125,4 @@
   }
 }
 
-/* LOKAI branded loading animation */
-@keyframes lokai-pulse {
-  0%, 100% {
-    color: var(--muted-foreground);
-    opacity: 0.3;
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    color: var(--accent);
-    opacity: 1;
-    transform: translateY(-6px) scale(1.1);
-  }
-}
 
-.lokai-letter {
-  display: inline-block;
-  animation: lokai-pulse 1.2s ease-in-out infinite;
-}

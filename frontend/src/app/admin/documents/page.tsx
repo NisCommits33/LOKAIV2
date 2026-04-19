@@ -36,6 +36,7 @@ import {
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { Pagination } from "@/components/ui/pagination";
 import type { PersonalDocument, DocumentProcessingStatus, Department } from "@/types/database";
 
 const container = {
@@ -92,13 +93,19 @@ export default function OrgDocumentsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<DocumentProcessingStatus | "all">("all");
   const [departmentId, setDepartmentId] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const limit = 20;
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   const fetchDocuments = useCallback(async () => {
     setLoading(true);
+    const offset = (page - 1) * limit;
     const params = new URLSearchParams();
+    params.set("limit", limit.toString());
+    params.set("offset", offset.toString());
+
     if (search.trim()) params.set("search", search.trim());
     if (statusFilter !== "all") params.set("status", statusFilter);
     if (departmentId && departmentId !== "all") params.set("department_id", departmentId);
@@ -108,13 +115,18 @@ export default function OrgDocumentsPage() {
       if (res.ok) {
         const data = await res.json();
         setDocuments(data.documents);
-        setTotal(data.total);
+        setTotal(data.total || data.documents.length);
       }
     } catch (e) {
       console.error("Failed to fetch documents", e);
     } finally {
       setLoading(false);
     }
+  }, [search, statusFilter, departmentId, page]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setPage(1);
   }, [search, statusFilter, departmentId]);
 
   useEffect(() => {
@@ -338,6 +350,15 @@ export default function OrgDocumentsPage() {
               </motion.div>
             ))}
           </motion.div>
+
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(total / limit)}
+            totalItems={total}
+            itemsPerPage={limit}
+            onPageChange={setPage}
+            isLoading={loading}
+          />
         </>
       )}
 

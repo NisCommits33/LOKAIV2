@@ -73,34 +73,6 @@ export function FormSkeleton() {
   );
 }
 
-const LOKAI_LETTERS = ["L", "O", "K", "A", "I"] as const;
-
-export function LokaiLoader({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const sizeClasses = {
-    sm: "text-lg gap-0.5",
-    md: "text-3xl gap-1",
-    lg: "text-5xl gap-1.5",
-  };
-
-  return (
-    <div
-      className={`flex items-center justify-center ${sizeClasses[size]}`}
-      role="status"
-      aria-label="Loading"
-    >
-      {LOKAI_LETTERS.map((letter, i) => (
-        <span
-          key={letter}
-          className="lokai-letter font-bold text-muted-foreground/30"
-          style={{ animationDelay: `${i * 0.15}s` }}
-        >
-          {letter}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 export function Spinner({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
@@ -112,8 +84,8 @@ export function Spinner({ className = "" }: { className?: string }) {
 export function FullPageSpinner() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <LokaiLoader size="lg" />
-      <p className="text-sm text-muted-foreground animate-pulse">Loading...</p>
+      <Loader2 className="h-10 w-10 animate-spin text-slate-300 dark:text-slate-700" />
+      <p className="text-sm font-medium text-slate-400 dark:text-slate-500 animate-pulse uppercase tracking-widest">Loading</p>
     </div>
   );
 }

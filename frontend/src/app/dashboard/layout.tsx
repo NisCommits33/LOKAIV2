@@ -162,27 +162,9 @@ const superAdminNavItems: NavItem[] = [
     roles: ["super_admin"],
   },
   {
-    label: "Quiz Manager",
-    href: "/super-admin/quizzes",
-    icon: BookOpen,
-    roles: ["super_admin"],
-  },
-  {
-    label: "Audit Logs",
-    href: "/super-admin/audit-logs",
-    icon: FileText,
-    roles: ["super_admin"],
-  },
-  {
     label: "Billing",
     href: "/super-admin/billing",
     icon: CreditCard,
-    roles: ["super_admin"],
-  },
-  {
-    label: "Settings",
-    href: "/super-admin/settings",
-    icon: Settings,
     roles: ["super_admin"],
   },
   {

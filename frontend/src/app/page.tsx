@@ -115,10 +115,16 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
-  // Redirect authenticated users to dashboard
+  // Redirect authenticated users to their respective dashboards
   useEffect(() => {
     if (!isLoading && dbUser) {
-      router.replace("/dashboard");
+      if (dbUser.role === "super_admin") {
+        router.replace("/super-admin");
+      } else if (dbUser.role === "org_admin") {
+        router.replace("/admin");
+      } else {
+        router.replace("/dashboard");
+      }
     }
   }, [dbUser, isLoading, router]);
 
@@ -174,10 +180,6 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl"
           >
-            <div className="mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-              <Sparkles className="h-3 w-3 text-indigo-500" />
-              LokAI v2.0 Available for 2081
-            </div>
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-50 leading-[1.1]">
               Nepal&apos;s AI-Powered <br />
               Exam Preparation Platform.
@@ -221,10 +223,6 @@ export default function Home() {
         <Container>
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
             <div className="max-w-xl space-y-6 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-indigo-400">
-                <BrainCircuit className="h-3 w-3" />
-                Now in Public Beta
-              </div>
               <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
                 Ready to Master the <br />
                 <span className="text-indigo-400 italic">General Knowledge</span>{" "}
@@ -442,11 +440,6 @@ export default function Home() {
                 title: "Advanced Analytics",
                 desc: "Track your preparation progress with detailed metrics, XP rewards, and performance reports exportable as PDF.",
                 icon: BarChart3,
-              },
-              {
-                title: "Multilingual Support",
-                desc: "Full OCR and processing support for both English and Nepali scripts, ensuring no material is left behind.",
-                icon: Globe2,
               },
               {
                 title: "High Performance",

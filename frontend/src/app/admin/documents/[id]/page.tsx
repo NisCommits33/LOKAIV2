@@ -235,7 +235,6 @@ export default function OrgDocumentDetailPage({
   const [mtTitle, setMtTitle] = useState("");
   const [mtQuestions, setMtQuestions] = useState(10);
   const [mtTimer, setMtTimer] = useState(15);
-  const [mtStart, setMtStart] = useState("");
   const [mtEnd, setMtEnd] = useState("");
   const [isScheduling, setIsScheduling] = useState(false);
 
@@ -505,7 +504,7 @@ export default function OrgDocumentDetailPage({
           questions: questions.slice(0, mtQuestions),
           time_limit: mtTimer,
           question_limit: mtQuestions,
-          start_time: mtStart || new Date().toISOString(),
+          start_time: new Date().toISOString(),
           end_time: mtEnd || null,
           is_published: true
         }),
@@ -1313,9 +1312,14 @@ export default function OrgDocumentDetailPage({
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">Start Time (Optional)</label>
-              <Input type="datetime-local" value={mtStart} onChange={e => setMtStart(e.target.value)} />
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-500 uppercase">Availability</p>
+                <p className="text-xs font-medium text-slate-700 dark:text-slate-300">Starts immediately upon scheduling</p>
+              </div>
             </div>
 
             <div className="space-y-1.5">

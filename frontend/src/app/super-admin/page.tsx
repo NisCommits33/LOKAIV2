@@ -204,47 +204,6 @@ export default function SuperAdminPage() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <BookOpen className="h-5 w-5 text-indigo-600" />
-              Global Quizzes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Create and push General Knowledge Quizzes straight to all normal 
-              users platform-wide.
-            </p>
-            <Button asChild variant="outline" className="w-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30">
-              <Link href="/super-admin/quizzes">
-                Quiz Manager
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Shield className="h-5 w-5 text-slate-600" />
-              Platform Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Configure platform-wide settings, manage global defaults, and
-              review system audit logs.
-            </p>
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/super-admin/settings">
-                Open Settings
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

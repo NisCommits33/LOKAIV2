@@ -39,6 +39,11 @@ export async function POST(
     return NextResponse.json({ error: "Mock test not found" }, { status: 404 });
   }
 
+  // 1.5 Check if test has expired
+  if (test.end_time && new Date() > new Date(test.end_time)) {
+     return NextResponse.json({ error: "This mock test session has already ended." }, { status: 403 });
+  }
+
   // 2. Check if already attempted (if restriction exists)
   // For now we allow one attempt per mock test via unique constraint or application logic
   const { count } = await supabase

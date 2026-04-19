@@ -363,7 +363,7 @@ export function QuizPlayer({
                       onClick={() => !reviewMode && selectAnswer(optIdx)} 
                       disabled={reviewMode}
                       className={cn(
-                        "w-full flex items-center gap-4 p-4 rounded-2xl border text-left text-sm font-bold transition-all group",
+                        "w-full flex items-center gap-4 p-4 rounded-xl border text-left text-sm font-bold transition-all group",
                         reviewMode
                             ? isCorrect
                                 ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-300"
@@ -373,12 +373,12 @@ export function QuizPlayer({
                                         ? "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-400"
                                         : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600"
                             : isSelected 
-                                ? "border-indigo-600 bg-indigo-50 text-indigo-900 shadow-md shadow-indigo-100" 
-                                : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                ? "border-indigo-200 dark:border-indigo-500/50 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-100 shadow-sm" 
+                                : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700"
                       )}
                     > 
                       <span className={cn(
-                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black transition-colors shadow-sm", 
+                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black transition-colors shadow-sm", 
                         reviewMode
                             ? isCorrect
                                 ? "bg-emerald-500 text-white"
@@ -387,7 +387,7 @@ export function QuizPlayer({
                                     : "bg-slate-100 text-slate-400"
                             : isSelected 
                                 ? "bg-indigo-600 text-white" 
-                                : "bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-950/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500 group-hover:bg-slate-200 dark:group-hover:bg-slate-700"
                       )}>
                         {String.fromCharCode(65 + optIdx)}
                       </span> 

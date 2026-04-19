@@ -47,6 +47,7 @@ import {
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import type { PersonalDocument, DocumentProcessingStatus } from "@/types/database";
 
@@ -87,6 +88,8 @@ export default function DocumentsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<DocumentProcessingStatus | "">("");
+  const [page, setPage] = useState(1);
+  const limit = 20;
 
   // Upload state
   const [uploading, setUploading] = useState(false);
@@ -100,25 +103,26 @@ export default function DocumentsPage() {
 
   const fetchDocuments = useCallback(async () => {
     setLoading(true);
+    const offset = (page - 1) * limit;
     const params = new URLSearchParams();
+    params.set("limit", limit.toString());
+    params.set("offset", offset.toString());
+
     if (search.trim()) params.set("search", search.trim());
     if (statusFilter) params.set("status", statusFilter);
 
     const res = await fetch(`/api/documents?${params.toString()}`);
-    console.log("/api/documents status:", res.status);
-    let bodyText = await res.text();
-    console.log("/api/documents body:", bodyText);
-    let data = null;
-    try {
-      data = JSON.parse(bodyText);
-    } catch (e) {
-      console.error("Failed to parse JSON:", e);
-    }
-    if (res.ok && data) {
-      setDocuments(data.documents);
-      setTotal(data.total);
+    if (res.ok) {
+        const data = await res.json();
+        setDocuments(data.documents);
+        setTotal(data.total);
     }
     setLoading(false);
+  }, [search, statusFilter, page]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
   }, [search, statusFilter]);
 
   useEffect(() => {
@@ -429,6 +433,15 @@ export default function DocumentsPage() {
               </motion.div>
             ))}
           </motion.div>
+
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(total / limit)}
+            totalItems={total}
+            itemsPerPage={limit}
+            onPageChange={setPage}
+            isLoading={loading}
+          />
         </>
       )}
 

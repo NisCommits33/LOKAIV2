@@ -18,7 +18,12 @@ import { NextResponse, type NextRequest } from "next/server";
 const publicRoutes = ["/login", "/auth/callback", "/", "/register", "/forgot-password", "/reset-password", "/api/plans"];
 
 /** Route prefixes accessible without authentication (prefix match) */
-const publicPrefixes = ["/register-organization", "/api/organizations/apply", "/api/admin/billing/khalti-verify"];
+const publicPrefixes = [
+  "/register-organization",
+  "/api/organizations/apply",
+  "/api/admin/billing/khalti-verify",
+  "/api/admin/billing/verify"
+];
 
 /** Route prefixes mapped to the roles that may access them */
 const roleRoutes: Record<string, string[]> = {
@@ -124,8 +129,12 @@ export async function proxy(request: NextRequest) {
       .single<{ profile_completed: boolean; verification_status: string; role: string; is_active: boolean }>();
 
     if (dbUser) {
-      // Deactivated users are treated as public — they can only access public features
-      userRole = dbUser.is_active ? dbUser.role : "public";
+      if (!dbUser.is_active) {
+          const loginUrl = new URL("/login", request.url);
+          loginUrl.searchParams.set("error", "account_deactivated");
+          return NextResponse.redirect(loginUrl);
+      }
+      userRole = dbUser.role || "public";
 
       // If they are a public user, check if they have a pending or rejected organization application
       if (userRole === "public" && pathname !== "/pending-org-approval") {
