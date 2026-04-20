@@ -385,12 +385,7 @@ function LoginContent() {
 
               </Tabs>
             </CardContent>
-            <CardFooter className="flex justify-center border-t border-slate-50 dark:border-slate-800 py-6 bg-slate-50/20 dark:bg-slate-900/20 text-center px-10">
-              <p className="text-[10px] text-slate-400 font-medium leading-relaxed max-w-[280px]">
-                Your data is secured with institutional grade encryption
-                protocols. Authorized for Lok Sewa preparation assistance.
-              </p>
-            </CardFooter>
+
           </Card>
         </motion.div>
       </Container>

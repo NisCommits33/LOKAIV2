@@ -85,6 +85,10 @@ export default function ProfileSetupPage() {
       full_name:
         dbUser?.full_name || supabaseUser?.user_metadata?.full_name || "",
       wants_verification: false,
+      organization_id: "",
+      department_id: "",
+      job_level_id: "",
+      employee_id: "",
     },
   });
 
@@ -251,8 +255,8 @@ export default function ProfileSetupPage() {
                         value={organizationId}
                         onValueChange={(val) => {
                           setValue("organization_id", val);
-                          setValue("department_id", undefined);
-                          setValue("job_level_id", undefined);
+                          setValue("department_id", "");
+                          setValue("job_level_id", "");
                         }}
                       />
 

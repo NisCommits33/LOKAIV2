@@ -84,7 +84,7 @@ export function DepartmentSelector({
     <div className="space-y-2">
       <Label>{label}</Label>
       <Select
-        value={value}
+        value={value ?? ""}
         onValueChange={handleValueChange(onValueChange)}
         disabled={isDisabled}
       >
