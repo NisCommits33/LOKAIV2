@@ -1,88 +1,110 @@
-<p align="center">
-  <h1 align="center">LokAI - Project Report Documentation</h1>
-  <p align="center">
-    <strong>Final Year Project: Computing with AI</strong>
-  </p>
-</p>
+# LokAI
 
----
+## Short Description
+LokAI is an AI-powered full-stack platform designed to modernize exam preparation for Nepal's civil service (Lok Sewa) aspirants. The system combines document intelligence, automated question generation, and a structured mock test ecosystem to provide a comprehensive study experience tailored to the Nepali public service context.
 
-## 1. Project Overview
-**LokAI** is a high-performance educational platform designed specifically for Nepal's government employees. It solves the challenge of modernizing civil service exam preparation by providing AI-driven tools for document analysis, automatic question generation, and structured mock test simulations.
+## Project Objective
+The main objective of this project is to develop a centralized, AI-driven environment that solves the problem of fragmented study materials and manual question preparation. By automating text extraction and MCQ generation from government policy documents, the system improves the efficiency and user experience of government employees preparing for career advancement.
 
----
+## Features
+The system provides the following features:
+*   **User Registration & Authentication**: Secure sign-in via Google OAuth and organization-specific credentials.
+*   **Institutional Dashboard**: Role-based access for Employees, Organization Admins, and Super Admins.
+*   **Personal Document Intelligence**: Upload PDFs to extract text (OCR), generate AI summaries, and create custom MCQ quizzes.
+*   **GK Quiz Engine**: Categorized general knowledge quizzes covering the Nepal Constitution, History, and Geography.
+*   **Official Mock Tests**: Scheduled assessments assigned by organizations with strict deadline enforcement.
+*   **Analytics & Reporting**: Detailed performance tracking with exportable result summaries.
+*   **Secure Multi-tenant System**: Department and job-level access control with robust RLS policies.
+*   **Secure Logout**: Complete session management and secure logout system.
 
-## 2. Technical Architecture & Hybrid AI
-LokAI features a unique **Hybrid AI Pipeline** that allows for both local and cloud-based processing:
+## Technologies Used
 
-### A. Local AI Processing (Privacy & Offline)
-*   **OCR Engine**: Tesseract OCR for dual-language (Nepali/English) text extraction.
-*   **Summarization**: BART-Large transformer model.
-*   **Question Generation**: T5 Model for automatic MCQ creation.
+### Frontend
+*   **Next.js 16**: React framework with App Router.
+*   **React 19**: Modern UI library.
+*   **TypeScript**: Static type checking.
+*   **Tailwind CSS 4**: Utility-first styling.
+*   **Framer Motion**: For smooth UI transitions and animations.
 
-### B. Cloud AI Processing (Groq Acceleration)
-*   **API Platform**: Groq SDK for ultra-low latency inference.
-*   **Primary Model**: Llama-3.3-70b-versatile.
-*   **Functionality**: Instant generation of premium quality summaries and context-aware exam questions with structured JSON output.
+### Backend
+*   **FastAPI**: High-performance Python async framework.
+*   **Tesseract OCR**: For English and Nepali text extraction.
+*   **HuggingFace Models**: BART for summarization and T5 for question generation.
 
----
+### Database
+*   **PostgreSQL (Supabase)**: Relational database with Row-Level Security.
+*   **Supabase Auth**: Social and email-based authentication.
 
-## 3. Detailed Feature Breakdown
+### Deployment
+*   **Vercel**: For the frontend application.
+*   **Docker**: For containerized backend deployment.
 
-### 📂 AI Document Intelligence
-The system processes government PDF documents through a multi-stage pipeline:
-1.  **Extraction**: PDF images are converted to text using Tesseract.
-2.  **Structuring**: Raw text is cleaned and segmented.
-3.  **Synthesis**: AI models generate key-point summaries and related test questions.
+## System Requirements
 
-### 📝 Mock Test ecosystem
-*   **Admin Management**: Admins can assign specific quizzes to their organization as official Mock Tests.
-*   **Test Scheduling**: Features strict `start_time` and `end_time` logic.
-*   **Attempt Guarding**: The system automatically disables "Start" buttons and rejects submissions after the deadline.
+### Hardware
+*   Computer or smartphone with an active internet connection.
+*   Minimum 4GB RAM (for optimal browser performance).
 
-### 📊 Real-time Analytics
-*   Tracks user progress through Experience Points (XP).
-*   Categorizes mastery levels across Constitution, History, Geography, and Law.
+### Software
+*   Modern Web browser (Google Chrome, Firefox, or Safari).
+*   **Node.js ≥ 18.x** (if running locally).
+*   **Python ≥ 3.10** (if running locally).
 
----
+## Installation and Setup
 
-## 4. Technology Selection
-*   **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS 4.
-*   **Backend**: FastAPI (Python), PyTorch, OpenCV, Poppler.
-*   **Database**: PostgreSQL / Supabase with Row Level Security (RLS).
-*   **Authentication**: Google OAuth 2.0.
+### 1. Clone the repository
+```bash
+git clone https://github.com/username/lokai.git
+cd lokai/Development
+```
 
----
+### 2. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## 5. Implementation Details (Database RLS)
-To ensure multi-tenant security, the system uses the following Postgres policies:
-*   `allow_users_read_own`: Users can only access their specific documents.
-*   `allow_admins_view_attempts`: Organization Admins can monitor the scores of users within their own organization only.
-*   `restrict_cross_org_access`: Prevents data leaking between different government ministries.
+### 3. Backend Setup
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
 
----
+## Live Project
+Live URL of the deployed system:
+[https://your-lokai-link.com](https://your-lokai-link.com)
 
-## 6. System Requirements & Setup
+## Project Structure
+```
+lokai/
+│ 
+├── frontend/               # Next.js Application
+├── backend/                # FastAPI AI Microservice
+├── migrations/             # SQL Database Scripts
+├── documentation/          # UML and Project Reports
+└── README.md               # Main Documentation
+```
 
-### Requirements
-*   **OS**: Windows 10/11
-*   **Environment**: Node.js 18+, Python 3.10+
-*   **Dependencies**: Tesseract OCR, Poppler-utils.
+## Screenshots
+*   **Login Page**: [Link to Screenshot]
+*   **Dashboard**: [Link to Screenshot]
+*   **Mock Test Interface**: [Link to Screenshot]
+*   **AI Document Workspace**: [Link to Screenshot]
 
-### Local Installation
-1.  **Backend**: Install requirements.txt and configure `.env` with Supabase and Groq keys.
-2.  **Frontend**: Run `npm install` and start the Next.js dev server.
+## Future Improvements
+*   **Mobile Application**: Developing native iOS and Android versions.
+*   **Advanced Analytics**: AI-driven predictive performance scoring.
+*   **Improved Nepali OCR**: Enhancing accuracy for hand-written documents.
+*   **Interactive Study Groups**: Real-time collaborative learning environments.
 
----
+## Authors
+**Student Name**: Nischal Shrestha
+**Program / Department**: Computing with AI
+**University / College Name**: Islington college
 
-## 7. Authorship & Declaration
-**Student Name**: Nischal Shrestha  
-**Student ID**: [Your ID if applicable]  
-**Program**: B.Sc. (Hons) Computing with AI  
-**College**: Islington College  
-**University**: [Partner University Name]  
-
----
-
-## 8. License & Usage
-This project is submitted as part of the Final Year Project (FYP) requirement. It is intended for academic evaluation and community educational support.
+## License
+This project is created for educational purposes as part of a Final Year Project.
