@@ -54,11 +54,14 @@ export function Footer() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [activeGuide, setActiveGuide] = useState(GUIDES[0])
 
-    // Hide footer on layouts that have their own navigation
+    // Hide footer on layouts that have their own navigation or auth flows
+    const isAuthPage = pathname === "/reset-password" || pathname === "/forgot-password" || pathname?.startsWith("/auth/confirm")
+
     if (
         pathname?.startsWith("/dashboard") ||
         pathname?.startsWith("/admin") ||
-        pathname?.startsWith("/super-admin")
+        pathname?.startsWith("/super-admin") ||
+        isAuthPage
     ) {
         return null
     }

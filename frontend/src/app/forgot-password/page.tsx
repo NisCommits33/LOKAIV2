@@ -39,8 +39,10 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
+      const origin = window.location.origin;
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+        redirectTo: `${origin}/auth/confirm?next=/reset-password`,
       });
 
       if (error) throw error;
@@ -73,7 +75,7 @@ export default function ForgotPasswordPage() {
               Check your email
             </h1>
             <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
-              We've sent a password recovery link to <span className="text-slate-900 dark:text-slate-100 font-bold">{email}</span>. 
+              We've sent a password recovery link to <span className="text-slate-900 dark:text-slate-100 font-bold">{email}</span>.
               Click the link in the email to reset your password.
             </p>
             <div className="space-y-4">

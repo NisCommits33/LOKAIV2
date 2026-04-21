@@ -41,8 +41,10 @@ export function Header() {
     const { supabaseUser, dbUser, signOut } = useAuth()
     const pathname = usePathname()
 
-    // Hide header on layouts that provide their own navigation sidebar
-    if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/admin") || pathname?.startsWith("/super-admin")) {
+    // Hide header on layouts that provide their own navigation sidebar or auth flows
+    const isAuthPage = pathname === "/reset-password" || pathname === "/forgot-password" || pathname?.startsWith("/auth/confirm")
+    
+    if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/admin") || pathname?.startsWith("/super-admin") || isAuthPage) {
         return null
     }
 
